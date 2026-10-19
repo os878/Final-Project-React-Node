@@ -4,6 +4,10 @@ const supplierSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.String,
         require: true
     },
+    password: {
+        type: String,
+        require: true
+    },
     phone: {
         type: String,
         require: true
