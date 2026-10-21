@@ -5,6 +5,7 @@ import Layout from "./common/Layout"
 import './App.css'
 import HomePage from './HomePage'
 import ProfilSupplier from "./Supplier/ProfilSupplier"
+import Login from './Supplier/Login'
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path="/Supplier/Profil" element={<ProfilSupplier />} />
+            <Route path="/Supplier/Login" element={<Login />} />
             {/* <Route path="/article" element={<ArticlesList />} />
             <Route path="/users" element={<UsersList />} />
             <Route path="/user" element={<UsersList />} />
