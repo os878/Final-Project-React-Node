@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Form } from 'react-router-dom'
 import Axios from "axios"
+import { useNavigate } from "react-router-dom";
+
 
 
 export const Login = () => {
@@ -12,7 +14,7 @@ export const Login = () => {
     const [phone, setPhone] = useState("")
     const [companyName, setCompanyName] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
-
+    const navigate = useNavigate();
     const validateEmail = (emailToTest) => {
         return emailToTest.includes('@') && emailToTest.includes('.') && emailToTest.indexOf('@') < emailToTest.lastIndexOf('.')
     }
@@ -24,10 +26,18 @@ export const Login = () => {
             return;
         }
         try {
-            const { data } = await Axios.post("http://localhost:7002/api/auth/login", { name, password: password1 })
+            // const { data } = await Axios.post("http://localhost:7002/api/auth/login", { name, password: password1 })
+            const { data } = await Axios.post(
+                "http://localhost:7002/api/auth/login",
+                { name, password: password1 }
+            );
+
+            console.log(data);
             alert("gooooooood")
 
-            navigate("/Profil")
+            console.log(data);
+            localStorage.setItem("token", data.accessToken);
+            navigate("/AddGift")
         }
         catch (error) {
             if (error.response && error.response.data && error.response.data.message) {

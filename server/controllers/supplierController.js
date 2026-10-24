@@ -31,7 +31,7 @@ const findByIdS = async (req, res) => {
         return res.status(400).json({ message: 'Supplier id is required' })
     }
 
-    const supplier = await Supplier.findById(id).lean()
+    const supplier = await Supplier.findById(id).select('_id name companyName').lean()
     if (!supplier) {
         return res.status(404).json({ message: 'The supplier was not found' })
     }
@@ -40,7 +40,7 @@ const findByIdS = async (req, res) => {
 
 // קבלת כל הספקים
 const getAllSuppliers = async (req, res) => {
-    const suppliers = await Supplier.find().lean()
+    const suppliers = await Supplier.find().select('_id name companyName').lean()
 
     if (!suppliers?.length) {
         return res.status(400).json({ message: 'No suppliers found' })

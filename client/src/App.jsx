@@ -6,7 +6,7 @@ import './App.css'
 import HomePage from './HomePage'
 import ProfilSupplier from "./Supplier/ProfilSupplier"
 import Login from './Supplier/Login'
-
+import AddGift from './Supplier/AddGift'
 
 function App() {
 
@@ -26,7 +26,7 @@ function App() {
             <Route path="/article/add" element={<AddArticle />} />
             <Route path="/users/add" element={<AddUser />} />
             <Route path="/albums/add" element={<AddAlbum />} /> */}
-
+<Route path="/AddGift" element={<AddGift />} />
           </Route>
         </Routes>
       </Router>
