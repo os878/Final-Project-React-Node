@@ -7,12 +7,13 @@ import HomePage from './HomePage'
 import ProfilSupplier from "./Supplier/ProfilSupplier"
 import Login from './Supplier/Login'
 import AddGift from './Supplier/AddGift'
-
+import GiftItem from './Supplier/GiftItem'
+import GiftsList from './Supplier/GiftsList'; 
 function App() {
 
   return (
     <>
-       <Router>
+      <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
@@ -26,7 +27,9 @@ function App() {
             <Route path="/article/add" element={<AddArticle />} />
             <Route path="/users/add" element={<AddUser />} />
             <Route path="/albums/add" element={<AddAlbum />} /> */}
-<Route path="/AddGift" element={<AddGift />} />
+            <Route path="/AddGift" element={<AddGift />} />
+            <Route path="/GiftItem" element={<GiftItem />} />
+            <Route path="/GiftsList" element={<GiftsList />} />
           </Route>
         </Routes>
       </Router>

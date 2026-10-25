@@ -18,7 +18,7 @@ export const Login = () => {
     const validateEmail = (emailToTest) => {
         return emailToTest.includes('@') && emailToTest.includes('.') && emailToTest.indexOf('@') < emailToTest.lastIndexOf('.')
     }
-    const submitForm = async (e) => {//צריך לשמור פה את הTOKEN
+    const submitForm = async (e) => {
         e.preventDefault()
         setErrorMessage(""); // איפוס שגיאה אדומה
         if (!name || !password1) {
@@ -26,7 +26,6 @@ export const Login = () => {
             return;
         }
         try {
-            // const { data } = await Axios.post("http://localhost:7002/api/auth/login", { name, password: password1 })
             const { data } = await Axios.post(
                 "http://localhost:7002/api/auth/login",
                 { name, password: password1 }
@@ -36,8 +35,9 @@ export const Login = () => {
             alert("gooooooood")
 
             console.log(data);
+            // שמירת הטוקן ב-localStorage
             localStorage.setItem("token", data.accessToken);
-            navigate("/AddGift")
+            navigate("/GiftsList"); // מעבר לעמוד המתנות לאחר התחברות מוצלחת
         }
         catch (error) {
             if (error.response && error.response.data && error.response.data.message) {

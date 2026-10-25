@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import Axios from "axios"
 
-export const AddGift = () => {
+export const AddGift = ({ gift, onUpdated }) => {
 
     // משתנים לשמירת פרטי המתנה שהמשתמש מכניס
     const [name, setName] = useState("")
@@ -43,7 +43,20 @@ export const AddGift = () => {
         getCategories()
 
     }, []) // המערך הריק גורם להפעלה בעת טעינת הקומפוננטה
-
+    // מילוי הטופס בפרטי המתנה במצב עריכה
+    useEffect(() => {
+        if (gift) {
+            setName(gift.name || "")
+            setGender(gift.forGender || "לא משנה")
+            setAge1(gift.age1 ?? "")
+            setAge2(gift.age2 ?? "")
+            setCategory(gift.category?._id || gift.category || "")
+            setColor(gift.color || "")
+            setPrice(gift.price ?? "")
+            setImage(gift.image || "")
+            setDescription(gift.description || "")
+        }
+    }, [gift])
     // פונקציה לעדכון שדה בטופס ולניקוי הודעת השגיאה
     const handleInputChange = (setter, value) => {
 
@@ -88,43 +101,76 @@ export const AddGift = () => {
             )
             return
         }
-
+        // בדיקה ששדות הגיל והצבע מולאו
+        if (
+            age1 === "" ||
+            age2 === "" ||
+            !color.trim()
+        ) {
+            setErrorMessage("יש למלא גיל מינימלי, גיל מקסימלי וצבע")
+            return
+        }
         try {
-            // שליחת פרטי המתנה לשרת באמצעות בקשת POST
-            const { data } = await Axios.post(
-                "http://localhost:7002/api/gift",
-                {
-                    name,
-                    forGender: gender,
-                    age1: Number(age1),
-                    age2: Number(age2),
-                    category,
-                    color,
-                    price: Number(price),
-                    image,
-                    description
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    }
+
+            // הנתונים שנשלחים לשרת, גם ביצירה וגם בעריכה
+            const giftData = {
+                name,
+                forGender: gender,
+                age1: Number(age1),
+                age2: Number(age2),
+                category,
+                color,
+                price: Number(price),
+                image,
+                description
+            }
+
+            // הגדרות האימות מול השרת
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
+            }
 
-            )
+            if (gift) {
+                // עדכון מתנה קיימת
+                const { data } = await Axios.put(
+                    "http://localhost:7002/api/gift",
+                    {
+                        ...giftData,
+                        id: gift._id
+                    },
+                    config
+                )
 
-            // הצגת הודעה לאחר הוספה מוצלחת
-            alert("המתנה נוספה בהצלחה!")
+                alert("המתנה עודכנה בהצלחה!")
 
-            // ניקוי כל השדות לאחר הוספת המתנה
-            setName("")
-            setGender("לא משנה")
-            setAge1("")
-            setAge2("")
-            setCategory("")
-            setColor("")
-            setPrice("")
-            setImage("")
-            setDescription("")
+                // מעבירים את המתנה המעודכנת ל-GiftsList
+                if (onUpdated) {
+                    onUpdated(data.gift)
+                }
+            } else {
+                // יצירת מתנה חדשה
+                await Axios.post(
+                    "http://localhost:7002/api/gift",
+                    giftData,
+                    config
+                )
+
+                alert("המתנה נוספה בהצלחה!")
+
+                // ניקוי השדות לאחר יצירה מוצלחת
+                setName("")
+                setGender("לא משנה")
+                setAge1("")
+                setAge2("")
+                setCategory("")
+                setColor("")
+                setPrice("")
+                setImage("")
+                setDescription("")
+            }
+
 
         } catch (error) {
 
@@ -144,8 +190,7 @@ export const AddGift = () => {
 
     return (
         <div>
-            <h2>הוספת מתנה חדשה</h2>
-
+            <h2>{gift ? "עריכת מתנה" : "הוספת מתנה חדשה"}</h2>
             {/* טופס הוספת המתנה */}
             <form onSubmit={submitForm}>
 
@@ -268,9 +313,8 @@ export const AddGift = () => {
                     </p>
                 )}
 
-                {/* כפתור שליחת הטופס */}
                 <button type="submit">
-                    הוספת מתנה
+                    {gift ? "שמירת שינויים" : "הוספת מתנה"}
                 </button>
 
             </form>
