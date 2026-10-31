@@ -19,9 +19,27 @@ const giftSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    styles: [{
+        type: String,
+        enum: ['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית']
+    }],
+    DedicationPersonalization:{
+        type: boolean,
+        required: true
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
+        required: true
+    },
+    event: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Event',
+        required: true
+    },
+    relationship: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Relationship',
         required: true
     },
     color: {
