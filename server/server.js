@@ -30,11 +30,8 @@ app.use("/api/customer", require("./routes/customerRoutes"))
 app.use("/api/admin", require("./routes/adminRoutes"))
 
 app.use("/api/gift", require("./routes/giftRoutes"))
+app.use("/api/relationship", require("./routes/relationshipRoutes"))
 app.use("/api/category", require("./routes/categoryRoutes"))
 
-// app.use("/api/supplier", require("./routes/supplierRoutes"))
-// app.use("/api/gift", require("./routes/giftRoutes"))
-// app.use("/api/category", require("./routes/categoryRoutes"))
-// app.use("/api/customer", require("./routes/customerRoutes"))
-// app.use("/api/auth", require("./routes/authRoutes"))
+
 app.use(express.static("public"))

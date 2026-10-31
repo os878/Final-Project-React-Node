@@ -1,12 +1,11 @@
-
 const express = require("express")
 const router = express.Router()
-const categoryController = require("../controllers/categoryController")
+const relationshipController = require("../controllers/relationshipController")
 
-router.get("/", categoryController.getAllCategories)
-router.put("/", categoryController.updateCategory)
-router.post("/", categoryController.createNewCategory)
-router.delete("/delete", categoryController.deleteCategory)
-router.get("/findByIdC", categoryController.findByIdC)
+router.get("/", relationshipController.getAllRelationships)
+router.put("/", relationshipController.updateRelationship)
+router.post("/", relationshipController.createNewRelationship)
+router.delete("/delete", relationshipController.deleteRelationship)
+router.get("/findByIdR", relationshipController.findByIdR)
 
 module.exports = router
