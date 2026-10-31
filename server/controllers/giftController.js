@@ -2,11 +2,37 @@ const Gift = require("../models/gift")
 const mongoose = require("mongoose")
 
 const createNewGift = async (req, res) => {
-    const { name, forGender, age1, age2, category, color, price, image, description } = req.body
+    const { 
+        name, 
+        forGender, 
+        age1, 
+        age2, 
+        category, 
+        event, 
+        relationship, 
+        color, 
+        price, 
+        image, 
+        description, 
+        styles, 
+        DedicationPersonalization 
+    } = req.body
 
-    if (!name || !forGender || age1 == null || age2 == null || !category || !color || !price) {
+    // בדיקת שדות חובה לפי המודל
+    if (
+        !name || 
+        !forGender || 
+        age1 == null || 
+        age2 == null || 
+        !category || 
+        !event || 
+        !relationship || 
+        !color || 
+        price == null || 
+        DedicationPersonalization == null
+    ) {
         return res.status(400).json({
-            message: 'name, forGender, age1, age2, category, color and price are required'
+            message: 'name, forGender, age1, age2, category, event, relationship, color, price and DedicationPersonalization are required'
         })
     }
 
@@ -16,12 +42,31 @@ const createNewGift = async (req, res) => {
         })
     }
 
-    const gift = await Gift.create({ name, forGender, age1, age2, category, supplier: req.user._id, color, price, image, description })
+    try {
+        const gift = await Gift.create({ 
+            name, 
+            forGender, 
+            age1, 
+            age2, 
+            category, 
+            event, 
+            relationship, 
+            color, 
+            price, 
+            image, 
+            description, 
+            styles, 
+            DedicationPersonalization, 
+            supplier: req.user._id 
+        })
 
-    if (gift) {
-        return res.status(201).json({ message: 'New Gift created', gift })
-    } else {
-        return res.status(400).json({ message: 'Invalid Gift' })
+        if (gift) {
+            return res.status(201).json({ message: 'New Gift created', gift })
+        } else {
+            return res.status(400).json({ message: 'Invalid Gift' })
+        }
+    } catch (error) {
+        return res.status(400).json({ message: 'Error creating gift', error: error.message })
     }
 }
 
@@ -34,7 +79,11 @@ const findByIdGift = async (req, res) => {
         })
     }
 
-    const gift = await Gift.findById(id).populate('category').populate('supplier', 'name companyName')
+    const gift = await Gift.findById(id)
+        .populate('category')
+        .populate('event')
+        .populate('relationship')
+        .populate('supplier', 'name companyName')
 
     if (!gift) {
         return res.status(404).json({ message: 'The gift was not found' })
@@ -42,10 +91,14 @@ const findByIdGift = async (req, res) => {
 
     res.json(gift)
 }
+
 const findByIdSupplier = async (req, res) => {
     const gifts = await Gift.find({
         supplier: req.user._id
-    });
+    })
+    .populate('category')
+    .populate('event')
+    .populate('relationship')
 
     if (!gifts.length) {
         return res.status(404).json({ message: 'No gifts found for this supplier' })
@@ -53,12 +106,14 @@ const findByIdSupplier = async (req, res) => {
 
     res.json(gifts)
 }
-    
-
- 
 
 const getAllGifts = async (req, res) => {
-    const gifts = await Gift.find().populate('category').populate('supplier', 'name companyName').lean()
+    const gifts = await Gift.find()
+        .populate('category')
+        .populate('event')
+        .populate('relationship')
+        .populate('supplier', 'name companyName')
+        .lean()
 
     if (!gifts.length) {
         return res.status(404).json({
@@ -71,8 +126,9 @@ const getAllGifts = async (req, res) => {
 
 const updateGift = async (req, res) => {
     const allowedFields = new Set([
-        'id', 'name', 'forGender', 'age1', 'age2', 'category',
-        'color', 'price', 'image', 'description'
+        'id', 'name', 'forGender', 'age1', 'age2', 'category', 'event', 
+        'relationship', 'color', 'price', 'image', 'description', 
+        'styles', 'DedicationPersonalization'
     ])
 
     if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body) ||
@@ -82,7 +138,23 @@ const updateGift = async (req, res) => {
         })
     }
 
-    const { id, name, forGender, age1, age2, category, color, price, image, description } = req.body
+    const { 
+        id, 
+        name, 
+        forGender, 
+        age1, 
+        age2, 
+        category, 
+        event, 
+        relationship, 
+        color, 
+        price, 
+        image, 
+        description, 
+        styles, 
+        DedicationPersonalization 
+    } = req.body
+
     const numericValues = [age1, age2, price]
     const hasInvalidNumber = numericValues.some(value =>
         (typeof value !== 'number' && typeof value !== 'string') ||
@@ -90,14 +162,22 @@ const updateGift = async (req, res) => {
         !Number.isFinite(Number(value))
     )
 
-    if (typeof id !== 'string' || !mongoose.isValidObjectId(id) ||
+    const validStyles = ['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית']
+
+    if (
+        typeof id !== 'string' || !mongoose.isValidObjectId(id) ||
         typeof name !== 'string' || !name.trim() ||
         !['בן', 'בת', 'לא משנה'].includes(forGender) ||
         hasInvalidNumber ||
         typeof category !== 'string' || !mongoose.isValidObjectId(category) ||
+        typeof event !== 'string' || !mongoose.isValidObjectId(event) ||
+        typeof relationship !== 'string' || !mongoose.isValidObjectId(relationship) ||
         typeof color !== 'string' || !color.trim() ||
+        typeof DedicationPersonalization !== 'boolean' ||
+        (styles && (!Array.isArray(styles) || styles.some(s => !validStyles.includes(s)))) ||
         (image != null && typeof image !== 'string') ||
-        (description != null && typeof description !== 'string')) {
+        (description != null && typeof description !== 'string')
+    ) {
         return res.status(400).json({
             message: 'Invalid gift data'
         })
@@ -123,10 +203,14 @@ const updateGift = async (req, res) => {
         gift.age1 = numericAge1
         gift.age2 = numericAge2
         gift.category = category
+        gift.event = event
+        gift.relationship = relationship
         gift.color = color
         gift.price = numericPrice
         gift.image = image
         gift.description = description
+        gift.styles = styles
+        gift.DedicationPersonalization = DedicationPersonalization
 
         const updatedGift = await gift.save()
 
