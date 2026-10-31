@@ -14,7 +14,7 @@ const createNewSupplier = async (req, res) => {
         password,
         phone,
         email,
-        companyName 
+        companyName
     })
 
     if (supplier) {
@@ -26,12 +26,12 @@ const createNewSupplier = async (req, res) => {
 
 // מציאת ספק לפי מזהה (מ-req.body או req.params)
 const findByIdS = async (req, res) => {
-    const { id } = req.body
+   const id = req.user._id;
     if (!id) {
         return res.status(400).json({ message: 'Supplier id is required' })
     }
 
-    const supplier = await Supplier.findById(id).select('_id name companyName').lean()
+    const supplier = await Supplier.findById(id).select('_id name companyName email phone').lean()
     if (!supplier) {
         return res.status(404).json({ message: 'The supplier was not found' })
     }
@@ -50,10 +50,10 @@ const getAllSuppliers = async (req, res) => {
 
 // עדכון ספק
 const updateSupplier = async (req, res) => {
-    const { id, name, password, phone, email, companyName } = req.body
+    const { id, name, phone, email, companyName } = req.body
 
-    if (!id || !name || !password || !phone || !email) {
-        return res.status(400).json({ message: 'id, name, password, phone and email are required' })
+    if (!id || !name  || !phone || !email) {
+        return res.status(400).json({ message: 'id, name, phone and email are required' })
     }
 
     const supplier = await Supplier.findById(id).exec()
@@ -62,7 +62,7 @@ const updateSupplier = async (req, res) => {
     }
 
     supplier.name = name
-    supplier.password = password
+  
     supplier.phone = phone
     supplier.email = email
     supplier.companyName = companyName

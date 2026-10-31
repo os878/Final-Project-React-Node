@@ -4,8 +4,8 @@ const Supplier=()=>{
     return (
         <>
          <nav className="sidebar-navigation">
-            <NavLink to="/SupplierDetails">Supplier Details</NavLink>
-            {/* <NavLink to="/users">My Gifts</NavLink>//GiftsList */}
+            <NavLink to="/Supplier/SupplierDetails">Supplier Details</NavLink>
+            <NavLink to="GiftsList">My Gifts</NavLink>//GiftsList
          </nav>
 
     

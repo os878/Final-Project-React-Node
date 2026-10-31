@@ -9,6 +9,8 @@ import Login from './Supplier/Login'
 import AddGift from './Supplier/AddGift'
 import GiftItem from './Supplier/GiftItem'
 import GiftsList from './Supplier/GiftsList'; 
+import SupplierDetails from './Supplier/SupplierDetails'
+
 function App() {
 
   return (
@@ -17,16 +19,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
-            <Route path="/Supplier/Profil" element={<ProfilSupplier />} />
+            <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
             <Route path="/Supplier/Login" element={<Login />} />
-            {/* <Route path="/article" element={<ArticlesList />} />
-            <Route path="/users" element={<UsersList />} />
-            <Route path="/user" element={<UsersList />} />
-            <Route path="/albums" element={<AlbumsList />} />
-            <Route path="/tasks/add" element={<AddTask />} />
-            <Route path="/article/add" element={<AddArticle />} />
-            <Route path="/users/add" element={<AddUser />} />
-            <Route path="/albums/add" element={<AddAlbum />} /> */}
+           <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
             <Route path="/AddGift" element={<AddGift />} />
             <Route path="/GiftItem" element={<GiftItem />} />
             <Route path="/GiftsList" element={<GiftsList />} />

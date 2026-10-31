@@ -25,7 +25,7 @@ const createNewGift = async (req, res) => {
     }
 }
 
-const findByIdG = async (req, res) => {
+const findByIdGift = async (req, res) => {
     const { id } = req.body
 
     if (!id) {
@@ -42,6 +42,20 @@ const findByIdG = async (req, res) => {
 
     res.json(gift)
 }
+const findByIdSupplier = async (req, res) => {
+    const gifts = await Gift.find({
+        supplier: req.user._id
+    });
+
+    if (!gifts.length) {
+        return res.status(404).json({ message: 'No gifts found for this supplier' })
+    }
+
+    res.json(gifts)
+}
+    
+
+ 
 
 const getAllGifts = async (req, res) => {
     const gifts = await Gift.find().populate('category').populate('supplier', 'name companyName').lean()
@@ -160,5 +174,6 @@ module.exports = {
     getAllGifts,
     updateGift,
     deleteGift,
-    findByIdG
+    findByIdSupplier,
+    findByIdGift
 }

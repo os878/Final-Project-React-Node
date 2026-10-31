@@ -34,7 +34,7 @@ const GiftsList = () => {
                 }
 
                 // שליחת בקשת GET לשרת עם הטוקן
-                const response = await fetch('http://localhost:7002/api/gift', {
+                const response = await fetch('http://localhost:7002/api/gift/findByIdSupplier', {
                     method: 'GET',
                     headers: {
                         // הטוקן מאפשר לשרת לזהות את הספק המחובר

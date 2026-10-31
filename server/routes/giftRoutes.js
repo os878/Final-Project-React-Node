@@ -4,7 +4,9 @@ const giftController = require("../controllers/giftController")
 const verifyJWT = require("../middleware/verifyJWT")
 
 router.get("/", giftController.getAllGifts)
-router.get("/findByIdG", giftController.findByIdG)
+
+router.get("/findByIdSupplier",verifyJWT, giftController.findByIdSupplier)
+router.get("/findByIdGift",verifyJWT, giftController.findByIdGift)
 router.post("/", verifyJWT, giftController.createNewGift)
 router.put("/", verifyJWT, giftController.updateGift)
 router.delete("/delete", verifyJWT, giftController.deleteGift)

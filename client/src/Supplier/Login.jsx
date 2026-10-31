@@ -37,7 +37,7 @@ export const Login = () => {
             console.log(data);
             // שמירת הטוקן ב-localStorage
             localStorage.setItem("token", data.accessToken);
-            navigate("/GiftsList"); // מעבר לעמוד המתנות לאחר התחברות מוצלחת
+            navigate("/Supplier/ProfilSupplier"); // מעבר לעמוד המתנות לאחר התחברות מוצלחת
         }
         catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
@@ -72,7 +72,7 @@ export const Login = () => {
             setSignLogin(true);
             setErrorMessage("");
             alert("ההרשמה בוצעה בהצלחה! כעת ניתן להתחבר.");
-            navigate("/Profil")
+            navigate("/Supplier/ProfilSupplier"); // מעבר לעמוד המתנות לאחר הרשמה מוצלחת
 
         }
         catch (error) {
