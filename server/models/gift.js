@@ -24,7 +24,7 @@ const giftSchema = new mongoose.Schema({
         enum: ['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית']
     }],
     DedicationPersonalization:{
-        type: boolean,
+        type: Boolean,
         required: true
     },
     category: {
