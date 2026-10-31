@@ -37,17 +37,16 @@ const getAllCustomers = async (req, res) => {
 }
 
 const updateCustomer = async (req, res) => {
-    const { id, name, password, username, email, phone } = req.body
+    const { id, name, username, email, phone } = req.body
 
-    if (!id || !name || !password || !username || !email || !phone) {
-        return res.status(400).json({ message: 'id, name, password, username, email and phone are required' })
+    if (!id || !name || !username || !email || !phone) {
+        return res.status(400).json({ message: 'id, name, username, email and phone are required' })
     }
     const customer = await Customer.findById(id).exec()
     if (!customer) {
         return res.status(400).json({ message: 'the customer not found' })
     }
     customer.name = name
-    customer.password = password
     customer.username = username
     customer.email = email
     customer.phone = phone

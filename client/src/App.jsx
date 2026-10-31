@@ -10,7 +10,8 @@ import AddGift from './Supplier/AddGift'
 import GiftItem from './Supplier/GiftItem'
 import GiftsList from './Supplier/GiftsList'; 
 import SupplierDetails from './Supplier/SupplierDetails'
-
+import ProfileCustomer from './Customer/ProfilCustomer'
+import CusromerDetails  from './Customer/CusromerDetails'
 function App() {
 
   return (
@@ -25,6 +26,8 @@ function App() {
             <Route path="/AddGift" element={<AddGift />} />
             <Route path="/GiftItem" element={<GiftItem />} />
             <Route path="/GiftsList" element={<GiftsList />} />
+            <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
+            <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
           </Route>
         </Routes>
       </Router>
