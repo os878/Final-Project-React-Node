@@ -13,6 +13,7 @@ import SupplierDetails from './Supplier/SupplierDetails'
 import ProfileCustomer from './Customer/ProfilCustomer'
 import CusromerDetails  from './Customer/CusromerDetails'
 import LoginCustomer from './Customer/LoginCustomer'
+import Questionnaire from './Customer/Questionnaire'
 function App() {
 
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
             <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
             <Route path="/Customer/LoginCustomer" element={<LoginCustomer />} />
+            <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
           </Route>
         </Routes>
       </Router>
