@@ -27,7 +27,7 @@ export const Login = () => {
         }
         try {
             const { data } = await Axios.post(
-                "http://localhost:7002/api/auth/login",
+                "http://localhost:7002/api/auth/supplier/login",
                 { name, password: password1 }
             );
 
@@ -68,7 +68,7 @@ export const Login = () => {
             return
         }
         try {
-            const { data } = await Axios.post("http://localhost:7002/api/auth/register", { name, password: password1, phone, email, companyName })
+            const { data } = await Axios.post("http://localhost:7002/api/auth/supplier/register", { name, password: password1, phone, email, companyName })
             setSignLogin(true);
             setErrorMessage("");
             alert("ההרשמה בוצעה בהצלחה! כעת ניתן להתחבר.");

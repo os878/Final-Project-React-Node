@@ -12,6 +12,7 @@ import GiftsList from './Supplier/GiftsList';
 import SupplierDetails from './Supplier/SupplierDetails'
 import ProfileCustomer from './Customer/ProfilCustomer'
 import CusromerDetails  from './Customer/CusromerDetails'
+import LoginCustomer from './Customer/LoginCustomer'
 function App() {
 
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/GiftsList" element={<GiftsList />} />
             <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
             <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
+            <Route path="/Customer/LoginCustomer" element={<LoginCustomer />} />
           </Route>
         </Routes>
       </Router>

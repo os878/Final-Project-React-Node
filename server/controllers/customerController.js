@@ -16,19 +16,19 @@ const Customer = require("../models/customer")
 // }
 
 const findByIdC = async (req, res) => {
-    const { id } = req.body
-    if (!id) {
-        return res.status(400).json({ message: 'Customer id is required' })
-    }
-    const customer = await Customer.findById(id)
+    const id = req.user._id
+
+    const customer = await Customer.findById(id).select('-password')
+
     if (!customer) {
-        return res.status(404).json({ message: 'the customer not found' })
+        return res.status(404).json({ message: 'Customer not found' })
     }
+
     res.json(customer)
 }
 
 const getAllCustomers = async (req, res) => {
-    const customers = await Customer.find().lean()
+    const customers = await Customer.find().select('-password').lean()
 
     if (!customers?.length) {
         return res.status(400).json({ message: 'No customer found' })
@@ -37,7 +37,8 @@ const getAllCustomers = async (req, res) => {
 }
 
 const updateCustomer = async (req, res) => {
-    const { id, name, username, email, phone } = req.body
+    const id = req.user._id
+    const {  name, username, email, phone } = req.body
 
     if (!id || !name || !username || !email || !phone) {
         return res.status(400).json({ message: 'id, name, username, email and phone are required' })

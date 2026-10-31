@@ -50,7 +50,7 @@ const getAllSuppliers = async (req, res) => {
 
 // עדכון ספק
 const updateSupplier = async (req, res) => {
-    const { id } = req.userץ_id
+    const { id } = req.user_id
     const {  name, phone, email, companyName } = req.body
 
     if (!id || !name  || !phone || !email) {
