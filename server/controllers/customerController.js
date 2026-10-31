@@ -1,19 +1,19 @@
 const Customer = require("../models/customer")
 
-const createNewCustomer = async (req, res) => {
-    const { name, password, username, email, phone } = req.body
-    if (!name || !password || !username || !email || !phone) { // Confirm data
-        return res.status(400).json({ message: 'name, password, username, email and phone are required' })
-    }
-    const customer = await Customer.create({
-        name, password, username, email, phone
-    })
-    if (customer) { // Created
-        return res.status(201).json({ message: 'New Customer created' })
-    } else {
-        return res.status(400).json({ message: 'Invalid Customer data' })
-    }
-}
+// const createNewCustomer = async (req, res) => {
+//     const { name, password, username, email, phone } = req.body
+//     if (!name || !password || !username || !email || !phone) { // Confirm data
+//         return res.status(400).json({ message: 'name, password, username, email and phone are required' })
+//     }
+//     const customer = await Customer.create({
+//         name, password, username, email, phone
+//     })
+//     if (customer) { // Created
+//         return res.status(201).json({ message: 'New Customer created' })
+//     } else {
+//         return res.status(400).json({ message: 'Invalid Customer data' })
+//     }
+// }
 
 const findByIdC = async (req, res) => {
     const { id } = req.body
@@ -75,7 +75,7 @@ const deleteCustomer = async (req, res) => {
 }
 
 module.exports = {
-    createNewCustomer,
+    // createNewCustomer,
     getAllCustomers,
     updateCustomer,
     deleteCustomer,

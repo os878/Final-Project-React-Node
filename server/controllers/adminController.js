@@ -10,11 +10,24 @@ const createNewAdmin = async (req, res) => {
             message: 'name, password, username, email and phone are required'
         })
     }
+    // בדיקת כפילות אימייל
+    const duplicateEmail = await Admin.findOne({ email }).lean();
+    if (duplicateEmail) {
+        return res.status(409).json({ message: "Duplicate email" });
+    }
 
-    const admin = await Admin.create({
-        name, password, username, email, phone
-    })
+    // בדיקת כפילות שם משתמש
+    const duplicateUsername = await Admin.findOne({ username }).lean();
+    if (duplicateUsername) {
+        return res.status(409).json({ message: "Duplicate username" });
+    }
 
+    // הצפנת סיסמה
+    const hashedPwd = await bcrypt.hash(password, 10);
+
+    const adminObject = { name, username, password: hashedPwd, phone, email };
+    const admin = await Admin.create(adminObject);
+  
     if (admin) {
         return res.status(201).json({ message: 'New Admin created' })
     } else {

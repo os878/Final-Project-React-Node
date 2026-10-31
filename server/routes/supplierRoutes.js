@@ -1,11 +1,11 @@
 const express = require("express")
-const verifyJWT = require("../middleware/verifyJWT")
+const { verifyJWT, verifyRole } = require('../middleware/verifyJWT')
 const router = express.Router()
 const supplierController = require("../controllers/supplierController")
-router.get("/",supplierController.getAllSuppliers)
-router.put("/",verifyJWT, supplierController.updateSupplier)
-router.post("/", supplierController.createNewSupplier)
-router.delete("/delete",verifyJWT, supplierController.deleteSupplier)//מי יכול למחוק ספק, הוא בעצמו או המנהל?
-router.get("/findByIdS",verifyJWT, supplierController.findByIdS)//צריך להשתמש בTOKEN?
+
+router.get("/",verifyJWT,verifyRole('Admin'),supplierController.getAllSuppliers)
+router.put("/",verifyJWT,verifyRole('Supplier'), supplierController.updateSupplier)
+router.delete("/delete",verifyJWT,verifyRole('Supplier'), supplierController.deleteSupplier)
+router.get("/findByIdS",verifyJWT, verifyRole('Supplier'),  supplierController.findByIdS)
 
 module.exports = router

@@ -43,9 +43,9 @@ const login = async (req, res) => {
     const suppInfo = {
         _id: foundSupplier._id, name: foundSupplier.name,
         phone: foundSupplier.phone, companyName: foundSupplier.companyName,
-        email: foundSupplier.email
+        email: foundSupplier.email,role: 'Supplier'
     }
-    const accessToken = jwt.sign(suppInfo, process.env.ACCESS_TOKEN_SECRET)
+    const accessToken = jwt.sign(suppInfo, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
     res.json({accessToken:accessToken})
 }
 module.exports = { register, login }

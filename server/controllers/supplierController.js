@@ -1,28 +1,28 @@
 const Supplier = require("../models/supplier")
 
 // יצירת ספק חדש
-const createNewSupplier = async (req, res) => {
-    const { name, password, phone, email, companyName } = req.body
+// const createNewSupplier = async (req, res) => {
+//     const { name, password, phone, email, companyName } = req.body
 
-    // בדיקת שדות חובה לפי המודל החדש
-    if (!name || !password || !phone || !email) {
-        return res.status(400).json({ message: 'name, password, phone and email are required' })
-    }
+//     // בדיקת שדות חובה לפי המודל החדש
+//     if (!name || !password || !phone || !email) {
+//         return res.status(400).json({ message: 'name, password, phone and email are required' })
+//     }
 
-    const supplier = await Supplier.create({
-        name,
-        password,
-        phone,
-        email,
-        companyName
-    })
+//     const supplier = await Supplier.create({
+//         name,
+//         password,
+//         phone,
+//         email,
+//         companyName
+//     })
 
-    if (supplier) {
-        return res.status(201).json({ message: 'New Supplier created', supplier })
-    } else {
-        return res.status(400).json({ message: 'Invalid Supplier data' })
-    }
-}
+//     if (supplier) {
+//         return res.status(201).json({ message: 'New Supplier created', supplier })
+//     } else {
+//         return res.status(400).json({ message: 'Invalid Supplier data' })
+//     }
+// }
 
 // מציאת ספק לפי מזהה (מ-req.body או req.params)
 const findByIdS = async (req, res) => {
@@ -50,7 +50,8 @@ const getAllSuppliers = async (req, res) => {
 
 // עדכון ספק
 const updateSupplier = async (req, res) => {
-    const { id, name, phone, email, companyName } = req.body
+    const { id } = req.userץ_id
+    const {  name, phone, email, companyName } = req.body
 
     if (!id || !name  || !phone || !email) {
         return res.status(400).json({ message: 'id, name, phone and email are required' })
@@ -93,7 +94,7 @@ const deleteSupplier = async (req, res) => {
 }
 
 module.exports = {
-    createNewSupplier,
+    // createNewSupplier,
     getAllSuppliers,
     updateSupplier,
     deleteSupplier,
