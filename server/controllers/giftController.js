@@ -1,6 +1,6 @@
 const Gift = require("../models/gift")
 const mongoose = require("mongoose")
-
+const matchGifts = require("../services/Giftservices")
 const createNewGift = async (req, res) => {
     const { 
         name, 
@@ -252,6 +252,14 @@ const deleteGift = async (req, res) => {
         return res.status(500).json({ message: 'Unable to delete gift' })
     }
 }
+const matchGiftsController = async (req, res) => {
+    try {
+        const matchingGifts = await matchGifts(req, res)   
+        return res.json({ gifts: matchingGifts })
+    } catch (error) {
+        return res.status(500).json({ message: 'Unable to match gifts' })
+    }
+}
 
 module.exports = {
     createNewGift,
@@ -259,5 +267,6 @@ module.exports = {
     updateGift,
     deleteGift,
     findByIdSupplier,
-    findByIdGift
+    findByIdGift,
+    matchGiftsController
 }

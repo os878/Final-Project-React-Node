@@ -6,8 +6,9 @@ router.get("/", giftController.getAllGifts)
 
 router.get("/findByIdSupplier",verifyJWT,verifyRole('Supplier'), giftController.findByIdSupplier)
 router.get("/findByIdGift",verifyJWT, giftController.findByIdGift)
-router.post("/", verifyJWT, giftController.createNewGift)
-router.put("/", verifyJWT, giftController.updateGift)
-router.delete("/delete", verifyJWT, giftController.deleteGift)
+router.post("/", verifyJWT,verifyRole('Supplier'), giftController.createNewGift)
+router.put("/", verifyJWT,verifyRole('Supplier'), giftController.updateGift)
+router.delete("/delete", verifyJWT,verifyRole('Supplier'), giftController.deleteGift)
+router.post("/matchGifts",verifyJWT, verifyRole('Customer'), giftController.matchGiftsController)
 
 module.exports = router
