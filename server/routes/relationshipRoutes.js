@@ -1,8 +1,11 @@
 const express = require("express")
 const router = express.Router()
-const authController = require("../controllers/customerAuthController")
+const relationshipController = require("../controllers/relationshipController")
 
-router.post("/login", authController.login)
-router.post("/register", authController.register)
+router.get("/", relationshipController.getAllRelationships)
+router.put("/", relationshipController.updateRelationship)
+router.post("/", relationshipController.createNewRelationship)
+router.delete("/delete", relationshipController.deleteRelationship)
+router.get("/findByIdR", relationshipController.findByIdR)
 
 module.exports = router

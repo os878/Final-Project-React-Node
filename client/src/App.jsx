@@ -26,8 +26,8 @@ function App() {
             <Route path="/Supplier/Login" element={<Login />} />
            <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
             <Route path="/AddGift" element={<AddGift />} />
-            <Route path="/GiftItem" element={<GiftItem />} />
-            <Route path="/GiftsList" element={<GiftsList />} />
+            <Route path="/Supplier/GiftItem" element={<GiftItem />} />
+            <Route path="/Supplier/GiftsList" element={<GiftsList />} />
             <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
             <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
             <Route path="/Customer/LoginCustomer" element={<LoginCustomer />} />
