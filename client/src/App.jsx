@@ -14,6 +14,7 @@ import ProfileCustomer from './Customer/ProfilCustomer'
 import CusromerDetails  from './Customer/CusromerDetails'
 import LoginCustomer from './Customer/LoginCustomer'
 import Questionnaire from './Customer/Questionnaire'
+import Favorites from './Customer/Favorites';
 function App() {
 
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
             <Route path="/Customer/LoginCustomer" element={<LoginCustomer />} />
             <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
+            <Route path="/Customer/Favorites" element={<Favorites />} />
           </Route>
         </Routes>
       </Router>

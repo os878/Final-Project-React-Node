@@ -33,6 +33,6 @@ app.use("/api/gift", require("./routes/giftRoutes"))
 app.use("/api/relationship", require("./routes/relationshipRoutes"))
 app.use("/api/category", require("./routes/categoryRoutes"))
 app.use("/api/event", require("./routes/eventRoutes"))
-
+app.use("/api/favorite", require("./routes/favoriteRoutes"))
 
 app.use(express.static("public"))

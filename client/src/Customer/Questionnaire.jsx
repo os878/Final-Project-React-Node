@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 const Questionnaire = ({ }) => {
   const [formData, setFormData] = useState({
     forGender: '',
@@ -12,6 +13,7 @@ const Questionnaire = ({ }) => {
     color: '',
     price: ''
   })
+  const navigate = useNavigate();
   const [matchingGifts, setMatchingGifts] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
@@ -65,39 +67,50 @@ const Questionnaire = ({ }) => {
     }
     fetchMatchingGifts()
   }
-  //פונקציה שתציג את המתנות התואמות ללקוח לפי הנתונים שהכניס בטופס השאלון
-  const displayGifts = () => {
-    //שליפת המתנות מהשרת והצגתן ללקוח
-  }
+
   //פונקציה שתשמור את המתנות שהלקוח בחר במועדפים שלו
-  const saveFavorites = () => {
-    //שמירת המתנות במועדפים של הלקוח
-  }
+  const handleAddToFavorites = (giftId) => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      setErrorMessage('יש להתחבר למערכת כדי לשמור מתנות במועדפים')
+      return
+    }
+    const addToFavorites = async () => {
+      try {
+        const response = await Axios.post(
+          'http://localhost:7002/api/favorite',
+          {
+            giftId: giftId
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        console.log('Favorite added:', response.data);
+        // כאן תוכל להוסיף לוגיקה נוספת לאחר שהמתנה נוספה למועדפים
+        alert('המתנה נוספה למועדפים בהצלחה');
+      } catch (error) {
+        if (error.response?.status === 409) {
+          alert('המתנה כבר נמצאת במועדפים');
+        } else {
+          console.error('Error adding favorite:', error);
+        }
+      }
+    };
+    addToFavorites();
+  };
   //פונקציה שתציג את המועדפים של הלקוח
-  const displayFavorites = () => {
-    //שליפת המועדפים מהשרת והצגתן ללקוח
-  }
+
   //פונקציה שתאפשר ללקוח לשלוח את המתנות שהוא בחר במועדפים שלו לחברים או משפחה
   const shareFavorites = () => {
     //שליחת המועדפים לחברים או משפחה
-  }
-  //אין עגלת קניות כי הלקוח לא יכול לקנות את המתנות, הוא רק יכול לשמור אותן במועדפים ולשלוח לחברים או משפחה או ליצור קשר אם הספק
-  //פונקציה שתאפשר ללקוח ליצור קשר עם הספק של המתנה שהוא בחר במועדפים שלו
-  const contactSupplier = () => {
-    //שליחת הודעה לספק של המתנה שהלקוח בחר במועדפים שלו
+
   }
 
-  // return (
-  //     <>
-  //     // כאן יוצגו הפקדים שבהם הלקוח יבחר את המתנה שהכי מתאימה לו לפי הקטגוריות
-  //     //בן /בת זוג /חברים /הורים /ילדים /סבים וסבתות
-  //     //המתנה תהיה מותאמת לפי גיל, תחומי עניין, תחביבים, סגנון חיים, צבעים אהובים, תקציב
-  //     //הלקוח יבחר את כל הפרמטרים האלה והמערכת תציג לו את המתנות שהכי מתאימות לו
-  //     //המערכת תציג את המתנות לפי סדר עדיפות, מהמתנה שהכי מתאימה לו ועד הפחות מתאימה
-  //     //יעשה שימוש בAI כדי לנתח את הנתונים שהלקוח הכניס ולהציע לו את המתנות שהכי מתאימות לו
 
-  //     </>
-  // )
+
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif', direction: 'rtl' }}>
@@ -274,6 +287,22 @@ const Questionnaire = ({ }) => {
       >
         {isLoading ? 'מחפש מתנות...' : 'חפש מתנות מתאימות'}
       </button>
+      <button
+        onClick={() => navigate('/Giftinspirations')}
+        disabled={isLoading}
+        style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
+          fontSize: '16px',
+          cursor: 'pointer'
+        }}
+      >
+        לקבלת הצעות למתנות אהובות
+      </button>
 
       {errorMessage && <p role="alert">{errorMessage}</p>}
       {hasSearched && matchingGifts.length === 0 && !errorMessage && (
@@ -293,6 +322,7 @@ const Questionnaire = ({ }) => {
 
               <p>מחיר: {result.gift.price} ₪</p>
 
+
               {result.gift.color && <p>צבע: {result.gift.color}</p>}
 
               {result.gift.description && <p>תיאור: {result.gift.description}</p>}
@@ -303,8 +333,9 @@ const Questionnaire = ({ }) => {
                   alt={result.gift.name}
                   width="150"
                 />
-              )}
 
+              )}
+              <button onClick={() => handleAddToFavorites(result.gift._id)}>הוסף למועדפים</button>
             </article>
           ))}
         </section>
