@@ -195,7 +195,7 @@ const deleteGift = async (req, res) => {
 }
 const matchGiftsController = async (req, res) => {
     try {
-        const matchingGifts = await matchGifts(req, res)   
+        const matchingGifts = await matchGifts(req.body)
         return res.json({ gifts: matchingGifts })
     } catch (error) {
         return res.status(500).json({ message: 'Unable to match gifts' })

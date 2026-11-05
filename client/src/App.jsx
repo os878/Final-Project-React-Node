@@ -18,6 +18,7 @@ import Questionnaire from './Customer/Questionnaire'
 import ProfilAdmin from './Admin/ProfilAdmin'
 import AdminDetails from './Admin/AdminDetails'
 import AllGifts from './Admin/AllGifts'
+import Favorites from './Customer/Favorites';
 function App() {
 
   return (
@@ -35,12 +36,13 @@ function App() {
             <Route path="/Supplier/Login" element={<Login />} />
             <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
             <Route path="/AddGift" element={<AddGift />} />
-            <Route path="/GiftItem" element={<GiftItem />} />
-            <Route path="/GiftsList" element={<GiftsList />} />
+            <Route path="/Supplier/GiftItem" element={<GiftItem />} />
+            <Route path="/Supplier/GiftsList" element={<GiftsList />} />
             <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
             <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
             <Route path="/Customer/LoginCustomer" element={<LoginCustomer />} />
             <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
+            <Route path="/Customer/Favorites" element={<Favorites />} />
           </Route>
         </Routes>
       </Router>

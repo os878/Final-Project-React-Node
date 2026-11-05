@@ -7,6 +7,7 @@ const ProfileCustomer=()=>{
             <NavLink to="/Customer/CusromerDetails">Cusromer Details</NavLink>
             {/* <NavLink to="/Customer/GiftsList">My Gifts</NavLink> */}
             <NavLink to="/Customer/Questionnaire">Questionnaire</NavLink>
+            <NavLink to="/Customer/Favorites">Favorites</NavLink>
          </nav>
 
     

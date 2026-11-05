@@ -10,6 +10,10 @@ export const AddGift = ({ gift, onUpdated }) => {
     const [age1, setAge1] = useState("")
     const [age2, setAge2] = useState("")
     const [category, setCategory] = useState("")
+    const [event, setEvent] = useState("")
+    const [relationship, setRelationship] = useState("")
+    const [styles, setStyles] = useState([])
+    const [dedicationPersonalization, setDedicationPersonalization] = useState(false)
     const [color, setColor] = useState("")
     const [price, setPrice] = useState("")
     const [image, setImage] = useState("")
@@ -17,6 +21,8 @@ export const AddGift = ({ gift, onUpdated }) => {
 
     // משתנה לשמירת רשימת הקטגוריות שמתקבלת מהשרת
     const [categories, setCategories] = useState([])
+    const [events, setEvents] = useState([])
+    const [relationships, setRelationships] = useState([])
 
     // משתנה לשמירת הודעת שגיאה
     const [errorMessage, setErrorMessage] = useState("")
@@ -24,23 +30,25 @@ export const AddGift = ({ gift, onUpdated }) => {
     // טעינת הקטגוריות מהשרת כשהקומפוננטה נפתחת
     useEffect(() => {
 
-        // פונקציה לקבלת הקטגוריות מהשרת
-        const getCategories = async () => {
+        // טעינת כל האפשרויות לשדות המקושרים למודלים אחרים
+        const getGiftOptions = async () => {
             try {
-                const { data } = await Axios.get(
-                    "http://localhost:7002/api/category"
-                )
+                const [categoryResponse, eventResponse, relationshipResponse] = await Promise.all([
+                    Axios.get("http://localhost:7002/api/category"),
+                    Axios.get("http://localhost:7002/api/event"),
+                    Axios.get("http://localhost:7002/api/relationship")
+                ])
 
-                // שמירת רשימת הקטגוריות שהתקבלה
-                setCategories(data)
-
+                setCategories(categoryResponse.data)
+                setEvents(eventResponse.data)
+                setRelationships(relationshipResponse.data)
             } catch (error) {
-                // הצגת הודעת שגיאה אם לא הצלחנו לקבל קטגוריות
-                setErrorMessage("לא ניתן לטעון את הקטגוריות")
+                console.error("לא ניתן לטעון את אפשרויות המתנה:", error)
+                setErrorMessage("לא ניתן לטעון קטגוריות, אירועים וקשרים. נסו לרענן את הדף.")
             }
         }
 
-        getCategories()
+        getGiftOptions()
 
     }, []) // המערך הריק גורם להפעלה בעת טעינת הקומפוננטה
     // מילוי הטופס בפרטי המתנה במצב עריכה
@@ -51,6 +59,10 @@ export const AddGift = ({ gift, onUpdated }) => {
             setAge1(gift.age1 ?? "")
             setAge2(gift.age2 ?? "")
             setCategory(gift.category?._id || gift.category || "")
+            setEvent(gift.event?._id || gift.event || "")
+            setRelationship(gift.relationship?._id || gift.relationship || "")
+            setStyles(gift.styles || [])
+            setDedicationPersonalization(gift.DedicationPersonalization ?? false)
             setColor(gift.color || "")
             setPrice(gift.price ?? "")
             setImage(gift.image || "")
@@ -79,35 +91,34 @@ export const AddGift = ({ gift, onUpdated }) => {
         setErrorMessage("")
 
         // בדיקה שהשדות הנדרשים מולאו
-        if (!name || !category || price === "") {
-            setErrorMessage("יש למלא שם, קטגוריה ומחיר")
-            return
-        }
-
-        // בדיקה שהמחיר אינו שלילי
-        if (Number(price) < 0) {
-            setErrorMessage("המחיר אינו יכול להיות שלילי")
-            return
-        }
-
-        // בדיקה שהגיל המינימלי אינו גדול מהגיל המקסימלי
         if (
-            age1 !== "" &&
-            age2 !== "" &&
-            Number(age1) > Number(age2)
-        ) {
-            setErrorMessage(
-                "הגיל המינימלי אינו יכול להיות גדול מהגיל המקסימלי"
-            )
-            return
-        }
-        // בדיקה ששדות הגיל והצבע מולאו
-        if (
+            !name.trim() ||
+            !category ||
+            !event ||
+            !relationship ||
             age1 === "" ||
             age2 === "" ||
+            price === "" ||
             !color.trim()
         ) {
-            setErrorMessage("יש למלא גיל מינימלי, גיל מקסימלי וצבע")
+            setErrorMessage("יש למלא שם, מגדר, גילאים, קטגוריה, אירוע, קשר, צבע ומחיר")
+            return
+        }
+
+        if (
+            !Number.isFinite(Number(age1)) ||
+            !Number.isFinite(Number(age2)) ||
+            !Number.isFinite(Number(price)) ||
+            Number(age1) < 0 ||
+            Number(age2) < Number(age1) ||
+            Number(price) < 0
+        ) {
+            setErrorMessage("יש להזין גילאים ומחיר תקינים; הגיל והמחיר אינם יכולים להיות שליליים")
+            return
+        }
+        const token = localStorage.getItem("token")
+        if (!token) {
+            setErrorMessage("יש להתחבר למערכת כדי להוסיף או לערוך מתנה")
             return
         }
         try {
@@ -119,6 +130,10 @@ export const AddGift = ({ gift, onUpdated }) => {
                 age1: Number(age1),
                 age2: Number(age2),
                 category,
+                event,
+                relationship,
+                styles,
+                DedicationPersonalization: dedicationPersonalization,
                 color,
                 price: Number(price),
                 image,
@@ -131,6 +146,8 @@ export const AddGift = ({ gift, onUpdated }) => {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
             }
+
+            config.headers.Authorization = 'Bearer ' + token
 
             if (gift) {
                 // עדכון מתנה קיימת
@@ -165,6 +182,10 @@ export const AddGift = ({ gift, onUpdated }) => {
                 setAge1("")
                 setAge2("")
                 setCategory("")
+                setEvent("")
+                setRelationship("")
+                setStyles([])
+                setDedicationPersonalization(false)
                 setColor("")
                 setPrice("")
                 setImage("")
@@ -199,6 +220,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                 <input
                     id="giftName"
                     type="text"
+                    required
                     value={name}
                     onChange={(e) =>
                         handleInputChange(setName, e.target.value)
@@ -209,6 +231,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                 <label htmlFor="gender">מיועד עבור</label>
                 <select
                     id="gender"
+                    required
                     value={gender}
                     onChange={(e) =>
                         handleInputChange(setGender, e.target.value)
@@ -225,6 +248,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                     id="age1"
                     type="number"
                     min="0"
+                    required
                     value={age1}
                     onChange={(e) =>
                         handleInputChange(setAge1, e.target.value)
@@ -237,6 +261,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                     id="age2"
                     type="number"
                     min="0"
+                    required
                     value={age2}
                     onChange={(e) =>
                         handleInputChange(setAge2, e.target.value)
@@ -247,6 +272,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                 <label htmlFor="category">קטגוריה</label>
                 <select
                     id="category"
+                    required
                     value={category}
                     onChange={(e) =>
                         handleInputChange(setCategory, e.target.value)
@@ -262,11 +288,82 @@ export const AddGift = ({ gift, onUpdated }) => {
                     ))}
                 </select>
 
+                {/* בחירת אירוע מתוך האירועים הקיימים במסד הנתונים */}
+                <label htmlFor="event">אירוע</label>
+                <select
+                    id="event"
+                    required
+                    value={event}
+                    onChange={(e) =>
+                        handleInputChange(setEvent, e.target.value)
+                    }
+                >
+                    <option value="">בחרי אירוע</option>
+                    {events.map((item) => (
+                        <option key={item._id} value={item._id}>
+                            {item.name}
+                        </option>
+                    ))}
+                </select>
+
+                {/* בחירת קשר מתוך הקשרים הקיימים במסד הנתונים */}
+                <label htmlFor="relationship">קשר / קרבה</label>
+                <select
+                    id="relationship"
+                    required
+                    value={relationship}
+                    onChange={(e) =>
+                        handleInputChange(setRelationship, e.target.value)
+                    }
+                >
+                    <option value="">בחרי קשר</option>
+                    {relationships.map((item) => (
+                        <option key={item._id} value={item._id}>
+                            {item.name}
+                        </option>
+                    ))}
+                </select>
+
+                {/* סגנונות המתנה */}
+                <fieldset>
+                    <legend>סגנון המתנה (ניתן לבחור כמה)</legend>
+                    {['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית'].map((style) => (
+                        <label key={style} style={{ display: 'block' }}>
+                            <input
+                                type="checkbox"
+                                value={style}
+                                checked={styles.includes(style)}
+                                onChange={(e) => {
+                                    const nextStyles = e.target.checked
+                                        ? [...styles, style]
+                                        : styles.filter((selectedStyle) => selectedStyle !== style)
+                                    handleInputChange(setStyles, nextStyles)
+                                }}
+                            />
+                            {style}
+                        </label>
+                    ))}
+                </fieldset>
+
+                {/* אפשרות להקדשה או התאמה אישית */}
+                <label htmlFor="dedicationPersonalization">
+                    <input
+                        id="dedicationPersonalization"
+                        type="checkbox"
+                        checked={dedicationPersonalization}
+                        onChange={(e) =>
+                            handleInputChange(setDedicationPersonalization, e.target.checked)
+                        }
+                    />
+                    ניתן להוסיף הקדשה / התאמה אישית
+                </label>
+
                 {/* צבע המתנה */}
                 <label htmlFor="color">צבע</label>
                 <input
                     id="color"
                     type="text"
+                    required
                     value={color}
                     onChange={(e) =>
                         handleInputChange(setColor, e.target.value)
@@ -279,6 +376,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                     id="price"
                     type="number"
                     min="0"
+                    required
                     value={price}
                     onChange={(e) =>
                         handleInputChange(setPrice, e.target.value)
