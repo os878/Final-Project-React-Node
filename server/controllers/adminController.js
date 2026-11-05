@@ -37,7 +37,7 @@ const createNewAdmin = async (req, res) => {
 
 // חיפוש מנהל לפי ID
 const findByIdA = async (req, res) => {
-    const { id } = req.body
+    const id = req.user._id
 
     if (!id) {
         return res.status(400).json({ message: 'Admin id is required' })

@@ -4,6 +4,7 @@ import Layout from "./common/Layout"
 
 import './App.css'
 import HomePage from './HomePage'
+import LoginAdmin from './Admin/LoginAdmin'
 import ProfilSupplier from "./Supplier/ProfilSupplier"
 import Login from './Supplier/Login'
 import AddGift from './Supplier/AddGift'
@@ -14,6 +15,9 @@ import ProfileCustomer from './Customer/ProfilCustomer'
 import CusromerDetails  from './Customer/CusromerDetails'
 import LoginCustomer from './Customer/LoginCustomer'
 import Questionnaire from './Customer/Questionnaire'
+import ProfilAdmin from './Admin/ProfilAdmin'
+import AdminDetails from './Admin/AdminDetails'
+import AllGifts from './Admin/AllGifts'
 function App() {
 
   return (
@@ -22,9 +26,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
+            <Route path="/admin-entry-details" element={<LoginAdmin />} />
+            <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
+            <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
+            <Route path="/Admin/AllGifts" element={<AllGifts />} />
+
             <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
             <Route path="/Supplier/Login" element={<Login />} />
-           <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
+            <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
             <Route path="/AddGift" element={<AddGift />} />
             <Route path="/GiftItem" element={<GiftItem />} />
             <Route path="/GiftsList" element={<GiftsList />} />
