@@ -19,6 +19,9 @@ import ProfilAdmin from './Admin/ProfilAdmin'
 import AdminDetails from './Admin/AdminDetails'
 import AllGifts from './Admin/AllGifts'
 import Favorites from './Customer/Favorites';
+import AllCustomers from './Admin/AllCustomers'
+import AllSuppliers from './Admin/AllSuppliers'
+import AddAdmin from './Admin/AddAdmin'
 function App() {
 
   return (
@@ -31,6 +34,9 @@ function App() {
             <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
             <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
             <Route path="/Admin/AllGifts" element={<AllGifts />} />
+            <Route path="/Admin/AllCustomers" element={<AllCustomers />} />
+            <Route path="/Admin/AllSuppliers" element={<AllSuppliers />} />
+            <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
 
             <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
             <Route path="/Supplier/Login" element={<Login />} />
