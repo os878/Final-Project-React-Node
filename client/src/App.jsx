@@ -9,10 +9,10 @@ import ProfilSupplier from "./Supplier/ProfilSupplier"
 import Login from './Supplier/Login'
 import AddGift from './Supplier/AddGift'
 import GiftItem from './Supplier/GiftItem'
-import GiftsList from './Supplier/GiftsList'; 
+import GiftsList from './Supplier/GiftsList';
 import SupplierDetails from './Supplier/SupplierDetails'
 import ProfileCustomer from './Customer/ProfilCustomer'
-import CusromerDetails  from './Customer/CusromerDetails'
+import CusromerDetails from './Customer/CusromerDetails'
 import LoginCustomer from './Customer/LoginCustomer'
 import Questionnaire from './Customer/Questionnaire'
 import ProfilAdmin from './Admin/ProfilAdmin'
@@ -22,36 +22,43 @@ import Favorites from './Customer/Favorites';
 import AllCustomers from './Admin/AllCustomers'
 import AllSuppliers from './Admin/AllSuppliers'
 import AddAdmin from './Admin/AddAdmin'
+import Giftinspirations from './Customer/Giftinspirations'
+import PresentingGifts from './Customer/PresentingGifts'
+import { GiftProvider } from './context/GiftContext';
 function App() {
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="/admin-entry-details" element={<LoginAdmin />} />
-            <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
-            <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
-            <Route path="/Admin/AllGifts" element={<AllGifts />} />
-            <Route path="/Admin/AllCustomers" element={<AllCustomers />} />
-            <Route path="/Admin/AllSuppliers" element={<AllSuppliers />} />
-            <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
+      <GiftProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<HomePage />} />
+              <Route path="/admin-entry-details" element={<LoginAdmin />} />
+              <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
+              <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
+              <Route path="/Admin/AllGifts" element={<AllGifts />} />
+              <Route path="/Admin/AllCustomers" element={<AllCustomers />} />
+              <Route path="/Admin/AllSuppliers" element={<AllSuppliers />} />
+              <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
 
-            <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
-            <Route path="/Supplier/Login" element={<Login />} />
-            <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
-            <Route path="/AddGift" element={<AddGift />} />
-            <Route path="/Supplier/GiftItem" element={<GiftItem />} />
-            <Route path="/Supplier/GiftsList" element={<GiftsList />} />
-            <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
-            <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
-            <Route path="/Customer/LoginCustomer" element={<LoginCustomer />} />
-            <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
-            <Route path="/Customer/Favorites" element={<Favorites />} />
-          </Route>
-        </Routes>
-      </Router>
+              <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
+              <Route path="/Supplier/Login" element={<Login />} />
+              <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
+              <Route path="/AddGift" element={<AddGift />} />
+              <Route path="/Supplier/GiftItem" element={<GiftItem />} />
+              <Route path="/Supplier/GiftsList" element={<GiftsList />} />
+              <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
+              <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
+              <Route path="/Customer/LoginCustomer" element={<LoginCustomer />} />
+              <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
+              <Route path="/PresentingGifts" element={<PresentingGifts />} />
+              <Route path="/Customer/Favorites" element={<Favorites />} />
+              <Route path="/Giftinspirations" element={<Giftinspirations />} />
+            </Route>
+          </Routes>
+        </Router>
+      </GiftProvider>
     </>
   )
 }

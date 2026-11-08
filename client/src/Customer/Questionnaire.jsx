@@ -1,39 +1,21 @@
 import { useState } from 'react'
 import Axios from 'axios'
 import { useNavigate } from 'react-router-dom';
-const Questionnaire = ({ }) => {
-  const [formData, setFormData] = useState({
-    forGender: '',
-    age: '',
-    styles: [],
-    DedicationPersonalization: false,
-    category: '',
-    event: '',
-    relationship: '',
-    color: '',
-    price: ''
-  })
-  const navigate = useNavigate();
-  const [matchingGifts, setMatchingGifts] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasSearched, setHasSearched] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
-  //פונקציה לשימרת הנתונים שהלקוח הכניס בטופס השאלון
-  //הנתונים יישמרו בסטייט של הקומפוננטה
-  //קריאה לפונקציה זו תתבצע בכל פעם שהלקוח ישנה את הערך של אחד מהשדות בטופס השאלון
+import { GiftContext } from '../context/GiftContext';
+import { useContext } from 'react';
+const Questionnaire = () => {
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const { formData, setFormData, setMatchingGifts } =
+    useContext(GiftContext);
   //פונקציה שתשלח את הנתונים שהלקוח הכניס בטופס השאלון לשרת ואז ישלפו המתנות התואמות
   const handleSubmit = (e) => {
     e.preventDefault()
     //שליחת הנתונים לשרת
     const token = localStorage.getItem('token')
     setErrorMessage('')
-    setMatchingGifts([])
-    setHasSearched(false)
 
     if (!token) {
       setErrorMessage('יש להתחבר למערכת כדי לחפש מתנות')
@@ -46,17 +28,18 @@ const Questionnaire = ({ }) => {
         const response = await Axios.post('http://localhost:7002/api/gift/matchGifts',
           formData,
           {
-            headers: Object.assign({
+            headers: {
               Authorization: `Bearer ${token}`
-            }, { Authorization: `Bearer ${token}` })
+            }
           }
         )
         if (!Array.isArray(response.data?.gifts)) {
           throw new Error('השרת החזיר תשובה לא תקינה')
         }
 
-        setMatchingGifts(response.data.gifts.filter(result => result.gift))
-        setHasSearched(true)
+        setMatchingGifts(response.data.gifts);
+
+        navigate('/PresentingGifts');
       } catch (error) {
         console.error('Error fetching matching gifts:', error)
         setErrorMessage(error.response?.data?.message || error.message || 'לא הצלחנו למצוא מתנות מתאימות')
@@ -67,50 +50,6 @@ const Questionnaire = ({ }) => {
     }
     fetchMatchingGifts()
   }
-
-  //פונקציה שתשמור את המתנות שהלקוח בחר במועדפים שלו
-  const handleAddToFavorites = (giftId) => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      setErrorMessage('יש להתחבר למערכת כדי לשמור מתנות במועדפים')
-      return
-    }
-    const addToFavorites = async () => {
-      try {
-        const response = await Axios.post(
-          'http://localhost:7002/api/favorite',
-          {
-            giftId: giftId
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-        console.log('Favorite added:', response.data);
-        // כאן תוכל להוסיף לוגיקה נוספת לאחר שהמתנה נוספה למועדפים
-        alert('המתנה נוספה למועדפים בהצלחה');
-      } catch (error) {
-        if (error.response?.status === 409) {
-          alert('המתנה כבר נמצאת במועדפים');
-        } else {
-          console.error('Error adding favorite:', error);
-        }
-      }
-    };
-    addToFavorites();
-  };
-  //פונקציה שתציג את המועדפים של הלקוח
-
-  //פונקציה שתאפשר ללקוח לשלוח את המתנות שהוא בחר במועדפים שלו לחברים או משפחה
-  const shareFavorites = () => {
-    //שליחת המועדפים לחברים או משפחה
-
-  }
-
-
-
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif', direction: 'rtl' }}>
@@ -305,41 +244,7 @@ const Questionnaire = ({ }) => {
       </button>
 
       {errorMessage && <p role="alert">{errorMessage}</p>}
-      {hasSearched && matchingGifts.length === 0 && !errorMessage && (
-        <p>לא נמצאו מתנות מתאימות</p>
-      )}
 
-      {matchingGifts.length > 0 && (
-        <section aria-label="מתנות מתאימות">
-          <h3>המתנות המתאימות עבורך</h3>
-
-          {matchingGifts.map(result => (
-            <article key={result.gift._id}>
-
-              <h4>{result.gift.name}</h4>
-
-              <p>אחוז התאמה: {result.score}%</p>
-
-              <p>מחיר: {result.gift.price} ₪</p>
-
-
-              {result.gift.color && <p>צבע: {result.gift.color}</p>}
-
-              {result.gift.description && <p>תיאור: {result.gift.description}</p>}
-
-              {result.gift.image && (
-                <img
-                  src={result.gift.image}
-                  alt={result.gift.name}
-                  width="150"
-                />
-
-              )}
-              <button onClick={() => handleAddToFavorites(result.gift._id)}>הוסף למועדפים</button>
-            </article>
-          ))}
-        </section>
-      )}
     </div>
   );
 

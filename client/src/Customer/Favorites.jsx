@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import Axios from 'axios';
 
 const Favorites = () => {
 
@@ -19,11 +19,8 @@ const Favorites = () => {
             try {
                 const token = localStorage.getItem('token');
 
-                const response = await Axios.post(
+                const response = await Axios.get(
                     'http://localhost:7002/api/favorite',
-                    {
-                        giftId: giftId
-                    },
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -33,7 +30,8 @@ const Favorites = () => {
 
                 setFavorites(response.data);
 
-            } catch (error) {
+            }
+            catch (error) {
                 setErrorMessage('לא ניתן לטעון את המתנות האהובות');
             } finally {
                 setLoading(false);
@@ -49,7 +47,7 @@ const Favorites = () => {
         try {
             const token = localStorage.getItem('token');
 
-            await axios.delete(
+            await Axios.delete(
                 `http://localhost:7002/api/favorite/${giftId}`,
                 {
                     headers: {
