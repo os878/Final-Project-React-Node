@@ -1,4 +1,7 @@
 const Gift = require("../models/gift")
+const Category=require('../models/category')
+const Event=require('../models/event')
+const Relationship = require('../models/relationship')
 const mongoose = require("mongoose")
 const matchGifts = require("../services/Giftservices")
 const createNewGift = async (req, res) => {
@@ -108,111 +111,50 @@ const findByIdSupplier = async (req, res) => {
 }
 
 const getAllGifts = async (req, res) => {
-    const gifts = await Gift.find()
-        .populate('category')
-        .populate('event')
-        .populate('relationship')
-        .populate('supplier', 'name companyName')
-        .lean()
+    try {
+        const gifts = await Gift.find()
+            .populate('category')
+            .populate('event')
+            .populate('relationship')
+            .exec()
 
-    if (!gifts.length) {
-        return res.status(404).json({
-            message: 'No gifts found'
+        return res.status(200).json(gifts)
+    } catch (error) {
+        console.error("Error in getAllGifts:", error)
+        return res.status(500).json({ 
+            message: 'שגיאה בשרת בעת טעינת המתנות', 
+            error: error.message 
         })
     }
-
-    res.json(gifts)
 }
-
 const updateGift = async (req, res) => {
-    const allowedFields = new Set([
-        'id', 'name', 'forGender', 'age1', 'age2', 'category', 'event', 
-        'relationship', 'color', 'price', 'image', 'description', 
-        'styles', 'DedicationPersonalization'
-    ])
+    const { id, age1, age2, price } = req.body
 
-    if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body) ||
-        Object.keys(req.body).some(field => !allowedFields.has(field))) {
-        return res.status(400).json({
-            message: 'Unexpected or invalid gift update fields'
-        })
-    }
-
-    const { 
-        id, 
-        name, 
-        forGender, 
-        age1, 
-        age2, 
-        category, 
-        event, 
-        relationship, 
-        color, 
-        price, 
-        image, 
-        description, 
-        styles, 
-        DedicationPersonalization 
-    } = req.body
-
-    const numericValues = [age1, age2, price]
-    const hasInvalidNumber = numericValues.some(value =>
-        (typeof value !== 'number' && typeof value !== 'string') ||
-        (typeof value === 'string' && value.trim() === '') ||
-        !Number.isFinite(Number(value))
-    )
-
-    const validStyles = ['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית']
-
-    if (
-        typeof id !== 'string' || !mongoose.isValidObjectId(id) ||
-        typeof name !== 'string' || !name.trim() ||
-        !['בן', 'בת', 'לא משנה'].includes(forGender) ||
-        hasInvalidNumber ||
-        typeof category !== 'string' || !mongoose.isValidObjectId(category) ||
-        typeof event !== 'string' || !mongoose.isValidObjectId(event) ||
-        typeof relationship !== 'string' || !mongoose.isValidObjectId(relationship) ||
-        typeof color !== 'string' || !color.trim() ||
-        typeof DedicationPersonalization !== 'boolean' ||
-        (styles && (!Array.isArray(styles) || styles.some(s => !validStyles.includes(s)))) ||
-        (image != null && typeof image !== 'string') ||
-        (description != null && typeof description !== 'string')
-    ) {
-        return res.status(400).json({
-            message: 'Invalid gift data'
-        })
-    }
-
-    const numericAge1 = Number(age1)
-    const numericAge2 = Number(age2)
-    const numericPrice = Number(price)
-
-    if (numericAge1 < 0 || numericAge2 < numericAge1 || numericPrice < 0) {
+    if (Number(age1) < 0 || Number(age2) < Number(age1) || Number(price) < 0) {
         return res.status(400).json({ message: 'Invalid age range or price' })
     }
 
     try {
-        const gift = await Gift.findOne({ _id: id, supplier: req.user._id }).exec()
+        const filter = req.user.role === 'Admin' 
+            ? { _id: id } 
+            : { _id: id, supplier: req.user._id }
+
+        const gift = await Gift.findOne(filter).exec()
 
         if (!gift) {
             return res.status(404).json({ message: 'The gift was not found' })
         }
 
-        gift.name = name
-        gift.forGender = forGender
-        gift.age1 = numericAge1
-        gift.age2 = numericAge2
-        gift.category = category
-        gift.event = event
-        gift.relationship = relationship
-        gift.color = color
-        gift.price = numericPrice
-        gift.image = image
-        gift.description = description
-        gift.styles = styles
-        gift.DedicationPersonalization = DedicationPersonalization
+        Object.assign(gift, req.body)
 
-        const updatedGift = await gift.save()
+        let updatedGift = await gift.save()
+        
+        // טעינת המסמכים המלאים ללא הגבלת שדות
+        updatedGift = await updatedGift.populate([
+            { path: 'category' },
+            { path: 'event' },
+            { path: 'relationship' }
+        ])
 
         return res.json({
             message: `'${updatedGift.name}' updated`,
@@ -225,7 +167,6 @@ const updateGift = async (req, res) => {
         return res.status(500).json({ message: 'Unable to update gift' })
     }
 }
-
 const deleteGift = async (req, res) => {
     const id = req.body?.id
 
