@@ -11,7 +11,9 @@ export const UpdateGift = ({ gift, onUpdated }) => {
     const [category, setCategory] = useState("")
     const [color, setColor] = useState("")
     const [price, setPrice] = useState("")
-    const [image, setImage] = useState("")
+    
+    // state לקובץ התמונה החדש שנבחר
+    const [imageFile, setImageFile] = useState(null)
     const [description, setDescription] = useState("")
 
     // שדות נוספים מהסכמה
@@ -68,10 +70,10 @@ export const UpdateGift = ({ gift, onUpdated }) => {
 
             setColor(gift.color || "")
             setPrice(gift.price ?? "")
-            setImage(gift.image || "")
             setDescription(gift.description || "")
             setDedicationPersonalization(Boolean(gift.DedicationPersonalization))
             setStyles(gift.styles || [])
+            setImageFile(null) // איפוס הקובץ החדש בעת טעינת מתנה לעריכה
         }
     }, [gift])
 
@@ -104,32 +106,40 @@ export const UpdateGift = ({ gift, onUpdated }) => {
         }
 
         try {
-            const giftData = {
-                id: gift._id,
-                name,
-                forGender: gender,
-                age1: Number(age1),
-                age2: Number(age2),
-                category,
-                event,
-                relationship,
-                color,
-                price: Number(price),
-                image,
-                description,
-                styles,
-                DedicationPersonalization: dedicationPersonalization
+            // בניה של FormData למשלוח הנתונים והקובץ
+            const formData = new FormData()
+            formData.append("id", gift._id)
+            formData.append("name", name)
+            formData.append("forGender", gender)
+            formData.append("age1", Number(age1))
+            formData.append("age2", Number(age2))
+            formData.append("category", category)
+            formData.append("event", event)
+            formData.append("relationship", relationship)
+            formData.append("color", color)
+            formData.append("price", Number(price))
+            formData.append("description", description)
+            formData.append("DedicationPersonalization", dedicationPersonalization)
+
+            styles.forEach((style) => {
+                formData.append("styles", style)
+            })
+
+            // אם נבחרה תמונה חדשה, מוסיפים אותה ל-FormData
+            if (imageFile) {
+                formData.append("image", imageFile)
             }
 
             const config = {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type": "multipart/form-data"
                 }
             }
 
             const { data } = await Axios.put(
                 "http://localhost:7002/api/gift",
-                giftData,
+                formData,
                 config
             )
 
@@ -253,18 +263,23 @@ export const UpdateGift = ({ gift, onUpdated }) => {
                     type="number"
                     min="0"
                     value={price}
-                    readOnly
+                    onChange={(e) => handleInputChange(setPrice, e.target.value)}
                 />
 
-                {/* תמונה ותיאור */}
-                <label htmlFor="image">קישור לתמונה</label>
+                {/* תמונה - בחירת קובץ */}
+                <label htmlFor="image">החלפת תמונה (אופציונלי)</label>
                 <input
                     id="image"
-                    type="text"
-                    value={image}
-                    onChange={(e) => handleInputChange(setImage, e.target.value)}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                            handleInputChange(setImageFile, e.target.files[0])
+                        }
+                    }}
                 />
 
+                {/* תיאור */}
                 <label htmlFor="description">תיאור המתנה</label>
                 <textarea
                     id="description"

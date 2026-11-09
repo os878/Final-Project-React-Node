@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react'
 import Axios from "axios"
 
 export const AddGift = ({ gift, onUpdated }) => {
 
-    // משתנים לשמירת פרטי המתנה שהמשתמש מכניס
     const [name, setName] = useState("")
     const [gender, setGender] = useState("לא משנה")
     const [age1, setAge1] = useState("")
@@ -16,21 +14,16 @@ export const AddGift = ({ gift, onUpdated }) => {
     const [dedicationPersonalization, setDedicationPersonalization] = useState(false)
     const [color, setColor] = useState("")
     const [price, setPrice] = useState("")
-    const [image, setImage] = useState("")
+    const [imageFile, setImageFile] = useState(null)
     const [description, setDescription] = useState("")
 
-    // משתנה לשמירת רשימת הקטגוריות שמתקבלת מהשרת
     const [categories, setCategories] = useState([])
     const [events, setEvents] = useState([])
     const [relationships, setRelationships] = useState([])
 
-    // משתנה לשמירת הודעת שגיאה
     const [errorMessage, setErrorMessage] = useState("")
 
-    // טעינת הקטגוריות מהשרת כשהקומפוננטה נפתחת
     useEffect(() => {
-
-        // טעינת כל האפשרויות לשדות המקושרים למודלים אחרים
         const getGiftOptions = async () => {
             try {
                 const [categoryResponse, eventResponse, relationshipResponse] = await Promise.all([
@@ -49,9 +42,8 @@ export const AddGift = ({ gift, onUpdated }) => {
         }
 
         getGiftOptions()
+    }, [])
 
-    }, []) // המערך הריק גורם להפעלה בעת טעינת הקומפוננטה
-    // מילוי הטופס בפרטי המתנה במצב עריכה
     useEffect(() => {
         if (gift) {
             setName(gift.name || "")
@@ -65,32 +57,22 @@ export const AddGift = ({ gift, onUpdated }) => {
             setDedicationPersonalization(gift.DedicationPersonalization ?? false)
             setColor(gift.color || "")
             setPrice(gift.price ?? "")
-            setImage(gift.image || "")
             setDescription(gift.description || "")
+            setImageFile(null)
         }
     }, [gift])
-    // פונקציה לעדכון שדה בטופס ולניקוי הודעת השגיאה
+
     const handleInputChange = (setter, value) => {
-
-        // עדכון הערך של השדה המתאים
         setter(value)
-
-        // ניקוי הודעת השגיאה כאשר המשתמש מתקן את הנתונים
         if (errorMessage) {
             setErrorMessage("")
         }
     }
 
-    // פונקציה לשליחת פרטי המתנה לשרת
     const submitForm = async (e) => {
-
-        // מניעת רענון אוטומטי של הדף בעת שליחת הטופס
         e.preventDefault()
-
-        // איפוס הודעת שגיאה קודמת
         setErrorMessage("")
 
-        // בדיקה שהשדות הנדרשים מולאו
         if (
             !name.trim() ||
             !category ||
@@ -116,67 +98,65 @@ export const AddGift = ({ gift, onUpdated }) => {
             setErrorMessage("יש להזין גילאים ומחיר תקינים; הגיל והמחיר אינם יכולים להיות שליליים")
             return
         }
+
         const token = localStorage.getItem("token")
         if (!token) {
             setErrorMessage("יש להתחבר למערכת כדי להוסיף או לערוך מתנה")
             return
         }
-        try {
 
-            // הנתונים שנשלחים לשרת, גם ביצירה וגם בעריכה
-            const giftData = {
-                name,
-                forGender: gender,
-                age1: Number(age1),
-                age2: Number(age2),
-                category,
-                event,
-                relationship,
-                styles,
-                DedicationPersonalization: dedicationPersonalization,
-                color,
-                price: Number(price),
-                image,
-                description
+        try {
+            const formData = new FormData()
+            formData.append("name", name)
+            formData.append("forGender", gender)
+            formData.append("age1", Number(age1))
+            formData.append("age2", Number(age2))
+            formData.append("category", category)
+            formData.append("event", event)
+            formData.append("relationship", relationship)
+            formData.append("DedicationPersonalization", dedicationPersonalization)
+            formData.append("color", color)
+            formData.append("price", Number(price))
+            formData.append("description", description)
+
+            styles.forEach((style) => {
+                formData.append("styles", style)
+            })
+
+            if (imageFile) {
+                formData.append("image", imageFile)
             }
 
-            // הגדרות האימות מול השרת
             const config = {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                    Authorization: `Bearer ${token}`
                 }
             }
 
-            config.headers.Authorization = 'Bearer ' + token
-
             if (gift) {
-                // עדכון מתנה קיימת
+                formData.append("id", gift._id)
+
                 const { data } = await Axios.put(
                     "http://localhost:7002/api/gift",
-                    {
-                        ...giftData,
-                        id: gift._id
-                    },
+                    formData,
                     config
                 )
 
                 alert("המתנה עודכנה בהצלחה!")
+            navigate("/Supplier/ProfilSupplier"); // מעבר לעמוד המתנות לאחר התחברות מוצלחת
 
-                // מעבירים את המתנה המעודכנת ל-GiftsList
                 if (onUpdated) {
                     onUpdated(data.gift)
                 }
             } else {
-                // יצירת מתנה חדשה
                 await Axios.post(
                     "http://localhost:7002/api/gift",
-                    giftData,
+                    formData,
                     config
                 )
 
                 alert("המתנה נוספה בהצלחה!")
 
-                // ניקוי השדות לאחר יצירה מוצלחת
                 setName("")
                 setGender("לא משנה")
                 setAge1("")
@@ -188,14 +168,11 @@ export const AddGift = ({ gift, onUpdated }) => {
                 setDedicationPersonalization(false)
                 setColor("")
                 setPrice("")
-                setImage("")
+                setImageFile(null)
                 setDescription("")
             }
 
-
         } catch (error) {
-
-            // הצגת הודעת השגיאה שהתקבלה מהשרת, אם קיימת
             if (
                 error.response &&
                 error.response.data &&
@@ -203,8 +180,7 @@ export const AddGift = ({ gift, onUpdated }) => {
             ) {
                 setErrorMessage(error.response.data.message)
             } else {
-                // הודעה כללית במקרה של תקלה
-                setErrorMessage("אירעה שגיאה בעת הוספת המתנה")
+                setErrorMessage("אירעה שגיאה בעת שמירת המתנה")
             }
         }
     }
@@ -212,37 +188,29 @@ export const AddGift = ({ gift, onUpdated }) => {
     return (
         <div>
             <h2>{gift ? "עריכת מתנה" : "הוספת מתנה חדשה"}</h2>
-            {/* טופס הוספת המתנה */}
             <form onSubmit={submitForm}>
 
-                {/* שם המתנה */}
                 <label htmlFor="giftName">שם המתנה</label>
                 <input
                     id="giftName"
                     type="text"
                     required
                     value={name}
-                    onChange={(e) =>
-                        handleInputChange(setName, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setName, e.target.value)}
                 />
 
-                {/* בחירת המגדר שעבורו המתנה מיועדת */}
                 <label htmlFor="gender">מיועד עבור</label>
                 <select
                     id="gender"
                     required
                     value={gender}
-                    onChange={(e) =>
-                        handleInputChange(setGender, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setGender, e.target.value)}
                 >
                     <option value="בן">בן</option>
                     <option value="בת">בת</option>
                     <option value="לא משנה">לא משנה</option>
                 </select>
 
-                {/* גיל מינימלי */}
                 <label htmlFor="age1">גיל מינימלי</label>
                 <input
                     id="age1"
@@ -250,12 +218,9 @@ export const AddGift = ({ gift, onUpdated }) => {
                     min="0"
                     required
                     value={age1}
-                    onChange={(e) =>
-                        handleInputChange(setAge1, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setAge1, e.target.value)}
                 />
 
-                {/* גיל מקסימלי */}
                 <label htmlFor="age2">גיל מקסימלי</label>
                 <input
                     id="age2"
@@ -263,24 +228,17 @@ export const AddGift = ({ gift, onUpdated }) => {
                     min="0"
                     required
                     value={age2}
-                    onChange={(e) =>
-                        handleInputChange(setAge2, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setAge2, e.target.value)}
                 />
 
-                {/* בחירת קטגוריה מתוך הקטגוריות הקיימות במסד הנתונים */}
                 <label htmlFor="category">קטגוריה</label>
                 <select
                     id="category"
                     required
                     value={category}
-                    onChange={(e) =>
-                        handleInputChange(setCategory, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setCategory, e.target.value)}
                 >
                     <option value="">בחרי קטגוריה</option>
-
-                    {/* מעבר על רשימת הקטגוריות ויצירת אפשרות לכל קטגוריה */}
                     {categories.map((item) => (
                         <option key={item._id} value={item._id}>
                             {item.name}
@@ -288,15 +246,12 @@ export const AddGift = ({ gift, onUpdated }) => {
                     ))}
                 </select>
 
-                {/* בחירת אירוע מתוך האירועים הקיימים במסד הנתונים */}
                 <label htmlFor="event">אירוע</label>
                 <select
                     id="event"
                     required
                     value={event}
-                    onChange={(e) =>
-                        handleInputChange(setEvent, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setEvent, e.target.value)}
                 >
                     <option value="">בחרי אירוע</option>
                     {events.map((item) => (
@@ -306,15 +261,12 @@ export const AddGift = ({ gift, onUpdated }) => {
                     ))}
                 </select>
 
-                {/* בחירת קשר מתוך הקשרים הקיימים במסד הנתונים */}
                 <label htmlFor="relationship">קשר / קרבה</label>
                 <select
                     id="relationship"
                     required
                     value={relationship}
-                    onChange={(e) =>
-                        handleInputChange(setRelationship, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setRelationship, e.target.value)}
                 >
                     <option value="">בחרי קשר</option>
                     {relationships.map((item) => (
@@ -324,7 +276,6 @@ export const AddGift = ({ gift, onUpdated }) => {
                     ))}
                 </select>
 
-                {/* סגנונות המתנה */}
                 <fieldset>
                     <legend>סגנון המתנה (ניתן לבחור כמה)</legend>
                     {['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית'].map((style) => (
@@ -345,7 +296,6 @@ export const AddGift = ({ gift, onUpdated }) => {
                     ))}
                 </fieldset>
 
-                {/* אפשרות להקדשה או התאמה אישית */}
                 <label htmlFor="dedicationPersonalization">
                     <input
                         id="dedicationPersonalization"
@@ -358,19 +308,15 @@ export const AddGift = ({ gift, onUpdated }) => {
                     ניתן להוסיף הקדשה / התאמה אישית
                 </label>
 
-                {/* צבע המתנה */}
                 <label htmlFor="color">צבע</label>
                 <input
                     id="color"
                     type="text"
                     required
                     value={color}
-                    onChange={(e) =>
-                        handleInputChange(setColor, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setColor, e.target.value)}
                 />
 
-                {/* מחיר המתנה */}
                 <label htmlFor="price">מחיר</label>
                 <input
                     id="price"
@@ -378,33 +324,28 @@ export const AddGift = ({ gift, onUpdated }) => {
                     min="0"
                     required
                     value={price}
-                    onChange={(e) =>
-                        handleInputChange(setPrice, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setPrice, e.target.value)}
                 />
 
-                {/* קישור לתמונת המתנה */}
-                <label htmlFor="image">קישור לתמונה</label>
+                <label htmlFor="image">תמונת המתנה</label>
                 <input
                     id="image"
-                    type="text"
-                    value={image}
-                    onChange={(e) =>
-                        handleInputChange(setImage, e.target.value)
-                    }
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                            handleInputChange(setImageFile, e.target.files[0])
+                        }
+                    }}
                 />
 
-                {/* תיאור המתנה */}
                 <label htmlFor="description">תיאור המתנה</label>
                 <textarea
                     id="description"
                     value={description}
-                    onChange={(e) =>
-                        handleInputChange(setDescription, e.target.value)
-                    }
+                    onChange={(e) => handleInputChange(setDescription, e.target.value)}
                 />
 
-                {/* הצגת הודעת שגיאה אם קיימת */}
                 {errorMessage && (
                     <p style={{ color: 'red' }}>
                         {errorMessage}
