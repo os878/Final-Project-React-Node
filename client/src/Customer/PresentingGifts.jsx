@@ -8,7 +8,7 @@ const PresentingGifts = () => {
     const [favorites, setFavorites] = useState([]);
     const { matchingGifts } = useContext(GiftContext);
     const [favoritesError, setFavoritesError] = useState('');
-   
+
 
     useEffect(() => {
         const fetchFavorites = async () => {
@@ -106,6 +106,9 @@ const PresentingGifts = () => {
                                 ? '❤️'
                                 : '♡'}
                         </button>
+                        <Link to={`/Customer/GiftDetails/${gift._id}`}>
+                            לפרטים נוספים
+                        </Link>
                     </div>
                 );
             })}
