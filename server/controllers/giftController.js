@@ -240,7 +240,7 @@ const deleteGift = async (req, res) => {
 };
 
 const findByIdGift = async (req, res) => {
-    const { id } = req.body;
+    const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Gift id is required' });
 
     const gift = await Gift.findById(id)

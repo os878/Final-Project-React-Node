@@ -22,9 +22,12 @@ import Favorites from './Customer/Favorites';
 import AllCustomers from './Admin/AllCustomers'
 import AllSuppliers from './Admin/AllSuppliers'
 import AddAdmin from './Admin/AddAdmin'
-import Giftinspirations from './Customer/Giftinspirations'
-import PresentingGifts from './Customer/PresentingGifts'
-import { GiftProvider } from './context/GiftContext';
+import Giftinspirations from './Customer/Giftinspirations';
+import PresentingGifts from './Customer/PresentingGifts';
+import { GiftProvider } from './context/GiftContext'
+import GiftDetails from './Customer/GiftDetails'
+import SupplierInquiries from './Supplier/SupplierInquiries'
+
 function App() {
 
   return (
@@ -55,6 +58,8 @@ function App() {
               <Route path="/PresentingGifts" element={<PresentingGifts />} />
               <Route path="/Customer/Favorites" element={<Favorites />} />
               <Route path="/Giftinspirations" element={<Giftinspirations />} />
+              <Route path="/Customer/GiftDetails/:id" element={<GiftDetails />} />
+              <Route path="/Supplier/Inquiries" element={<SupplierInquiries />}/>
             </Route>
           </Routes>
         </Router>
