@@ -2,6 +2,7 @@ require("dotenv").config()
 const express = require("express")
 const cors = require("cors")
 
+
 const corsOptions = require("./config/corsOptions.js")
 const PORT = process.env.PORT || 7001
 const app = express()
@@ -34,5 +35,5 @@ app.use("/api/relationship", require("./routes/relationshipRoutes"))
 app.use("/api/category", require("./routes/categoryRoutes"))
 app.use("/api/event", require("./routes/eventRoutes"))
 app.use("/api/favorite", require("./routes/favoriteRoutes"))
-
+app.use('/api/inquiry', require('./routes/inquiryRoutes'));
 app.use(express.static("public"))

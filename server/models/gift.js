@@ -65,4 +65,4 @@ const giftSchema = new mongoose.Schema({
     timestamps: true
 })
 
-module.exports = mongoose.model('Gift', giftSchema)
+module.exports = mongoose.models.Gift || mongoose.model('Gift', giftSchema)
