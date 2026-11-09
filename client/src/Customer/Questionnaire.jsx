@@ -1,55 +1,90 @@
-import { useState } from 'react'
-import Axios from 'axios'
+import React, { useState, useContext } from 'react';
+import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { GiftContext } from '../context/GiftContext';
-import { useContext } from 'react';
-const Questionnaire = () => {
 
+const Questionnaire = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
-  const { formData, setFormData, setMatchingGifts } =
-    useContext(GiftContext);
-  //פונקציה שתשלח את הנתונים שהלקוח הכניס בטופס השאלון לשרת ואז ישלפו המתנות התואמות
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const { formData, setFormData, setMatchingGifts, setAiInspirations } = useContext(GiftContext);
+
+  // פונקציה 1: חיפוש מתנות מספקים
   const handleSubmit = (e) => {
-    e.preventDefault()
-    //שליחת הנתונים לשרת
-    const token = localStorage.getItem('token')
-    setErrorMessage('')
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    setErrorMessage('');
 
     if (!token) {
-      setErrorMessage('יש להתחבר למערכת כדי לחפש מתנות')
-      return
+      setErrorMessage('יש להתחבר למערכת כדי לחפש מתנות');
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     const fetchMatchingGifts = async () => {
       try {
-        const response = await Axios.post('http://localhost:7002/api/gift/matchGifts',
+        const response = await Axios.post(
+          'http://localhost:7002/api/gift/matchGifts',
           formData,
           {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` }
           }
-        )
+        );
         if (!Array.isArray(response.data?.gifts)) {
-          throw new Error('השרת החזיר תשובה לא תקינה')
+          throw new Error('השרת החזיר תשובה לא תקינה');
         }
 
         setMatchingGifts(response.data.gifts);
-
         navigate('/PresentingGifts');
       } catch (error) {
-        console.error('Error fetching matching gifts:', error)
-        setErrorMessage(error.response?.data?.message || error.message || 'לא הצלחנו למצוא מתנות מתאימות')
+        console.error('Error fetching matching gifts:', error);
+        setErrorMessage(error.response?.data?.message || error.message || 'לא הצלחנו למצוא מתנות מתאימות');
+      } finally {
+        setIsLoading(false);
       }
-      finally {
-        setIsLoading(false)
-      }
+    };
+    fetchMatchingGifts();
+  };
+
+  // פונקציה 2: קבלת השראות מבינה מלאכותית עם הגדרת Timeout של 30 שניות
+  const handleAiInspirations = async () => {
+    const token = localStorage.getItem('token');
+    setErrorMessage('');
+
+    if (!token) {
+      setErrorMessage('יש להתחבר למערכת כדי לקבל השראות');
+      return;
     }
-    fetchMatchingGifts()
-  }
+
+    setIsLoading(true);
+
+    try {
+      const response = await Axios.post(
+        'http://localhost:7002/api/gift/getAiInspirations',
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 360000 // הגדרת זמן קצוב של 360 שניות
+        }
+      );
+
+      if (response.data?.inspirations) {
+        if (setAiInspirations) {
+          setAiInspirations(response.data.inspirations);
+        }
+        navigate('/Giftinspirations', { state: { inspirations: response.data.inspirations } });
+      }
+    } catch (error) {
+      console.error('Error fetching AI inspirations:', error);
+      if (error.code === 'ECONNABORTED') {
+        setErrorMessage('הבקשה לקחה יותר מדי זמן, אנא נסי שוב.');
+      } else {
+        setErrorMessage(error.response?.data?.message || 'לא הצלחנו לקבל השראות כעת');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', fontFamily: 'sans-serif', direction: 'rtl' }}>
@@ -162,12 +197,12 @@ const Questionnaire = () => {
                       setFormData({
                         ...formData,
                         styles: [...formData.styles, style]
-                      })
+                      });
                     } else {
                       setFormData({
                         ...formData,
                         styles: formData.styles.filter(s => s !== style)
-                      })
+                      });
                     }
                   }}
                 />
@@ -222,13 +257,6 @@ const Questionnaire = () => {
       <button
         onClick={handleSubmit}
         disabled={isLoading}
-        style={{ width: '100%', padding: '12px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', fontSize: '16px', cursor: 'pointer' }}
-      >
-        {isLoading ? 'מחפש מתנות...' : 'חפש מתנות מתאימות'}
-      </button>
-      <button
-        onClick={() => navigate('/Giftinspirations')}
-        disabled={isLoading}
         style={{
           width: '100%',
           padding: '12px',
@@ -237,16 +265,37 @@ const Questionnaire = () => {
           border: 'none',
           borderRadius: '5px',
           fontSize: '16px',
-          cursor: 'pointer'
+          cursor: isLoading ? 'not-allowed' : 'pointer',
+          marginBottom: '10px'
         }}
       >
-        לקבלת הצעות למתנות אהובות
+        {isLoading ? 'מחפש מתנות...' : 'חפש מתנות מתאימות מספקים'}
       </button>
 
-      {errorMessage && <p role="alert">{errorMessage}</p>}
+      <button
+        onClick={handleAiInspirations}
+        disabled={isLoading}
+        style={{
+          width: '100%',
+          padding: '12px',
+          backgroundColor: isLoading ? '#6c757d' : '#28a745',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
+          fontSize: '16px',
+          cursor: isLoading ? 'not-allowed' : 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '10px'
+        }}
+      >
+        {isLoading ? 'מייצר השראות...' : 'קבלת הצעות להשראה מבינה מלאכותית'}
+      </button>
 
+      {errorMessage && <p role="alert" style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</p>}
     </div>
   );
+};
 
-}
-export default Questionnaire
+export default Questionnaire;

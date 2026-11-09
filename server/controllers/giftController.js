@@ -5,32 +5,36 @@ const Relationship = require('../models/relationship');
 const mongoose = require("mongoose");
 const matchGifts = require("../services/Giftservices");
 const cloudinary = require('cloudinary').v2;
+const { GoogleGenAI } = require('@google/genai');
 
 require('dotenv').config();
 
+// אתחול Google Gen AI עם ה-API Key שמוגדר בקובץ .env
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 const createNewGift = async (req, res) => {
-    const { 
-        name, 
-        forGender, 
-        category, 
-        event, 
-        relationship, 
-        color, 
-        description 
+    const {
+        name,
+        forGender,
+        category,
+        event,
+        relationship,
+        color,
+        description
     } = req.body;
 
     const age1 = req.body.age1 !== undefined && req.body.age1 !== '' ? Number(req.body.age1) : null;
     const age2 = req.body.age2 !== undefined && req.body.age2 !== '' ? Number(req.body.age2) : null;
     const price = req.body.price !== undefined && req.body.price !== '' ? Number(req.body.price) : null;
-    
-    const DedicationPersonalization = 
-        req.body.DedicationPersonalization === 'true' || 
+
+    const DedicationPersonalization =
+        req.body.DedicationPersonalization === 'true' ||
         req.body.DedicationPersonalization === true;
 
     let stylesArray = [];
@@ -43,14 +47,14 @@ const createNewGift = async (req, res) => {
     const file = req.file;
 
     if (
-        !name || 
-        !forGender || 
-        age1 === null || isNaN(age1) || 
-        age2 === null || isNaN(age2) || 
-        !category || 
-        !event || 
-        !relationship || 
-        !color || 
+        !name ||
+        !forGender ||
+        age1 === null || isNaN(age1) ||
+        age2 === null || isNaN(age2) ||
+        !category ||
+        !event ||
+        !relationship ||
+        !color ||
         price === null || isNaN(price) ||
         req.body.DedicationPersonalization === undefined
     ) {
@@ -81,21 +85,21 @@ const createNewGift = async (req, res) => {
             imageUrl = uploadResult.secure_url;
         }
 
-        const gift = await Gift.create({ 
-            name, 
-            forGender, 
-            age1, 
-            age2, 
-            category: category && category.trim() !== '' ? category : null, 
-            event: event && event.trim() !== '' ? event : null, 
-            relationship: relationship && relationship.trim() !== '' ? relationship : null, 
-            color, 
-            price, 
-            image: imageUrl, 
-            description, 
-            styles: stylesArray, 
-            DedicationPersonalization, 
-            supplier: req.user._id 
+        const gift = await Gift.create({
+            name,
+            forGender,
+            age1,
+            age2,
+            category: category && category.trim() !== '' ? category : null,
+            event: event && event.trim() !== '' ? event : null,
+            relationship: relationship && relationship.trim() !== '' ? relationship : null,
+            color,
+            price,
+            image: imageUrl,
+            description,
+            styles: stylesArray,
+            DedicationPersonalization,
+            supplier: req.user._id
         });
 
         if (gift) {
@@ -153,8 +157,8 @@ const updateGift = async (req, res) => {
     }
 
     try {
-        const filter = req.user.role === 'Admin' 
-            ? { _id: id } 
+        const filter = req.user.role === 'Admin'
+            ? { _id: id }
             : { _id: id, supplier: req.user._id };
 
         const gift = await Gift.findOne(filter).exec();
@@ -182,23 +186,23 @@ const updateGift = async (req, res) => {
         if (age1 !== undefined) updatedFields.age1 = age1;
         if (age2 !== undefined) updatedFields.age2 = age2;
         if (price !== undefined) updatedFields.price = price;
-        
+
         if (req.body.DedicationPersonalization !== undefined) {
-            updatedFields.DedicationPersonalization = 
-                req.body.DedicationPersonalization === 'true' || 
+            updatedFields.DedicationPersonalization =
+                req.body.DedicationPersonalization === 'true' ||
                 req.body.DedicationPersonalization === true;
         }
 
         if (req.body.styles !== undefined) {
-            updatedFields.styles = Array.isArray(req.body.styles) 
-                ? req.body.styles 
+            updatedFields.styles = Array.isArray(req.body.styles)
+                ? req.body.styles
                 : [req.body.styles];
         }
 
         Object.assign(gift, updatedFields);
 
         let updatedGift = await gift.save();
-        
+
         updatedGift = await updatedGift.populate([
             { path: 'category' },
             { path: 'event' },
@@ -262,6 +266,55 @@ const matchGiftsController = async (req, res) => {
     }
 };
 
+// פונקציה חדשה ליצירת השראות מבינה מלאכותית
+const getAiInspirations = async (req, res) => {
+    try {
+        const formData = req.body;
+
+        if (!process.env.GEMINI_API_KEY) {
+            console.error("GEMINI_API_KEY is missing in environment variables.");
+            return res.status(500).json({ message: 'מפתח API לא מוגדר בשרת' });
+        }
+
+        const modelName = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+
+        const prompt = `
+אתה עוזר יצירתי לבחירת מתנות.
+הלקוח מילא את השאלון הבא:
+- גיל: ${formData.age || 'לא צוין'}
+- מגדר יעד: ${formData.forGender || 'לא צוין'}
+- סוג האירוע: ${formData.event || 'לא צוין'}
+- קשר/קירבה: ${formData.relationship || 'לא צוין'}
+- קטגוריה: ${formData.category || 'לא צוין'}
+- סגנונות מבוקשים: ${Array.isArray(formData.styles) ? formData.styles.join(', ') : 'לא צוין'}
+- תקציב מקסימלי: ${formData.price ? formData.price + ' ש"ח' : 'לא צוין'}
+- צבע מועדף: ${formData.color || 'לא צוין'}
+
+אנא החזר 3 רעיונות מקוריים ויצירתיים להשראה למתנות מתאימות.
+החזר את התשובה בפורמט JSON בלבד, כרשימה (array) של אובייקטים המכילים לכל מתנה את השדות הבאים:
+"title" (שם המתנה), "description" (תיאור קצר והסבר למה היא מתאימה), "estimatedPrice" (הערכת מחיר בש"ח).
+`;
+
+        const response = await ai.models.generateContent({
+            model: modelName,
+            contents: prompt,
+            config: {
+                responseMimeType: 'application/json',
+            },
+        });
+
+        let cleanText = response.text ? response.text.trim() : '';
+        if (cleanText.startsWith("```")) {
+            cleanText = cleanText.replace(/^```json\s*/, "").replace(/^```\s*/, "").replace(/\s*```$/, "");
+        }
+
+        const inspirations = JSON.parse(cleanText);
+        return res.json({ inspirations });
+    } catch (error) {
+        console.error("Error generating AI inspirations:", error);
+        return res.status(500).json({ message: 'לא ניתן ליצור הצעות השראה כרגע', error: error.message });
+    }
+};
 module.exports = {
     createNewGift,
     getAllGifts,
@@ -269,5 +322,6 @@ module.exports = {
     deleteGift,
     findByIdSupplier,
     findByIdGift,
-    matchGiftsController
+    matchGiftsController,
+    getAiInspirations
 };

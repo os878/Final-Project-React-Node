@@ -16,5 +16,6 @@ router.post("/", verifyJWT,verifyRole('Supplier'),upload.single('image'), giftCo
 router.put("/", verifyJWT,verifyRole('Supplier','Admin'),upload.single('image'), giftController.updateGift)
 router.delete("/delete", verifyJWT,verifyRole('Supplier','Admin'), giftController.deleteGift)
 router.post("/matchGifts",verifyJWT, verifyRole('Customer'), giftController.matchGiftsController)
+router.post("/getAiInspirations",verifyJWT, verifyRole('Customer'), giftController.getAiInspirations)
 
 module.exports = router
