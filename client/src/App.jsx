@@ -27,6 +27,7 @@ import PresentingGifts from './Customer/PresentingGifts';
 import { GiftProvider } from './context/GiftContext'
 import GiftDetails from './Customer/GiftDetails'
 import SupplierInquiries from './Supplier/SupplierInquiries'
+import MaintenanceManager from './Admin/MaintenanceManager'
 
 function App() {
 
@@ -44,6 +45,7 @@ function App() {
               <Route path="/Admin/AllCustomers" element={<AllCustomers />} />
               <Route path="/Admin/AllSuppliers" element={<AllSuppliers />} />
               <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
+              <Route path="/Admin/MaintenanceManager" element={<MaintenanceManager />} />
 
               <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
               <Route path="/Supplier/Login" element={<Login />} />

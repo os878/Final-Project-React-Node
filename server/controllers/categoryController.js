@@ -52,7 +52,7 @@ const getAllCategories = async (req, res) => {
         })
     }
 
-    res.json(categories)
+    return res.json(categories || [])
 }
 
 const updateCategory = async (req, res) => {

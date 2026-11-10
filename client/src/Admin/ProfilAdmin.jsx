@@ -9,6 +9,7 @@ const ProfilAdmin=()=>{
             <NavLink to="/Admin/AllSuppliers">ניהול ספקים</NavLink>
             <NavLink to="/Admin/AllGifts">ניהול מוצרים</NavLink>
             <NavLink to="/Admin/AddAdmin">הוספת מנהל</NavLink>
+            <NavLink to="/Admin/MaintenanceManager">ניהול תחזוקה</NavLink>
          </nav>
 
     

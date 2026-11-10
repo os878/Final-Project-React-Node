@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { GiftContext } from '../context/GiftContext';
@@ -7,7 +7,38 @@ const Questionnaire = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // מצבים לשמירת האפשרויות שיגיעו מהדאטהבייס
+  const [categories, setCategories] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [relationships, setRelationships] = useState([]);
+
   const { formData, setFormData, setMatchingGifts, setAiInspirations } = useContext(GiftContext);
+
+  // טעינת אפשרויות (קטגוריות, אירועים, קשרים) מהשרת בעת עשיית Render ראשוני
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+
+        const [categoryRes, eventRes, relationshipRes] = await Promise.all([
+          Axios.get('http://localhost:7002/api/category', config),
+          Axios.get('http://localhost:7002/api/event', config),
+          Axios.get('http://localhost:7002/api/relationship', config)
+        ]);
+
+        setCategories(Array.isArray(categoryRes.data) ? categoryRes.data : categoryRes.data?.data || []);
+        setEvents(Array.isArray(eventRes.data) ? eventRes.data : eventRes.data?.data || []);
+        setRelationships(Array.isArray(relationshipRes.data) ? relationshipRes.data : relationshipRes.data?.data || []);
+      } catch (error) {
+        console.error('שגיאה בטעינת אפשרויות מהשרת:', error);
+        setErrorMessage('לא ניתן לטעון את אפשרויות הבחירה. נסי לרענן את הדף.');
+      }
+    };
+
+    fetchOptions();
+  }, []);
 
   // פונקציה 1: חיפוש מתנות מספקים
   const handleSubmit = (e) => {
@@ -46,7 +77,7 @@ const Questionnaire = () => {
     fetchMatchingGifts();
   };
 
-  // פונקציה 2: קבלת השראות מבינה מלאכותית עם הגדרת Timeout של 30 שניות
+  // פונקציה 2: קבלת השראות מבינה מלאכותית
   const handleAiInspirations = async () => {
     const token = localStorage.getItem('token');
     setErrorMessage('');
@@ -64,7 +95,7 @@ const Questionnaire = () => {
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },
-          timeout: 360000 // הגדרת זמן קצוב של 360 שניות
+          timeout: 360000 // זמן קצוב של 360 שניות
         }
       );
 
@@ -124,7 +155,7 @@ const Questionnaire = () => {
         </div>
       </fieldset>
 
-      {/* שלב 2: אירוע ומערכת יחסים */}
+      {/* שלב 2: אירוע ומערכת יחסים (טעון מהשרת) */}
       <fieldset style={{ marginBottom: '20px', padding: '15px', borderRadius: '8px' }}>
         <legend><strong>מה מטרת המתנה?</strong></legend>
 
@@ -136,14 +167,11 @@ const Questionnaire = () => {
             style={{ display: 'block', width: '100%', padding: '8px', marginTop: '5px' }}
           >
             <option value="">בחר אירוע...</option>
-            <option value="יום הולדת">יום הולדת</option>
-            <option value="חתונה">חתונה</option>
-            <option value="בר מצוה">בר מצוה</option>
-            <option value="בת מצוה">בת מצוה</option>
-            <option value="הולדת תינוק">הולדת תינוק</option>
-            <option value="חג">חג / ראש השנה / פסח</option>
-            <option value="מעבר דירה">מעבר דירה</option>
-            <option value="הודיה/הערכה">הודיה/הערכה</option>
+            {events.map((item) => (
+              <option key={item._id || item.id} value={item._id || item.name}>
+                {item.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -155,16 +183,16 @@ const Questionnaire = () => {
             style={{ display: 'block', width: '100%', padding: '8px', marginTop: '5px' }}
           >
             <option value="">בחר קשר...</option>
-            <option value="בן / בת זוג">בן / בת זוג</option>
-            <option value="משפחה">משפחה</option>
-            <option value="חבר/ה">חבר/ה</option>
-            <option value="קולגה לעבודה">קולגה לעבודה</option>
-            <option value="אחר">אחר</option>
+            {relationships.map((item) => (
+              <option key={item._id || item.id} value={item._id || item.name}>
+                {item.name}
+              </option>
+            ))}
           </select>
         </div>
       </fieldset>
 
-      {/* שלב 3: סגנון, קטגוריה והתאמה אישית */}
+      {/* שלב 3: סגנון, קטגוריה והתאמה אישית (טעון מהשרת) */}
       <fieldset style={{ marginBottom: '20px', padding: '15px', borderRadius: '8px' }}>
         <legend><strong>אופי והתאמת המתנה</strong></legend>
 
@@ -176,10 +204,11 @@ const Questionnaire = () => {
             style={{ display: 'block', width: '100%', padding: '8px', marginTop: '5px' }}
           >
             <option value="">בחר קטגוריה...</option>
-            <option value="משחקים וצעצועים">משחקים וצעצועים</option>
-            <option value="כלי בית ועיצוב">כלי בית ועיצוב</option>
-            <option value="ספרים ומוצרי נייר">ספרים ומוצרי נייר</option>
-            <option value="מארזים ומתוקים">מארזים ומתוקים</option>
+            {categories.map((item) => (
+              <option key={item._id || item.id} value={item._id || item.name}>
+                {item.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -191,17 +220,18 @@ const Questionnaire = () => {
                 <input
                   type="checkbox"
                   value={style}
-                  checked={formData.styles.includes(style)}
+                  checked={formData.styles ? formData.styles.includes(style) : false}
                   onChange={(e) => {
+                    const currentStyles = formData.styles || [];
                     if (e.target.checked) {
                       setFormData({
                         ...formData,
-                        styles: [...formData.styles, style]
+                        styles: [...currentStyles, style]
                       });
                     } else {
                       setFormData({
                         ...formData,
-                        styles: formData.styles.filter(s => s !== style)
+                        styles: currentStyles.filter(s => s !== style)
                       });
                     }
                   }}
@@ -216,7 +246,7 @@ const Questionnaire = () => {
           <label>
             <input
               type="checkbox"
-              checked={formData.DedicationPersonalization}
+              checked={formData.DedicationPersonalization || false}
               onChange={(e) => setFormData({
                 ...formData,
                 DedicationPersonalization: e.target.checked

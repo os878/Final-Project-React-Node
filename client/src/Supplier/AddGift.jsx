@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 export const AddGift = ({ gift, onUpdated }) => {
+    const navigate = useNavigate()
 
     const [name, setName] = useState("")
     const [gender, setGender] = useState("לא משנה")
@@ -23,18 +25,23 @@ export const AddGift = ({ gift, onUpdated }) => {
 
     const [errorMessage, setErrorMessage] = useState("")
 
+    // טעינת הקטגוריות, האירועים והקשרים מהדאטהבייס
     useEffect(() => {
         const getGiftOptions = async () => {
             try {
+                const token = localStorage.getItem("token")
+                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+
                 const [categoryResponse, eventResponse, relationshipResponse] = await Promise.all([
-                    Axios.get("http://localhost:7002/api/category"),
-                    Axios.get("http://localhost:7002/api/event"),
-                    Axios.get("http://localhost:7002/api/relationship")
+                    Axios.get("http://localhost:7002/api/category", config),
+                    Axios.get("http://localhost:7002/api/event", config),
+                    Axios.get("http://localhost:7002/api/relationship", config)
                 ])
 
-                setCategories(categoryResponse.data)
-                setEvents(eventResponse.data)
-                setRelationships(relationshipResponse.data)
+                // וידוא שהנתונים המתקבלים הם מערכים
+                setCategories(Array.isArray(categoryResponse.data) ? categoryResponse.data : categoryResponse.data.data || [])
+                setEvents(Array.isArray(eventResponse.data) ? eventResponse.data : eventResponse.data.data || [])
+                setRelationships(Array.isArray(relationshipResponse.data) ? relationshipResponse.data : relationshipResponse.data.data || [])
             } catch (error) {
                 console.error("לא ניתן לטעון את אפשרויות המתנה:", error)
                 setErrorMessage("לא ניתן לטעון קטגוריות, אירועים וקשרים. נסו לרענן את הדף.")
@@ -143,7 +150,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                 )
 
                 alert("המתנה עודכנה בהצלחה!")
-            navigate("/Supplier/ProfilSupplier"); // מעבר לעמוד המתנות לאחר התחברות מוצלחת
+                navigate("/Supplier/ProfilSupplier")
 
                 if (onUpdated) {
                     onUpdated(data.gift)

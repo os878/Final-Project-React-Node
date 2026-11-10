@@ -8,6 +8,7 @@ const { verifyJWT, verifyRole } = require("../middleware/verifyJWT")
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
 router.get("/findByIdGift/:id", verifyJWT, giftController.findByIdGift)
 router.get("/findByIdSupplier",verifyJWT,verifyRole('Supplier'), giftController.findByIdSupplier)
 router.get("/getAllGifts",verifyJWT,verifyRole('Supplier','Admin'), giftController.getAllGifts)
