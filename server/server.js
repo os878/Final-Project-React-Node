@@ -37,3 +37,4 @@ app.use("/api/event", require("./routes/eventRoutes"))
 app.use("/api/favorite", require("./routes/favoriteRoutes"))
 app.use('/api/inquiry', require('./routes/inquiryRoutes'));
 app.use(express.static("public"))
+app.use("/api/auth", require("./routes/authMeRoutes")) 

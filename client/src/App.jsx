@@ -1,10 +1,9 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Layout from "./common/Layout"
 
 import './App.css'
 import LoginAdmin from './Admin/LoginAdmin'
-import ProfilSupplier from "./Supplier/ProfilSupplier"
+import ProfilSupplier from './Supplier/ProfilSupplier'
 import AddGift from './Supplier/AddGift'
 import GiftItem from './Supplier/GiftItem'
 import GiftsList from './Supplier/GiftsList';
@@ -28,6 +27,7 @@ import MaintenanceManager from './Admin/MaintenanceManager'
 import AuthPage from './common/AuthPage';
 
 import LandingPage from './LandingPage'
+
 function App() {
 
   return (
@@ -35,10 +35,15 @@ function App() {
       <GiftProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<LandingPage />} />
-              <Route path="/LandingPage" element={<LandingPage />} />
-              <Route path="/admin-entry-details" element={<LoginAdmin />} />
+            {/* דפים שיש להם עיצוב מלא משלהם – בלי ההדר של ה-Layout */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/LandingPage" element={<LandingPage />} />
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/admin-entry-details" element={<LoginAdmin />} />
+
+            {/* כל הדפים הפנימיים – עם ההדר */}
+            <Route element={<Layout />}>
+              {/* מנהל */}
               <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
               <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
               <Route path="/Admin/AllGifts" element={<AllGifts />} />
@@ -47,13 +52,15 @@ function App() {
               <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
               <Route path="/Admin/MaintenanceManager" element={<MaintenanceManager />} />
 
-
-              <Route path="/login" element={<AuthPage />} />
+              {/* ספק */}
               <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
               <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
               <Route path="/AddGift" element={<AddGift />} />
               <Route path="/Supplier/GiftItem" element={<GiftItem />} />
               <Route path="/Supplier/GiftsList" element={<GiftsList />} />
+              <Route path="/Supplier/Inquiries" element={<SupplierInquiries />} />
+
+              {/* לקוח */}
               <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
               <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
               <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
@@ -61,7 +68,6 @@ function App() {
               <Route path="/Customer/Favorites" element={<Favorites />} />
               <Route path="/Giftinspirations" element={<Giftinspirations />} />
               <Route path="/Customer/GiftDetails/:id" element={<GiftDetails />} />
-              <Route path="/Supplier/Inquiries" element={<SupplierInquiries />} />
             </Route>
           </Routes>
         </Router>
