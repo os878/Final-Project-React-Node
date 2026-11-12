@@ -1,50 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Assistant:wght@400;600;700&display=swap');
+/* ==========================================================
+   Gifter – דף נחיתה
+   הצבעים, הגופנים והפריסה על כל הרוחב מגיעים מ-App.css.
+   כדי לשנות צבע בכל האתר, משנים אותו רק ב-App.css.
+   ========================================================== */
 
 .gp {
-  --navy: #1E2A4A;
-  --navy-soft: #4A5568;
-  --orange: #E8572A;
-  --orange-dark: #C9441B;
-  --spark: #FFC94A;
-  --cream: #FFF8F1;
-  --tint: #FCEFE3;
-  --line: #EADBCB;
-  --radius: 18px;
-
-  font-family: 'Assistant', system-ui, sans-serif;
-  color: var(--navy);
+  width: 100%;
+  flex: 1;
   background: var(--cream);
-  line-height: 1.6;
-}
-
-.gp *,
-.gp *::before,
-.gp *::after { box-sizing: border-box; }
-
-.gp h1, .gp h2, .gp h3 { font-family: 'Rubik', sans-serif; margin: 0; line-height: 1.2; }
-.gp p { margin: 0; }
-
-.sr-only {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
 }
 
 .gp-container { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
 /* ---------- לוגו ---------- */
 .gifter-logo { display: inline-flex; align-items: center; gap: 12px; }
-.gifter-logo__text { display: flex; flex-direction: column; gap: 2px; }
+.gifter-logo__text { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .gifter-wordmark {
-  font-family: 'Rubik', sans-serif; font-weight: 800; font-size: 32px;
-  line-height: 1; letter-spacing: -0.5px; color: var(--navy); white-space: nowrap;
+  font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 32px;
+  line-height: 1; letter-spacing: 0; color: var(--navy); white-space: nowrap;
 }
 .gifter-wordmark__i { position: relative; display: inline-block; }
 .gifter-wordmark__bulb {
-  position: absolute; left: 50%; top: -0.12em; width: 0.42em; height: 0.48em;
+  position: absolute; left: 50%; top: -0.1em; width: 0.3em; height: 0.36em;
   transform: translateX(-50%);
 }
-.gifter-slogan { font-size: 15px; font-weight: 600; color: var(--navy); }
-.gifter-slogan em { font-style: normal; color: var(--orange-dark); }
+.gifter-slogan { font-family: 'Assistant', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.3px; color: var(--navy-soft); }
+.gifter-slogan em { font-style: normal; font-weight: 600; color: var(--orange); }
 
 /* ---------- כפתורים ---------- */
 .gp-btn {
@@ -55,12 +36,12 @@
 .gp-btn:hover { background: var(--orange-dark); transform: translateY(-1px); }
 .gp-btn:focus-visible { outline: 3px solid var(--spark); outline-offset: 3px; }
 .gp-btn--small { padding: 10px 22px; font-size: 16px; }
-.gp-btn--large { padding: 18px 40px; font-size: 21px; box-shadow: 0 10px 24px rgba(232, 87, 42, .28); }
+.gp-btn--large { padding: 18px 40px; font-size: 21px; box-shadow: 0 10px 24px rgba(122, 31, 43, .25); }
 
 /* ---------- כותרת עליונה ---------- */
 .gp-header {
   position: sticky; top: 0; z-index: 10;
-  background: rgba(255, 248, 241, .92); backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--cream) 92%, transparent); backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
 .gp-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; padding-bottom: 12px; }
@@ -79,12 +60,12 @@
 .gp-hero__card {
   position: relative; width: min(100%, 380px); aspect-ratio: 1;
   border-radius: 40px; background: #fff; border: 1px solid var(--line);
-  box-shadow: 0 30px 60px rgba(30, 42, 74, .10);
+  box-shadow: 0 30px 60px rgba(42, 26, 20, .10);
   display: flex; align-items: center; justify-content: center;
 }
 .gp-chip {
   position: absolute; padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 16px;
-  background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(30, 42, 74, .08);
+  background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(42, 26, 20, .08);
   white-space: nowrap;
 }
 .gp-chip--a { top: 12%; right: -6%; }
@@ -117,7 +98,7 @@
 .gp-path p { font-size: 18px; }
 .gp-path__tag { display: inline-block; padding: 4px 14px; border-radius: 999px; font-weight: 700; font-size: 15px; }
 .gp-path--navy { background: var(--navy); color: #fff; }
-.gp-path--navy p { color: #D5DBEA; }
+.gp-path--navy p { color: #E3D6CC; }
 .gp-path--navy .gp-path__tag { background: rgba(255, 255, 255, .14); color: #fff; }
 .gp-path--spark { background: #fff; border: 2px solid var(--spark); }
 .gp-path--spark p { color: var(--navy-soft); }
@@ -130,13 +111,45 @@
   background: #fff; color: var(--navy); border: 1.5px solid var(--line);
   transition: border-color .15s, background .15s;
 }
-.gp-occasion:hover { border-color: var(--orange); background: #FFF1E8; }
+.gp-occasion:hover { border-color: var(--orange); background: #F5E6E2; }
 .gp-occasion:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 
 .gp-reasons { margin-top: 44px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .gp-reason { text-align: center; padding: 8px 12px; }
 .gp-reason h3 { font-size: 24px; color: var(--orange-dark); margin-bottom: 8px; }
 .gp-reason p { font-size: 17px; color: var(--navy-soft); }
+
+/* ---------- ספקים ---------- */
+.gp-header__actions { display: flex; align-items: center; gap: 20px; }
+.gp-header__link {
+  font-weight: 700; font-size: 16px; color: var(--navy); text-decoration: none;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.gp-header__link:hover { color: var(--orange); }
+.gp-header__link:focus-visible { outline: 3px solid var(--spark); outline-offset: 3px; border-radius: 6px; }
+
+.gp-suppliers { scroll-margin-top: 72px; }
+.gp-suppliers__inner {
+  display: flex; flex-direction: column; gap: 40px;
+  background: #fff; border: 2px solid var(--spark); border-radius: 32px;
+  padding: 52px 48px;
+}
+.gp-suppliers__title { font-size: clamp(30px, 4.4vw, 46px); font-weight: 800; }
+.gp-suppliers__title span { color: var(--orange); }
+.gp-suppliers__lead { margin-top: 18px; font-size: 20px; color: var(--navy-soft); max-width: 36em; }
+
+.gp-perks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.gp-perk { background: var(--cream); border-radius: var(--radius); padding: 28px 26px; }
+.gp-perk h3 { font-size: 22px; margin-bottom: 8px; }
+.gp-perk p { font-size: 17px; color: var(--navy-soft); }
+
+.gp-suppliers__bottom {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
+  padding-top: 32px; border-top: 1px solid var(--line);
+}
+.gp-suppliers__early { font-size: 18px; font-weight: 600; max-width: 30em; }
+.gp-btn--spark { background: var(--navy); color: #fff; }
+.gp-btn--spark:hover { background: #140C09; }
 
 /* ---------- קריאה לפעולה ---------- */
 .gp-cta { background: var(--navy); color: #fff; padding: 80px 0; }
@@ -153,7 +166,9 @@
   .gp-hero__inner { grid-template-columns: 1fr; }
   .gp-hero__visual { order: -1; }
   .gp-hero__card { width: min(78%, 300px); }
-  .gp-steps, .gp-paths, .gp-reasons { grid-template-columns: 1fr; }
+  .gp-steps, .gp-paths, .gp-reasons, .gp-perks { grid-template-columns: 1fr; }
+  .gp-header__actions { gap: 12px; }
+  .gp-suppliers__inner { padding: 32px 22px; border-radius: 24px; }
   .gp-section { padding: 60px 0; }
   .gp-btn--large { width: 100%; }
 }

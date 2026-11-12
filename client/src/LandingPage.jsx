@@ -1,32 +1,36 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './landingPage.css';
+import './LandingPage.css';
 
 // לאן הכפתורים מובילים
 const START_ROUTE = '/HomePage';
+const SUPPLIER_ROUTE = '/SupplierSignup'; // להחליף לנתיב של טופס ההרשמה לספקים
 
 /* ---------- לוגו ---------- */
 
 const BulbIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 40 46" aria-hidden="true">
-    <circle cx="20" cy="17" r="13" fill="#FFC94A" stroke="#1E2A4A" strokeWidth="4" />
-    <rect x="14" y="31" width="12" height="7" rx="2.5" fill="#1E2A4A" />
+    <circle cx="20" cy="17" r="13" fill="#D9B26A" />
+    <rect x="14" y="33" width="12" height="4" rx="2" fill="#2A1A14" />
+    <rect x="16" y="39" width="8" height="4" rx="2" fill="#2A1A14" />
   </svg>
 );
 
 export const GifterMark = ({ size = 48 }) => (
   <svg width={size} height={size} viewBox="0 0 120 120" aria-hidden="true">
-    <g stroke="#1E2A4A" strokeWidth="3.5" strokeLinecap="round">
-      <line x1="60" y1="2" x2="60" y2="7" />
-      <line x1="38" y1="10" x2="42" y2="14" />
-      <line x1="82" y1="10" x2="78" y2="14" />
+    <g stroke="#D9B26A" strokeWidth="2" strokeLinecap="round">
+      <line x1="60" y1="6" x2="60" y2="10" />
+      <line x1="44" y1="13" x2="46.5" y2="16" />
+      <line x1="76" y1="13" x2="73.5" y2="16" />
     </g>
-    <circle cx="60" cy="26" r="13" fill="#FFC94A" stroke="#1E2A4A" strokeWidth="3.5" />
-    <rect x="54" y="37" width="12" height="6" rx="2" fill="#1E2A4A" />
-    <rect x="20" y="56" width="80" height="54" rx="9" fill="#E8572A" />
-    <rect x="13" y="43" width="94" height="17" rx="6" fill="#E8572A" />
-    <rect x="13" y="56" width="94" height="4" fill="#000" opacity="0.12" />
-    <rect x="54" y="43" width="12" height="67" fill="#1E2A4A" />
+    <circle cx="60" cy="29" r="11" fill="none" stroke="#D9B26A" strokeWidth="2.5" />
+    <path d="M55.5 31 Q60 23 64.5 31" fill="none" stroke="#D9B26A" strokeWidth="1.8" strokeLinecap="round" />
+    <line x1="55" y1="42" x2="65" y2="42" stroke="#2A1A14" strokeWidth="2.5" strokeLinecap="round" />
+    <line x1="56.5" y1="45.5" x2="63.5" y2="45.5" stroke="#2A1A14" strokeWidth="2.5" strokeLinecap="round" />
+    <rect x="24" y="62" width="72" height="48" rx="3" fill="#7A1F2B" />
+    <rect x="18" y="50" width="84" height="14" rx="2.5" fill="#7A1F2B" />
+    <rect x="18" y="62" width="84" height="2" fill="#2A1A14" opacity="0.35" />
+    <rect x="57.5" y="50" width="5" height="60" fill="#D9B26A" />
   </svg>
 );
 
@@ -92,6 +96,21 @@ const reasons = [
   { title: 'כל הכיף נשאר לכם', text: 'אנחנו עושים את העבודה הקשה, אתם נהנים מהרגע של הנתינה.' },
 ];
 
+const supplierPerks = [
+  {
+    title: 'פוגשים קונים ברגע הנכון',
+    text: 'מי שמגיע ל-Gifter כבר החליט לקנות מתנה. הוא רק מחפש מה. בדיוק שם המוצר שלכם מופיע.',
+  },
+  {
+    title: 'לא נבלעים בין אלפי מוצרים',
+    text: 'הקונה רואה רק כמה המלצות שמתאימות לו. כשהמוצר שלכם מתאים, הוא בולט ולא נקבר בעמוד העשרים.',
+  },
+  {
+    title: 'מצטרפים בקלות',
+    text: 'מעלים את המוצרים, מסמנים למי ולאיזה אירוע הם מתאימים, ואנחנו דואגים להתאמה.',
+  },
+];
+
 /* ---------- עמוד ---------- */
 
 const LandingPage = () => {
@@ -104,9 +123,12 @@ const LandingPage = () => {
       <header className="gp-header">
         <div className="gp-container gp-header__inner">
           <GifterLogo size={40} />
-          <button type="button" className="gp-btn gp-btn--small" onClick={() => start()}>
-            למצוא מתנה
-          </button>
+          <div className="gp-header__actions">
+            <a href="#suppliers" className="gp-header__link">לספקים</a>
+            <button type="button" className="gp-btn gp-btn--small" onClick={() => start()}>
+              למצוא מתנה
+            </button>
+          </div>
         </div>
       </header>
 
@@ -203,6 +225,42 @@ const LandingPage = () => {
                   <p>{r.text}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ספקים */}
+        <section id="suppliers" className="gp-section gp-suppliers" aria-labelledby="suppliers-title">
+          <div className="gp-container gp-suppliers__inner">
+            <div className="gp-suppliers__copy">
+              <p className="gp-eyebrow">לספקים ולבעלי עסקים</p>
+              <h2 id="suppliers-title" className="gp-suppliers__title">
+                הלקוחות שלכם כבר מחפשים מתנה.
+                <br />
+                <span>תנו להם למצוא אתכם.</span>
+              </h2>
+              <p className="gp-suppliers__lead">
+                יש לכם מוצר שיכול לשמח מישהו? ב-Gifter הוא מגיע ישר למי שמחפש בדיוק אותו,
+                ברגע שהוא מוכן לקנות.
+              </p>
+            </div>
+
+            <ul className="gp-perks">
+              {supplierPerks.map((p) => (
+                <li key={p.title} className="gp-perk">
+                  <h3>{p.title}</h3>
+                  <p>{p.text}</p>
+                </li>
+              ))}
+            </ul>
+
+            <div className="gp-suppliers__bottom">
+              <p className="gp-suppliers__early">
+                אנחנו בונים עכשיו את נבחרת הספקים הראשונה. מצטרפים עכשיו? אתם שם מההתחלה.
+              </p>
+              <button type="button" className="gp-btn gp-btn--large gp-btn--spark" onClick={() => navigate(SUPPLIER_ROUTE)}>
+                אני רוצה להציע את המוצרים שלי
+              </button>
             </div>
           </div>
         </section>
