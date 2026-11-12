@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFeedback } from '../common/Feedback';
+import { EditIcon, TrashIcon, GiftIcon } from '../common/Icons';
 
 const GiftItem = ({ gift, onDelete, onEdit }) => {
   const { toast, confirm } = useFeedback();
@@ -48,47 +49,50 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
   };
 
   return (
-    <div className="gift-item" style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px', borderRadius: '8px' }}>
-      <h3>{gift.name}</h3>
-
-      <p><strong>מחיר:</strong> {gift.price} ₪</p>
-      <p><strong>מיועד עבור:</strong> {gift.forGender || 'לא משנה'}</p>
-      <p><strong>טווח גילאים:</strong> {gift.age1} - {gift.age2}</p>
-      <p><strong>צבע:</strong> {gift.color}</p>
-      <p><strong>תיאור:</strong> {gift.description || 'אין תיאור'}</p>
-
-      {/* תצוגת שדות מקושרים */}
-      <p><strong>קטגוריה:</strong> {getDisplayName(gift.category, 'לא צוינה קטגוריה')}</p>
-      <p><strong>אירוע:</strong> {getDisplayName(gift.event, 'לא צוין אירוע')}</p>
-      <p><strong>למי מיועד:</strong> {getDisplayName(gift.relationship, 'לא צוין קשר')}</p>
-
-      <p><strong>אפשרות להקדשה אישית:</strong> {gift.DedicationPersonalization ? 'כן' : 'לא'}</p>
-
-      {gift.styles && gift.styles.length > 0 && (
-        <p><strong>סגנונות:</strong> {gift.styles.join(', ')}</p>
-      )}
-
-      {gift.image && (
-        <div className="pg-card__media" style={{ marginTop: '10px', marginBottom: '10px' }}>
-          <img
-            src={gift.image}
-            alt={gift.name}
-            className="pg-card__img"
-            width="150"
-            style={{ borderRadius: '4px' }}
-          />
-        </div>
-      )}
-
-      <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-        <button onClick={() => onEdit(gift)}>
-          עריכה
-        </button>
-        <button onClick={handleDelete}>
-          מחיקה
-        </button>
+    <article className="pg-card gift-item">
+      <div className="pg-card__media">
+        {gift.image ? (
+          <img src={gift.image} alt={gift.name} className="pg-card__img" />
+        ) : (
+          <span className="pg-card__placeholder"><GiftIcon /></span>
+        )}
+        <span className="pg-card__score">{getDisplayName(gift.category, 'לא צוינה קטגוריה')}</span>
       </div>
-    </div>
+
+      <div className="pg-card__body">
+        <h3 className="pg-card__title">{gift.name}</h3>
+        <p className="pg-card__text">{gift.description || 'אין תיאור'}</p>
+
+        {/* פרטי התאמה */}
+        <dl className="ad-specs">
+          <div><dt>מיועד עבור</dt><dd>{gift.forGender || 'לא משנה'}</dd></div>
+          <div><dt>גילאים</dt><dd>{gift.age1} עד {gift.age2}</dd></div>
+          <div><dt>אירוע</dt><dd>{getDisplayName(gift.event, 'לא צוין אירוע')}</dd></div>
+          <div><dt>למי מיועד</dt><dd>{getDisplayName(gift.relationship, 'לא צוין קשר')}</dd></div>
+          <div><dt>צבע</dt><dd>{gift.color}</dd></div>
+          <div><dt>הקדשה אישית</dt><dd>{gift.DedicationPersonalization ? 'כן' : 'לא'}</dd></div>
+        </dl>
+
+        {gift.styles && gift.styles.length > 0 && (
+          <div className="ad-tags">
+            {gift.styles.map((style) => <span key={style} className="sgi-chip">{style}</span>)}
+          </div>
+        )}
+
+        <div className="pg-card__footer">
+          <span className="pg-card__price">{gift.price} ₪</span>
+          <div className="sgi-actions">
+            <button type="button" className="sgi-btn" onClick={() => onEdit(gift)}>
+              <EditIcon />
+              עריכה
+            </button>
+            <button type="button" className="sgi-btn sgi-btn--danger" onClick={handleDelete} aria-label={`מחיקת ${gift.name}`}>
+              <TrashIcon />
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
   );
 };
 

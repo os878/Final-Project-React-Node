@@ -72,51 +72,55 @@ export const UpdateSupplier = ({ supplier, onUpdated }) => {
     };
 
     return (
-        <div>
-            <h2>עריכת פרטי ספק</h2>
-            <form onSubmit={submitForm}>
-                
-                {/* שם איש קשר / ספק */}
-                <label htmlFor="supplierName">שם איש קשר</label>
-                <input
-                    id="supplierName"
-                    type="text"
-                    value={name}
-                    onChange={(e) => handleInputChange(setName, e.target.value)}
-                />
-
-                {/* שם חברה */}
-                <label htmlFor="companyName">שם החברה</label>
-                <input
-                    id="companyName"
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => handleInputChange(setCompanyName, e.target.value)}
-                />
-
-                {/* דואר אלקטרוני */}
-                <label htmlFor="email">אימייל</label>
-                <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => handleInputChange(setEmail, e.target.value)}
-                />
-
-                {/* טלפון */}
-                <label htmlFor="phone">מספר טלפון</label>
-                <input
-                    id="phone"
-                    type="text"
-                    value={phone}
-                    onChange={(e) => handleInputChange(setPhone, e.target.value)}
-                />
+        <div className="fm" dir="rtl">
+            <div className="fm-head">
+                <h2 className="fm-title">עריכת פרטי ספק</h2>
+            </div>
+            <form className="fm-form" onSubmit={submitForm}>
+                <div className="fm-grid">
+                    <div className="fm-field">
+                        <label htmlFor="supplierName">שם איש קשר</label>
+                        <input
+                            id="supplierName"
+                            type="text"
+                            value={name}
+                            onChange={(e) => handleInputChange(setName, e.target.value)}
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="companyName">שם החברה</label>
+                        <input
+                            id="companyName"
+                            type="text"
+                            value={companyName}
+                            onChange={(e) => handleInputChange(setCompanyName, e.target.value)}
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="email">אימייל</label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => handleInputChange(setEmail, e.target.value)}
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="phone">מספר טלפון</label>
+                        <input
+                            id="phone"
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => handleInputChange(setPhone, e.target.value)}
+                        />
+                    </div>
+                </div>
 
                 {errorMessage && (
-                    <p style={{ color: 'red' }}>{errorMessage}</p>
+                    <p className="pg-error" role="alert">{errorMessage}</p>
                 )}
 
-                <button type="submit">שמירת שינויים</button>
+                <button type="submit" className="ag-submit">שמירת שינויים</button>
             </form>
         </div>
     );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useFeedback } from '../common/Feedback';
+import { EditIcon, TrashIcon, PlusIcon, CheckIcon, CloseIcon } from '../common/Icons';
 
 // כתובת בסיס השרת - יש לוודא שהפורט תואם לשרת ה-Node.js שלך (לדוגמה 7002 או 5000)
 const API_BASE_URL = 'http://localhost:7002';
@@ -127,103 +128,109 @@ const MaintenanceManager = () => {
 };
 
     return (
-        <div style={{ padding: '20px', maxWidth: '700px', margin: '0 auto', direction: 'rtl' }}>
-            <h2>ניהול ותחזוקת מערכת</h2>
+        <section className="mm" dir="rtl">
+            <header>
+                <p className="pg-eyebrow">לוח ניהול</p>
+                <h1 className="pg-title">ניהול ותחזוקת מערכת</h1>
+                <p className="pg-sub">האפשרויות שהלקוחות והספקים בוחרים מהן בשאלון ובטופס המתנה.</p>
+            </header>
 
             {/* סרגל כפתורי הניווט */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <div className="iq-tabs" role="group" aria-label="בחירת רשימה">
                 {Object.values(MODULES).map((mod) => (
                     <button
                         key={mod.key}
+                        type="button"
+                        className={`iq-tab ${activeTab === mod.key ? 'iq-tab--on' : ''}`}
+                        aria-pressed={activeTab === mod.key}
                         onClick={() => setActiveTab(mod.key)}
-                        style={{
-                            padding: '10px 20px',
-                            cursor: 'pointer',
-                            backgroundColor: activeTab === mod.key ? '#007bff' : '#e0e0e0',
-                            color: activeTab === mod.key ? '#fff' : '#000',
-                            border: 'none',
-                            borderRadius: '4px',
-                            fontWeight: 'bold'
-                        }}
                     >
                         {mod.label}
+                        {activeTab === mod.key && !loading && <span className="iq-tab__count">{items.length}</span>}
                     </button>
                 ))}
             </div>
 
-            {/* טופס הוספה */}
-            <form onSubmit={handleCreate} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                <input
-                    type="text"
-                    placeholder={`שם חדש...`}
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-                />
-                <button type="submit" style={{ padding: '8px 16px', cursor: 'pointer' }}>
-                    הוסף
-                </button>
-            </form>
+            <div className="mm-card">
+                {/* טופס הוספה */}
+                <form onSubmit={handleCreate} className="mm-add">
+                    <label htmlFor="mmNewName" className="sr-only">שם חדש</label>
+                    <input
+                        id="mmNewName"
+                        type="text"
+                        placeholder={`הוספה ל${currentModule.label}...`}
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                    />
+                    <button type="submit" className="mm-add__btn">
+                        <PlusIcon />
+                        הוסף
+                    </button>
+                </form>
 
-            {/* הצגת רשימת הנתונים */}
-            {loading ? (
-                <p>טוען נתונים...</p>
-            ) : error ? (
-                <p style={{ color: 'red' }}>{error}</p>
-            ) : (
-                <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {Array.isArray(items) && items.length > 0 ? (
-                        items.map((item) => (
-                            <li 
-                                key={item._id || item.id} 
-                                style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'space-between', 
-                                    padding: '10px', 
-                                    borderBottom: '1px solid #eee' 
-                                }}
-                            >
-                                {editingId === (item._id || item.id) ? (
-                                    <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                                        <input
-                                            type="text"
-                                            value={editingName}
-                                            onChange={(e) => setEditingName(e.target.value)}
-                                            style={{ flex: 1, padding: '4px' }}
-                                        />
-                                        <button onClick={() => handleUpdate(item._id || item.id)}>שמירה</button>
-                                        <button onClick={() => setEditingId(null)}>ביטול</button>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <span>{item.name}</span>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
-                                            <button
-                                                onClick={() => {
-                                                    setEditingId(item._id || item.id);
-                                                    setEditingName(item.name);
-                                                }}
-                                            >
-                                                ערוך
+                {/* הצגת רשימת הנתונים */}
+                {loading ? (
+                    <p className="mm-state" role="status">טוען נתונים…</p>
+                ) : error ? (
+                    <p className="pg-error" role="alert">{error}</p>
+                ) : (
+                    <ul className="mm-list">
+                        {Array.isArray(items) && items.length > 0 ? (
+                            items.map((item) => (
+                                <li key={item._id || item.id} className="mm-item">
+                                    {editingId === (item._id || item.id) ? (
+                                        <div className="mm-edit">
+                                            <label htmlFor="mmEditName" className="sr-only">שם חדש</label>
+                                            <input
+                                                id="mmEditName"
+                                                type="text"
+                                                value={editingName}
+                                                onChange={(e) => setEditingName(e.target.value)}
+                                                autoFocus
+                                            />
+                                            <button type="button" className="sgi-btn mm-save" onClick={() => handleUpdate(item._id || item.id)}>
+                                                <CheckIcon />
+                                                שמירה
                                             </button>
-                                            <button 
-                                                onClick={() => handleDelete(item._id || item.id)} 
-                                                style={{ color: 'red' }}
-                                            >
-                                                מחק
+                                            <button type="button" className="sgi-btn" onClick={() => setEditingId(null)} aria-label="ביטול">
+                                                <CloseIcon />
                                             </button>
                                         </div>
-                                    </>
-                                )}
-                            </li>
-                        ))
-                    ) : (
-                        <p>לא נמצאו נתונים.</p>
-                    )}
-                </ul>
-            )}
-        </div>
+                                    ) : (
+                                        <>
+                                            <span className="mm-item__name">{item.name}</span>
+                                            <div className="sgi-actions">
+                                                <button
+                                                    type="button"
+                                                    className="sgi-btn"
+                                                    onClick={() => {
+                                                        setEditingId(item._id || item.id);
+                                                        setEditingName(item.name);
+                                                    }}
+                                                >
+                                                    <EditIcon />
+                                                    ערוך
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="sgi-btn sgi-btn--danger"
+                                                    onClick={() => handleDelete(item._id || item.id)}
+                                                    aria-label={`מחיקת ${item.name}`}
+                                                >
+                                                    <TrashIcon />
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </li>
+                            ))
+                        ) : (
+                            <li className="mm-state">לא נמצאו נתונים.</li>
+                        )}
+                    </ul>
+                )}
+            </div>
+        </section>
     );
 };
 

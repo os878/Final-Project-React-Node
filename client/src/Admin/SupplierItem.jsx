@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFeedback } from '../common/Feedback';
+import { EditIcon, TrashIcon, MailIcon, PhoneIcon, UserIcon, StoreIcon } from '../common/Icons';
 
 const SupplierItem = ({ supplier, onDelete, onEdit }) => {
     const { toast, confirm } = useFeedback();
@@ -38,32 +39,33 @@ const SupplierItem = ({ supplier, onDelete, onEdit }) => {
     };
 
     return (
-        <div
-            className="supplier-item"
-            style={{
-                border: '1px solid #ccc',
-                padding: '15px',
-                marginBottom: '15px',
-                borderRadius: '8px'
-            }}
-        >
-            <h3>{supplier.name}</h3>
+        <article className="ad-card supplier-item">
+            <div className="ad-card__top">
+                <span className="ad-avatar" aria-hidden="true">{(supplier.name || '?').trim().charAt(0)}</span>
+                <div className="ad-card__head">
+                    <h3 className="ad-card__name">{supplier.name}</h3>
+                    <span className="ad-card__sub">{supplier.companyName || 'ספק'}</span>
+                </div>
+            </div>
 
-            {supplier.companyName && (
-                <p><strong>שם חברה:</strong> {supplier.companyName}</p>
-            )}
-            <p><strong>אימייל:</strong> {supplier.email|| 'לא צוין'}</p>
-            <p><strong>טלפון:</strong> {supplier.phone|| 'לא צוין'}</p>
+            <ul className="ad-rows">
+                {supplier.companyName && (
+                    <li className="ad-row"><StoreIcon className="ad-row__icon" /><span className="ad-row__label">שם חברה</span><span>{supplier.companyName}</span></li>
+                )}
+                <li className="ad-row"><MailIcon className="ad-row__icon" /><span className="ad-row__label">אימייל</span><bdi>{supplier.email|| 'לא צוין'}</bdi></li>
+                <li className="ad-row"><PhoneIcon className="ad-row__icon" /><span className="ad-row__label">טלפון</span><bdi>{supplier.phone|| 'לא צוין'}</bdi></li>
+            </ul>
 
-            <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-                <button onClick={() => onEdit(supplier)}>
+            <div className="ad-card__actions">
+                <button type="button" className="sgi-btn" onClick={() => onEdit(supplier)}>
+                    <EditIcon />
                     עריכה
                 </button>
-                <button onClick={handleDelete}>
-                    מחיקה
+                <button type="button" className="sgi-btn sgi-btn--danger" onClick={handleDelete} aria-label={`מחיקת ${supplier.name}`}>
+                    <TrashIcon />
                 </button>
             </div>
-        </div>
+        </article>
     );
 };
 

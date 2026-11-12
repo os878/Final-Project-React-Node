@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import SupplierItem from './SupplierItem';
 import UpdateSupplier from './UpdateSupplier';
+import { CloseIcon } from '../common/Icons';
 
 const AllSuppliers = () => {
     // מערך הספקים שנקבל מהשרת
@@ -72,50 +73,45 @@ const AllSuppliers = () => {
     };
 
     return (
-        <div>
-            <h1>ניהול ספקים</h1>
+        <section className="sg" dir="rtl">
+            <header className="sg-head">
+                <div>
+                    <p className="pg-eyebrow">לוח ניהול</p>
+                    <h1 className="pg-title">ניהול ספקים</h1>
+                    <p className="pg-sub">{suppliers.length > 0 ? `${suppliers.length} ספקים רשומים באתר` : 'אין עדיין ספקים להצגה'}</p>
+                </div>
+            </header>
 
             {/* הצגת הודעת שגיאה */}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p className="pg-error" role="alert">{error}</p>}
 
-            {/* מעבר על כל הספקים והצגתם */}
-            {suppliers.map((supplier) => (
-                <SupplierItem
-                    key={supplier._id}
-                    supplier={supplier}
-                    onDelete={removeSupplier}
-                    onEdit={openEdit}
-                />
-            ))}
+            {/* מעבר על כל הפריטים והצגתם */}
+            {suppliers.length > 0 && (
+                <div className="ad-grid">
+                    {suppliers.map((supplier) => (
+                        <SupplierItem
+                            key={supplier._id}
+                            supplier={supplier}
+                            onDelete={removeSupplier}
+                            onEdit={openEdit}
+                        />
+                    ))}
+                </div>
+            )}
 
-            {/* חלון מודאלי לעריכת ספק */}
+            {/* חלון עריכה */}
             {isEditOpen && selectedSupplier && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        zIndex: 1000
-                    }}
-                >
-                    <div
-                        style={{
-                            backgroundColor: 'white',
-                            padding: '20px',
-                            borderRadius: '8px',
-                            maxHeight: '90vh',
-                            overflowY: 'auto',
-                            width: '500px',
-                            maxWidth: '90%'
-                        }}
-                    >
-                        <button onClick={closeEdit}>סגירה ✕</button>
+                <div className="gd-overlay" onClick={closeEdit}>
+                    <div className="gd-dialog" role="dialog" aria-modal="true" aria-label="עריכת פרטי ספק" onClick={(e) => e.stopPropagation()}>
+                        <div className="gd-dialog__head">
+                            <div>
+                                <h2 className="gd-dialog__title">עריכת פרטי ספק</h2>
+                                <p className="gd-dialog__sub">{selectedSupplier.companyName || selectedSupplier.name}</p>
+                            </div>
+                            <button type="button" className="gd-dialog__close" onClick={closeEdit} aria-label="סגירה">
+                                <CloseIcon />
+                            </button>
+                        </div>
 
                         <UpdateSupplier
                             supplier={selectedSupplier}
@@ -125,11 +121,13 @@ const AllSuppliers = () => {
                 </div>
             )}
 
-            {/* הודעה אם אין ספקים להצגה */}
+            {/* הודעה אם אין מה להציג */}
             {suppliers.length === 0 && !error && (
-                <p>אין עדיין ספקים להצגה</p>
+                <div className="pg-empty">
+                    <h2>אין עדיין ספקים להצגה</h2>
+                </div>
             )}
-        </div>
+        </section>
     );
 };
 

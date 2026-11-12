@@ -160,170 +160,230 @@ export const UpdateGift = ({ gift, onUpdated }) => {
     }
 
     return (
-        <div>
-            <h2>עריכת מתנה</h2>
-            <form onSubmit={submitForm}>
+        <div className="ag" dir="rtl">
+            <div className="ag-head">
+                <h2 className="ag-title">עריכת מתנה</h2>
+            </div>
+            <form className="ag-form" onSubmit={submitForm}>
 
-                {/* שם המתנה */}
-                <label htmlFor="giftName">שם המתנה</label>
-                <input
-                    id="giftName"
-                    type="text"
-                    value={name}
-                    onChange={(e) => handleInputChange(setName, e.target.value)}
-                />
+                {/* ----- פרטי המתנה ----- */}
+                <fieldset className="ag-section">
+                    <legend className="ag-legend"><span>1</span>פרטי המתנה</legend>
 
-                {/* מגדר */}
-                <label htmlFor="gender">מיועד עבור</label>
-                <select
-                    id="gender"
-                    value={gender}
-                    onChange={(e) => handleInputChange(setGender, e.target.value)}
-                >
-                    <option value="בן">בן</option>
-                    <option value="בת">בת</option>
-                    <option value="לא משנה">לא משנה</option>
-                </select>
+                    <div className="ag-field">
+                        <label htmlFor="giftName">שם המתנה</label>
+                        <input
+                            id="giftName"
+                            type="text"
+                            value={name}
+                            onChange={(e) => handleInputChange(setName, e.target.value)}
+                        />
+                    </div>
 
-                {/* גיל מינימלי ומקסימלי */}
-                <label htmlFor="age1">גיל מינימלי</label>
-                <input
-                    id="age1"
-                    type="number"
-                    min="0"
-                    value={age1}
-                    onChange={(e) => handleInputChange(setAge1, e.target.value)}
-                />
+                    <div className="ag-field">
+                        <label htmlFor="description">תיאור המתנה</label>
+                        <textarea
+                            id="description"
+                            rows="3"
+                            value={description}
+                            onChange={(e) => handleInputChange(setDescription, e.target.value)}
+                        />
+                    </div>
 
-                <label htmlFor="age2">גיל מקסימלי</label>
-                <input
-                    id="age2"
-                    type="number"
-                    min="0"
-                    value={age2}
-                    onChange={(e) => handleInputChange(setAge2, e.target.value)}
-                />
+                    <div className="ag-field">
+                        <span className="ag-label">החלפת תמונה (אופציונלי)</span>
+                        <label htmlFor="image" className="ag-upload">
+                            {gift?.image && !imageFile ? (
+                                <img src={gift.image} alt="" className="ag-upload__img" />
+                            ) : (
+                                <span className="ag-upload__icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="2" /><path d="M21 16l-5-5-8 8" />
+                                    </svg>
+                                </span>
+                            )}
+                            <span className="ag-upload__text">
+                                <strong>{imageFile ? "נבחרה תמונה חדשה" : "בחירת תמונה חדשה"}</strong>
+                                <span>{imageFile ? imageFile.name : "התמונה הנוכחית תישאר אם לא תבחרו חדשה"}</span>
+                            </span>
+                            <input
+                                id="image"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    if (e.target.files && e.target.files[0]) {
+                                        handleInputChange(setImageFile, e.target.files[0])
+                                    }
+                                }}
+                            />
+                        </label>
+                    </div>
+                </fieldset>
 
-                {/* קטגוריה */}
-                <label htmlFor="category">קטגוריה</label>
-                <select
-                    id="category"
-                    value={category}
-                    onChange={(e) => handleInputChange(setCategory, e.target.value)}
-                >
-                    <option value="">בחרי קטגוריה</option>
-                    {categories.map((item) => (
-                        <option key={item._id} value={item._id}>
-                            {item.name}
-                        </option>
-                    ))}
-                </select>
+                {/* ----- למי זה מתאים ----- */}
+                <fieldset className="ag-section">
+                    <legend className="ag-legend"><span>2</span>למי זה מתאים</legend>
 
-                {/* אירוע */}
-                <label htmlFor="event">אירוע</label>
-                <select
-                    id="event"
-                    value={event}
-                    onChange={(e) => handleInputChange(setEvent, e.target.value)}
-                >
-                    <option value="">בחרי אירוע</option>
-                    {events.map((item) => (
-                        <option key={item._id} value={item._id}>
-                            {item.name}
-                        </option>
-                    ))}
-                </select>
+                    <div className="ag-field">
+                        <span className="ag-label" id="genderLabel">מיועד עבור</span>
+                        <div className="ag-choices" role="radiogroup" aria-labelledby="genderLabel">
+                            {["בן", "בת", "לא משנה"].map((g) => (
+                                <label key={g} className={`ag-choice ${gender === g ? "ag-choice--on" : ""}`}>
+                                    <input
+                                        type="radio"
+                                        name="gender"
+                                        value={g}
+                                        checked={gender === g}
+                                        onChange={(e) => handleInputChange(setGender, e.target.value)}
+                                    />
+                                    {g}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
 
-                {/* מערכת יחסים / למי מיועד */}
-                <label htmlFor="relationship">למי מיועד</label>
-                <select
-                    id="relationship"
-                    value={relationship}
-                    onChange={(e) => handleInputChange(setRelationship, e.target.value)}
-                >
-                    <option value="">בחרי קשר</option>
-                    {relationships.map((item) => (
-                        <option key={item._id} value={item._id}>
-                            {item.name}
-                        </option>
-                    ))}
-                </select>
+                    <div className="ag-row">
+                        <div className="ag-field">
+                            <label htmlFor="age1">מגיל</label>
+                            <input
+                                id="age1"
+                                type="number"
+                                min="0"
+                                value={age1}
+                                onChange={(e) => handleInputChange(setAge1, e.target.value)}
+                            />
+                        </div>
+                        <div className="ag-field">
+                            <label htmlFor="age2">עד גיל</label>
+                            <input
+                                id="age2"
+                                type="number"
+                                min="0"
+                                value={age2}
+                                onChange={(e) => handleInputChange(setAge2, e.target.value)}
+                            />
+                        </div>
+                    </div>
 
-                {/* צבע */}
-                <label htmlFor="color">צבע</label>
-                <input
-                    id="color"
-                    type="text"
-                    value={color}
-                    onChange={(e) => handleInputChange(setColor, e.target.value)}
-                />
+                    <div className="ag-field">
+                        <label htmlFor="relationship">למי מיועד</label>
+                        <select
+                            id="relationship"
+                            value={relationship}
+                            onChange={(e) => handleInputChange(setRelationship, e.target.value)}
+                        >
+                            <option value="">בחרי קשר</option>
+                            {relationships.map((item) => (
+                                <option key={item._id} value={item._id}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </fieldset>
 
-                {/* מחיר */}
-                <label htmlFor="price">מחיר</label>
-                <input
-                    id="price"
-                    type="number"
-                    min="0"
-                    value={price}
-                    onChange={(e) => handleInputChange(setPrice, e.target.value)}
-                />
+                {/* ----- קטגוריה, אירוע וסגנון ----- */}
+                <fieldset className="ag-section">
+                    <legend className="ag-legend"><span>3</span>קטגוריה, אירוע וסגנון</legend>
 
-                {/* תמונה - בחירת קובץ */}
-                <label htmlFor="image">החלפת תמונה (אופציונלי)</label>
-                <input
-                    id="image"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                            handleInputChange(setImageFile, e.target.files[0])
-                        }
-                    }}
-                />
+                    <div className="ag-row">
+                        <div className="ag-field">
+                            <label htmlFor="category">קטגוריה</label>
+                            <select
+                                id="category"
+                                value={category}
+                                onChange={(e) => handleInputChange(setCategory, e.target.value)}
+                            >
+                                <option value="">בחרי קטגוריה</option>
+                                {categories.map((item) => (
+                                    <option key={item._id} value={item._id}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="ag-field">
+                            <label htmlFor="event">אירוע</label>
+                            <select
+                                id="event"
+                                value={event}
+                                onChange={(e) => handleInputChange(setEvent, e.target.value)}
+                            >
+                                <option value="">בחרי אירוע</option>
+                                {events.map((item) => (
+                                    <option key={item._id} value={item._id}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
 
-                {/* תיאור */}
-                <label htmlFor="description">תיאור המתנה</label>
-                <textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => handleInputChange(setDescription, e.target.value)}
-                />
+                    <div className="ag-field">
+                        <span className="ag-label">סגנונות <small>אפשר לבחור כמה</small></span>
+                        <div className="ag-choices">
+                            {availableStyles.map((style) => (
+                                <label key={style} className={`ag-choice ${styles.includes(style) ? "ag-choice--on" : ""}`}>
+                                    <input
+                                        type="checkbox"
+                                        checked={styles.includes(style)}
+                                        onChange={() => handleStyleChange(style)}
+                                    />
+                                    {style}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
 
-                {/* הקדשה אישית */}
-                <div>
-                    <label htmlFor="dedication">
+                    <label className="qz-switch" htmlFor="dedication">
                         <input
                             id="dedication"
                             type="checkbox"
                             checked={dedicationPersonalization}
                             onChange={(e) => setDedicationPersonalization(e.target.checked)}
                         />
-                        אפשרות להקדשה אישית
+                        <span className="qz-switch__track" aria-hidden="true"><span className="qz-switch__thumb" /></span>
+                        <span className="qz-switch__text">אפשרות להקדשה אישית</span>
                     </label>
-                </div>
+                </fieldset>
 
-                {/* סגנונות */}
-                <div>
-                    <label>סגנונות:</label>
-                    {availableStyles.map((style) => (
-                        <label key={style} style={{ marginLeft: '10px' }}>
+                {/* ----- מחיר וצבע ----- */}
+                <fieldset className="ag-section">
+                    <legend className="ag-legend"><span>4</span>מחיר וצבע</legend>
+
+                    <div className="ag-row">
+                        <div className="ag-field">
+                            <label htmlFor="price">מחיר</label>
+                            <div className="ag-price">
+                                <span aria-hidden="true">₪</span>
+                                <input
+                                    id="price"
+                                    type="number"
+                                    min="0"
+                                    value={price}
+                                    onChange={(e) => handleInputChange(setPrice, e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="ag-field">
+                            <label htmlFor="color">צבע</label>
                             <input
-                                type="checkbox"
-                                checked={styles.includes(style)}
-                                onChange={() => handleStyleChange(style)}
+                                id="color"
+                                type="text"
+                                value={color}
+                                onChange={(e) => handleInputChange(setColor, e.target.value)}
                             />
-                            {style}
-                        </label>
-                    ))}
-                </div>
+                        </div>
+                    </div>
+                </fieldset>
 
                 {errorMessage && (
-                    <p style={{ color: 'red' }}>
+                    <p className="pg-error" role="alert">
                         {errorMessage}
                     </p>
                 )}
 
-                <button type="submit">שמירת שינויים</button>
+                <button type="submit" className="ag-submit">שמירת שינויים</button>
 
             </form>
         </div>

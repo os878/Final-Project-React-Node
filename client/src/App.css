@@ -2144,14 +2144,12 @@ label {
 .pg-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  align-items: stretch;
   gap: 22px;
 }
 
 .pg-card {
   display: flex;
   flex-direction: column;
-  height: 100%;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 22px;
@@ -2168,30 +2166,22 @@ label {
 /* תמונה */
 .pg-card__media {
   position: relative;
-  width: 100%;
   aspect-ratio: 4 / 3;
-  overflow: hidden;
   background: var(--tint);
-  flex-shrink: 0;
 }
 
 .pg-card__img {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
-  padding: 12px;
-  box-sizing: border-box;
+  object-fit: cover;
 }
 
 .pg-card__placeholder {
-  position: absolute;
-  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
   color: var(--spark);
 }
 
@@ -2203,7 +2193,6 @@ label {
 /* אחוז התאמה */
 .pg-card__score {
   position: absolute;
-  z-index: 1;
   top: 12px;
   right: 12px;
   padding: 5px 12px;
@@ -2218,7 +2207,6 @@ label {
 /* כפתור מועדפים */
 .pg-fav {
   position: absolute;
-  z-index: 1;
   top: 10px;
   left: 10px;
   display: inline-flex;
@@ -2258,10 +2246,6 @@ label {
 }
 
 .pg-card__title {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   color: var(--navy);
   font-size: 19px;
   font-weight: 700;
@@ -2273,7 +2257,6 @@ label {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: calc(1.6em * 3);
   color: var(--navy-soft);
   font-size: 15px;
   line-height: 1.6;
@@ -2436,7 +2419,6 @@ label {
 }
 
 .gd-media {
-  position: relative;
   overflow: hidden;
   aspect-ratio: 1;
   border-radius: 20px;
@@ -2444,13 +2426,9 @@ label {
 }
 
 .gd-media__img {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 16px;
-  box-sizing: border-box;
+  object-fit: cover;
 }
 
 .gd-media__placeholder {
@@ -2830,6 +2808,9 @@ label {
     padding: 18px;
   }
 
+  .gd-media {
+    aspect-ratio: 4 / 3;
+  }
 }
 
 @media (max-width: 560px) {
@@ -3104,7 +3085,6 @@ label {
 .sg-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  align-items: stretch;
   gap: 22px;
 }
 
@@ -3381,10 +3361,7 @@ label {
 }
 
 .ag-upload__img {
-  object-fit: contain;
-  background: var(--tint);
-  padding: 4px;
-  box-sizing: border-box;
+  object-fit: cover;
 }
 
 .ag-upload__icon {
@@ -3798,241 +3775,380 @@ a.iq-contact--pref:hover {
   }
 }
 
-/* ========== הודעות ואישורים (ui) ========== */
-.ui-toast-stack {
-  position: fixed;
-  z-index: 2000;
-  top: 20px;
-  left: 50%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: min(420px, calc(100vw - 24px));
-  transform: translateX(-50%);
-  direction: rtl;
-  pointer-events: none;
-}
-
-.ui-toast {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 64px;
-  padding: 14px 16px;
-  overflow: hidden;
+/* ========== טפסים כלליים (fm) – הוספת מנהל, כניסת מנהל, עריכת לקוח/ספק ========== */
+.fm {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px clamp(20px, 4vw, 40px) 36px;
   border: 1px solid var(--line);
-  border-right: 4px solid var(--navy);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--white);
-  box-shadow: 0 12px 32px rgba(42, 26, 20, .14), 0 3px 8px rgba(42, 26, 20, .06);
-  color: var(--navy);
-  animation: ui-toast-in .24s ease-out both;
-  pointer-events: auto;
+  box-shadow: 0 18px 44px rgba(42, 26, 20, .06);
 }
 
-.ui-toast--success {
-  border-right-color: #2E8B57;
+.fm--narrow {
+  max-width: 440px;
 }
 
-.ui-toast--error {
-  border-right-color: var(--orange);
-}
-
-.ui-toast--info {
-  border-right-color: var(--navy);
-}
-
-.ui-toast__icon {
-  flex: 0 0 22px;
-  width: 22px;
-  height: 22px;
-  color: var(--navy);
-}
-
-.ui-toast--success .ui-toast__icon {
-  color: #2E8B57;
-}
-
-.ui-toast--error .ui-toast__icon {
-  color: var(--orange);
-}
-
-.ui-toast__message {
-  flex: 1;
-  margin: 0;
-  color: var(--navy);
-  font-family: 'Assistant', sans-serif;
-  font-size: 16px;
-  line-height: 1.45;
-}
-
-.ui-toast__close {
-  display: inline-flex;
-  flex: 0 0 36px;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
+/* בתוך חלון עריכה: בלי כרטיס כפול ובלי כותרת כפולה */
+.gd-dialog .fm {
+  max-width: none;
   padding: 0;
   border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--navy-soft);
-  font-size: 17px;
-  cursor: pointer;
+  box-shadow: none;
 }
 
-.ui-toast__close:hover {
-  background: var(--tint);
-  color: var(--navy);
+.gd-dialog .fm-head {
+  display: none;
 }
 
-.ui-toast__close:focus-visible,
-.ui-modal button:focus-visible {
-  outline: 3px solid var(--spark);
-  outline-offset: 2px;
+.fm-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
-@keyframes ui-toast-in {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.ui-modal-overlay {
-  position: fixed;
-  z-index: 2100;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: rgba(42, 26, 20, .45);
-  backdrop-filter: blur(3px);
-}
-
-.ui-modal {
-  width: min(100%, 420px);
-  padding: 28px;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  background: var(--white);
-  box-shadow: 0 24px 70px rgba(42, 26, 20, .22);
+.fm-head--center {
+  flex-direction: column;
   text-align: center;
 }
 
-.ui-modal__icon {
+.fm-icon {
   display: inline-flex;
+  flex: 0 0 56px;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 54px;
-  margin-bottom: 16px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--navy) 9%, transparent);
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--navy);
+  color: var(--spark);
+}
+
+.fm-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.fm-title {
   color: var(--navy);
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 800;
 }
 
-.ui-modal__icon svg {
-  width: 26px;
-  height: 26px;
+.fm-sub {
+  margin-top: 4px;
+  color: var(--navy-soft);
+  font-size: 15px;
 }
 
-.ui-modal__icon--danger {
-  background: color-mix(in srgb, var(--orange) 12%, transparent);
+.fm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.fm--narrow .fm-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.fm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fm-field label {
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fm input {
+  background: var(--cream);
+}
+
+.fm input:focus {
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(122, 31, 43, .1);
+}
+
+.fm input[type="tel"] {
+  text-align: right;
+}
+
+/* דף מלא (כניסת מנהל – מחוץ ל-Layout) */
+.fm-page {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--cream);
+}
+
+/* ========== כרטיסי לקוחות וספקים אצל המנהל (ad) ========== */
+.ad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.ad-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--white);
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.ad-card:hover {
+  border-color: var(--spark);
+  box-shadow: 0 14px 30px rgba(42, 26, 20, .07);
+}
+
+.ad-card__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ad-avatar {
+  display: inline-flex;
+  flex: 0 0 48px;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--spark);
+  font-family: 'Rubik', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.ad-card__head {
+  min-width: 0;
+}
+
+.ad-card__name {
+  overflow: hidden;
+  color: var(--navy);
+  font-size: 19px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ad-card__sub {
+  color: var(--navy-soft);
+  font-size: 14px;
+}
+
+.ad-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+.ad-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--navy);
+  font-size: 15px;
+}
+
+.ad-row > bdi,
+.ad-row > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ad-row__icon {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
   color: var(--orange);
 }
 
-.ui-modal__title {
+.ad-row__label {
+  flex: 0 0 auto;
+  color: var(--navy-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ad-row__label::after {
+  content: ":";
+}
+
+.ad-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.ad-card__actions .sgi-btn:first-child {
+  flex: 1;
+}
+
+/* פרטי מתנה אצל המנהל */
+.ad-specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  margin: 4px 0 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--cream);
+}
+
+.ad-specs dt {
+  color: var(--navy-soft);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ad-specs dd {
   margin: 0;
   color: var(--navy);
-  font-family: 'Rubik', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1.3;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.ui-modal__message {
-  margin: 10px 0 24px;
-  color: var(--navy-soft);
-  font-family: 'Assistant', sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
+.ad-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.ui-modal__actions {
+/* ========== ניהול ותחזוקה (mm) ========== */
+.mm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.mm-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--white);
+  box-shadow: 0 14px 34px rgba(42, 26, 20, .05);
+}
+
+.mm-add {
   display: flex;
   gap: 10px;
 }
 
-.ui-modal__actions button {
+.mm-add input,
+.mm-edit input {
   flex: 1;
   min-height: 48px;
-  padding: 10px 20px;
+  background: var(--cream);
+}
+
+.mm-add__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 8px 22px;
+  border: 0;
   border-radius: 999px;
+  background: var(--orange);
+  color: var(--white);
   font-family: 'Rubik', sans-serif;
   font-size: 16px;
   font-weight: 700;
-  cursor: pointer;
-  transition: background .2s, color .2s, border-color .2s, transform .2s;
 }
 
-.ui-modal__confirm {
-  border: 1.5px solid var(--navy);
+.mm-add__btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mm-add__btn:hover {
+  background: var(--orange-dark);
+}
+
+.mm-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.mm-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 64px;
+  padding: 8px 4px;
+  border-top: 1px solid var(--line);
+}
+
+.mm-item__name {
+  color: var(--navy);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.mm-edit {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+}
+
+.mm-save {
+  border-color: var(--navy);
   background: var(--navy);
   color: var(--white);
 }
 
-.ui-modal__confirm:hover {
-  background: var(--navy-soft);
-  border-color: var(--navy-soft);
+.mm-state {
+  padding: 18px 4px;
+  color: var(--navy-soft);
+  text-align: center;
 }
 
-.ui-modal__confirm--danger {
-  border-color: var(--orange);
-  background: var(--orange);
-}
-
-.ui-modal__confirm--danger:hover {
-  border-color: var(--orange-dark);
-  background: var(--orange-dark);
-}
-
-.ui-modal__cancel {
-  border: 1.5px solid var(--line);
-  background: var(--white);
-  color: var(--navy);
-}
-
-.ui-modal__cancel:hover {
-  border-color: var(--navy-soft);
-  background: var(--tint);
-}
-
-@media (max-width: 559px) {
-  .ui-toast-stack {
-    right: 12px;
-    left: 12px;
-    width: auto;
-    transform: none;
+@media (max-width: 640px) {
+  .fm-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .ui-modal__actions {
+  .mm-add {
     flex-direction: column;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .ui-toast {
-    animation: none;
+  .mm-edit {
+    flex-wrap: wrap;
   }
 
-  .ui-modal__actions button {
-    transition: none;
+  .mm-edit input {
+    flex-basis: 100%;
   }
 }

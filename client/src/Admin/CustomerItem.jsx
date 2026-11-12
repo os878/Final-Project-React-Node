@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFeedback } from '../common/Feedback';
+import { EditIcon, TrashIcon, MailIcon, PhoneIcon, UserIcon, StoreIcon } from '../common/Icons';
 
 const CustomerItem = ({ customer, onDelete, onEdit }) => {
     const { toast, confirm } = useFeedback();
@@ -38,30 +39,31 @@ const CustomerItem = ({ customer, onDelete, onEdit }) => {
     };
 
     return (
-        <div
-            className="customer-item"
-            style={{
-                border: '1px solid #ccc',
-                padding: '15px',
-                marginBottom: '15px',
-                borderRadius: '8px'
-            }}
-        >
-            <h3>{customer.name}</h3>
+        <article className="ad-card customer-item">
+            <div className="ad-card__top">
+                <span className="ad-avatar" aria-hidden="true">{(customer.name || '?').trim().charAt(0)}</span>
+                <div className="ad-card__head">
+                    <h3 className="ad-card__name">{customer.name}</h3>
+                    <span className="ad-card__sub">לקוח</span>
+                </div>
+            </div>
 
-            <p><strong>שם משתמש:</strong> {customer.username}</p>
-            <p><strong>אימייל:</strong> {customer.email}</p>
-            <p><strong>טלפון:</strong> {customer.phone}</p>
+            <ul className="ad-rows">
+                <li className="ad-row"><UserIcon className="ad-row__icon" /><span className="ad-row__label">שם משתמש</span><bdi>{customer.username}</bdi></li>
+                <li className="ad-row"><MailIcon className="ad-row__icon" /><span className="ad-row__label">אימייל</span><bdi>{customer.email}</bdi></li>
+                <li className="ad-row"><PhoneIcon className="ad-row__icon" /><span className="ad-row__label">טלפון</span><bdi>{customer.phone}</bdi></li>
+            </ul>
 
-            <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-                <button onClick={() => onEdit(customer)}>
+            <div className="ad-card__actions">
+                <button type="button" className="sgi-btn" onClick={() => onEdit(customer)}>
+                    <EditIcon />
                     עריכה
                 </button>
-                <button onClick={handleDelete}>
-                    מחיקה
+                <button type="button" className="sgi-btn sgi-btn--danger" onClick={handleDelete} aria-label={`מחיקת ${customer.name}`}>
+                    <TrashIcon />
                 </button>
             </div>
-        </div>
+        </article>
     );
 };
 

@@ -112,19 +112,23 @@ const AdminDetails = () => {
 
     // אם הפרטים עדיין נטענים, מציגים הודעה
     if (isLoading) {
-        return <p>טוען פרטי מנהל...</p>;
+        return <p className="gd-state" role="status">טוען פרטי מנהל…</p>;
     }
 
     // אם הטעינה הסתיימה אבל לא התקבלו פרטי מנהל
     if (!admin) {
-        return <p>לא ניתן לטעון את פרטי המנהל.</p>;
+        return <p className="gd-state gd-state--error" role="alert">לא ניתן לטעון את פרטי המנהל.</p>;
     }
 
     return (
-        <>
+        <section className="pd" dir="rtl">
             {/* כותרת וכפתורים לעריכה או לשמירה */}
             <div className="header-section">
-                <h2>פרטי מנהל</h2>
+                <span className="pd-avatar" aria-hidden="true">{(admin.name || '?').trim().charAt(0)}</span>
+                <div className="pd-title">
+                    <h2>פרטי מנהל</h2>
+                    <p>{isEditing ? 'עורכים את הפרטים. אל תשכחו לשמור.' : 'פרטי החשבון שלך'}</p>
+                </div>
 
                 {isEditing ? (
                     <div className="button-group">
@@ -165,13 +169,16 @@ const AdminDetails = () => {
                 )}
             </div>
 
+            <div className="pd-fields">
+
             {/* שדה שם המנהל */}
             <div className="field-group">
-                <label>שם המנהל:</label>
+                <label htmlFor="adName">שם המנהל:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="text"
+                            id="adName"
                             name="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -184,11 +191,12 @@ const AdminDetails = () => {
 
             {/* שדה שם המשתמש */}
             <div className="field-group">
-                <label>שם משתמש:</label>
+                <label htmlFor="adUsername">שם משתמש:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="text"
+                            id="adUsername"
                             name="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -201,11 +209,12 @@ const AdminDetails = () => {
 
             {/* שדה כתובת הדואר האלקטרוני */}
             <div className="field-group">
-                <label>דואר אלקטרוני:</label>
+                <label htmlFor="adEmail">דואר אלקטרוני:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="email"
+                            id="adEmail"
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -218,11 +227,12 @@ const AdminDetails = () => {
 
             {/* שדה מספר הטלפון */}
             <div className="field-group">
-                <label>טלפון:</label>
+                <label htmlFor="adPhone">טלפון:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="tel"
+                            id="adPhone"
                             name="phone"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
@@ -232,7 +242,9 @@ const AdminDetails = () => {
                     )}
                 </div>
             </div>
-        </>
+
+            </div>
+        </section>
     );
 };
 

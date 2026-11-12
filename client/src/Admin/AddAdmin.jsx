@@ -5,6 +5,8 @@ import { useFeedback } from '../common/Feedback';
 
 const AddAdmin = () => {
     const { toast } = useFeedback();
+    // תיקון: navigate היה בשימוש בלי שהוגדר, ולכן ההרשמה נכשלה אחרי ההצלחה
+    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [password1, setPassword1] = useState("");
@@ -76,64 +78,78 @@ const AddAdmin = () => {
         }
     };
     return (
-        <div>
-            <form onSubmit={submitForm1}>
+        <div className="fm" dir="rtl">
+            <div className="fm-head">
+                <span className="fm-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z" /><path d="M12 9v6M9 12h6" /></svg>
+                </span>
+                <div>
+                    <h1 className="fm-title">הוספת מנהל</h1>
+                    <p className="fm-sub">המנהל החדש יקבל גישה מלאה ללוח הניהול.</p>
+                </div>
+            </div>
 
-                <label htmlFor="inputName">שם מלא</label>
-                <input
-                    onChange={(e) => handleInputChange(setName, e.target.value)}
-                    type="text"
-                    id="inputName"
-                />
+            <form className="fm-form" onSubmit={submitForm1}>
+                <div className="fm-grid">
+                    <div className="fm-field">
+                        <label htmlFor="inputName">שם מלא</label>
+                        <input
+                            onChange={(e) => handleInputChange(setName, e.target.value)}
+                            type="text"
+                            id="inputName"
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="inputUsername">שם משתמש</label>
+                        <input
+                            onChange={(e) => handleInputChange(setUsername, e.target.value)}
+                            type="text"
+                            id="inputUsername"
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="inputPhone">טלפון</label>
+                        <input
+                            onChange={(e) => handleInputChange(setPhone, e.target.value)}
+                            type="tel"
+                            id="inputPhone"
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="inputEmail">אימייל</label>
+                        <input
+                            onChange={(e) => handleInputChange(setEmail, e.target.value)}
+                            type="email"
+                            id="inputEmail" placeholder="Your@gmail.com"
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="inputPassword">סיסמה</label>
+                        <input
+                            onChange={(e) => handleInputChange(setPassword1, e.target.value)}
+                            type="password"
+                            id="inputPassword" placeholder="******"
+                        />
+                    </div>
+                    <div className="fm-field">
+                        <label htmlFor="inputRealPassword">אימות סיסמה</label>
+                        <input
+                            onChange={(e) => handleInputChange(setPassword2, e.target.value)}
+                            type="password"
+                            id="inputRealPassword" placeholder="******"
+                        />
+                    </div>
+                </div>
 
-                <label htmlFor="inputUsername">שם משתמש</label>
-                <input
-                    onChange={(e) => handleInputChange(setUsername, e.target.value)}
-                    type="text"
-                    id="inputUsername"
-                />
+                {errorMessage && <p className="pg-error" role="alert">{errorMessage}</p>}
 
-                <label htmlFor="inputPhone">טלפון</label>
-                <input
-                    onChange={(e) => handleInputChange(setPhone, e.target.value)}
-                    type="text"
-                    id="inputPhone"
-                />
-
-                <label htmlFor="inputEmail">אימייל</label>
-                <input
-                    onChange={(e) => handleInputChange(setEmail, e.target.value)}
-                    type="text"
-                    id="inputEmail"
-                    placeholder="Your@gmail.com"
-                />
-
-                <label htmlFor="inputPassword">סיסמה</label>
-                <input
-                    onChange={(e) => handleInputChange(setPassword1, e.target.value)}
-                    type="password"
-                    id="inputPassword"
-                    placeholder="******"
-                />
-
-                <label htmlFor="inputRealPassword">אימות סיסמה</label>
-                <input
-                    onChange={(e) => handleInputChange(setPassword2, e.target.value)}
-                    type="password"
-                    id="inputRealPassword"
-                    placeholder="******"
-                />
-
-                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-
-                <button type="submit" id="submitSighn">
-                    אישור
+                <button type="submit" id="submitSighn" className="ag-submit">
+                    הוספת מנהל
                 </button>
 
             </form>
         </div>
     )
-
 
 }
 export default AddAdmin

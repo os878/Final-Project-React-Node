@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import CustomerItem from './CustomerItem';
 import UpdateCustomer from './UpdateCustomer';
+import { CloseIcon } from '../common/Icons';
 
 const AllCustomers = () => {
     // מערך הלקוחות שנקבל מהשרת
@@ -72,50 +73,45 @@ const AllCustomers = () => {
     };
 
     return (
-        <div>
-            <h1>ניהול לקוחות</h1>
+        <section className="sg" dir="rtl">
+            <header className="sg-head">
+                <div>
+                    <p className="pg-eyebrow">לוח ניהול</p>
+                    <h1 className="pg-title">ניהול לקוחות</h1>
+                    <p className="pg-sub">{customers.length > 0 ? `${customers.length} לקוחות רשומים באתר` : 'אין עדיין לקוחות להצגה'}</p>
+                </div>
+            </header>
 
             {/* הצגת הודעת שגיאה */}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p className="pg-error" role="alert">{error}</p>}
 
-            {/* מעבר על כל הלקוחות והצגתם */}
-            {customers.map((customer) => (
-                <CustomerItem
-                    key={customer._id}
-                    customer={customer}
-                    onDelete={removeCustomer}
-                    onEdit={openEdit}
-                />
-            ))}
+            {/* מעבר על כל הפריטים והצגתם */}
+            {customers.length > 0 && (
+                <div className="ad-grid">
+                    {customers.map((customer) => (
+                        <CustomerItem
+                            key={customer._id}
+                            customer={customer}
+                            onDelete={removeCustomer}
+                            onEdit={openEdit}
+                        />
+                    ))}
+                </div>
+            )}
 
-            {/* חלון מודאלי לעריכת לקוח */}
+            {/* חלון עריכה */}
             {isEditOpen && selectedCustomer && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        zIndex: 1000
-                    }}
-                >
-                    <div
-                        style={{
-                            backgroundColor: 'white',
-                            padding: '20px',
-                            borderRadius: '8px',
-                            maxHeight: '90vh',
-                            overflowY: 'auto',
-                            width: '500px',
-                            maxWidth: '90%'
-                        }}
-                    >
-                        <button onClick={closeEdit}>סגירה ✕</button>
+                <div className="gd-overlay" onClick={closeEdit}>
+                    <div className="gd-dialog" role="dialog" aria-modal="true" aria-label="עריכת פרטי לקוח" onClick={(e) => e.stopPropagation()}>
+                        <div className="gd-dialog__head">
+                            <div>
+                                <h2 className="gd-dialog__title">עריכת פרטי לקוח</h2>
+                                <p className="gd-dialog__sub">{selectedCustomer.name}</p>
+                            </div>
+                            <button type="button" className="gd-dialog__close" onClick={closeEdit} aria-label="סגירה">
+                                <CloseIcon />
+                            </button>
+                        </div>
 
                         <UpdateCustomer
                             customer={selectedCustomer}
@@ -125,11 +121,13 @@ const AllCustomers = () => {
                 </div>
             )}
 
-            {/* הודעה אם אין לקוחות להצגה */}
+            {/* הודעה אם אין מה להציג */}
             {customers.length === 0 && !error && (
-                <p>אין עדיין לקוחות להצגה</p>
+                <div className="pg-empty">
+                    <h2>אין עדיין לקוחות להצגה</h2>
+                </div>
             )}
-        </div>
+        </section>
     );
 };
 
