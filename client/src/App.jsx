@@ -28,6 +28,7 @@ import SupplierInquiries from './Supplier/SupplierInquiries'
 import MaintenanceManager from './Admin/MaintenanceManager'
 import AuthPage from './common/AuthPage';
 
+import LandingPage from './LandingPage'
 function App() {
 
   return (
@@ -36,7 +37,9 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
+              <Route index element={<LandingPage />} />
+              <Route path="/HomePage" element={<HomePage />} />
+              <Route path="/LandingPage" element={<LandingPage />} />
               <Route path="/admin-entry-details" element={<LoginAdmin />} />
               <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
               <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
