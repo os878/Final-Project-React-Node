@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 
 // לאן הכפתורים מובילים
-const START_ROUTE = '/HomePage';
-const SUPPLIER_ROUTE = '/SupplierSignup'; // להחליף לנתיב של טופס ההרשמה לספקים
+const START_ROUTE = '/login';
+// הנתיב של דף הכניסה (AuthPage) כפי שמוגדר ב-App.jsx
+const AUTH_ROUTE = '/login';
+// פותח את דף הכניסה ישר על "הרשמה" עם "הרשמה כספק" מסומן
+const SUPPLIER_ROUTE = `/login?mode=register&role=supplier`;
 
 /* ---------- לוגו ---------- */
 
