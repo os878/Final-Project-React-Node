@@ -1,0 +1,142 @@
+/* מרכוז כללי של הדף */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+    direction: rtl;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* כרטיס הטופס המרכזי */
+.auth-card {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eaeaea;
+}
+
+/* לשוניות עליונות (התחברות / הרשמה) */
+.auth-tabs {
+    display: flex;
+    background-color: #f1f3f5;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.auth-tab.active {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* מתג בחירת תפקיד בהרשמה (לקוח / ספק) */
+.role-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.role-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    background-color: #ffffff;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.role-btn.active {
+    border-color: #2b5876;
+    background-color: #f0f4f8;
+    color: #2b5876;
+    font-weight: 600;
+}
+
+/* מבנה הטופס והשדות */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: right;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #343a40;
+}
+
+.form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 14px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #2b5876;
+    box-shadow: 0 0 0 3px rgba(43, 88, 118, 0.12);
+}
+
+/* הודעת שגיאה */
+.auth-error {
+    color: #d9534f;
+    background-color: #fdf2f2;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin: 4px 0;
+}
+
+/* כפתור שליחה ראשי */
+.auth-submit-btn {
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #2b5876;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.auth-submit-btn:hover {
+    background-color: #1e3f56;
+}
