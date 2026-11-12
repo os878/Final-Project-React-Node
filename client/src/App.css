@@ -4152,3 +4152,233 @@ a.iq-contact--pref:hover {
     flex-basis: 100%;
   }
 }
+/* ========== הודעות ואישורים (ui) – common/Feedback.jsx ========== */
+/* הודעות קופצות */
+.ui-toasts {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(420px, calc(100% - 24px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.ui-toast {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 14px 14px 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 16px 36px rgba(42, 26, 20, .14);
+  pointer-events: auto;
+  animation: ui-toast-in .25s ease;
+}
+
+/* פס צבע בצד ימין */
+.ui-toast::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--ui-color);
+}
+
+.ui-toast--success { --ui-color: #2E8B57; }
+.ui-toast--error { --ui-color: var(--orange); }
+.ui-toast--info { --ui-color: var(--navy); }
+
+@keyframes ui-toast-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.ui-toast__icon {
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  margin-right: 4px;
+  color: var(--ui-color);
+}
+
+.ui-toast__icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.ui-toast__text {
+  flex: 1;
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.ui-toast__close {
+  display: inline-flex;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--navy-soft);
+}
+
+.ui-toast__close:hover {
+  background: var(--tint);
+}
+
+.ui-toast__close svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* חלון אישור */
+.ui-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(42, 26, 20, .45);
+  backdrop-filter: blur(3px);
+  animation: ui-fade .2s ease;
+}
+
+@keyframes ui-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ui-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 30px 28px 26px;
+  border-radius: 24px;
+  background: var(--white);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, .25);
+  text-align: center;
+  animation: ui-pop .22s ease;
+}
+
+@keyframes ui-pop {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.ui-dialog__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--tint);
+  color: var(--navy);
+}
+
+.ui-dialog__icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.ui-dialog__icon--danger {
+  background: rgba(122, 31, 43, .1);
+  color: var(--orange);
+}
+
+.ui-dialog__title {
+  color: var(--navy);
+  font-family: 'Rubik', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.ui-dialog__text {
+  margin-top: 8px;
+  color: var(--navy-soft);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ui-dialog__actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.ui-btn {
+  flex: 1;
+  min-height: 48px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background .15s, border-color .15s;
+}
+
+.ui-btn--danger {
+  border: 0;
+  background: var(--orange);
+  color: var(--white);
+}
+
+.ui-btn--danger:hover {
+  background: var(--orange-dark);
+}
+
+.ui-btn--main {
+  border: 0;
+  background: var(--navy);
+  color: var(--white);
+}
+
+.ui-btn--main:hover {
+  background: #140C09;
+}
+
+.ui-btn--ghost {
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  color: var(--navy);
+}
+
+.ui-btn--ghost:hover {
+  border-color: var(--navy-soft);
+}
+
+@media (max-width: 560px) {
+  .ui-dialog__actions {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-toast,
+  .ui-overlay,
+  .ui-dialog {
+    animation: none;
+  }
+}

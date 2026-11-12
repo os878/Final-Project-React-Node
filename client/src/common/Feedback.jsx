@@ -1,173 +1,122 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
+// ===== מערכת הודעות ואישורים לכל האתר =====
+// שימוש בכל קומפוננטה:
+//   const { toast, confirm } = useFeedback();
+//   toast('נשמר בהצלחה!', 'success')            // 'success' | 'error' | 'info'
+//   const ok = await confirm({ title, message, confirmText, cancelText, danger: true });
+
 const FeedbackContext = createContext(null);
 
-const FeedbackIcon = ({ type, className = '' }) => {
-    if (type === 'success') {
-        return (
-            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <path d="m8 12 2.5 2.5L16 9" />
-            </svg>
-        );
-    }
-
-    if (type === 'error') {
-        return (
-            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 8v4m0 4h.01" />
-            </svg>
-        );
-    }
-
-    return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 11v5m0-8h.01" />
-        </svg>
-    );
+const Svg = ({ children }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {children}
+    </svg>
+);
+const ICONS = {
+    success: <Svg><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.7 2.7L16 9.8" /></Svg>,
+    error: <Svg><circle cx="12" cy="12" r="9" /><path d="M12 7.5v5.5M12 16.5h.01" /></Svg>,
+    info: <Svg><circle cx="12" cy="12" r="9" /><path d="M12 11v5.5M12 7.5h.01" /></Svg>,
+    danger: <Svg><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></Svg>,
+    question: <Svg><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.2M12 16.5h.01" /></Svg>,
+    close: <Svg><path d="M6 6l12 12M18 6 6 18" /></Svg>,
 };
+
+let nextId = 1;
 
 export const FeedbackProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
-    const [dialog, setDialog] = useState(null);
-    const timersRef = useRef(new Map());
-    const nextToastIdRef = useRef(0);
-    const confirmResolverRef = useRef(null);
-    const cancelButtonRef = useRef(null);
-    const previousFocusRef = useRef(null);
-    const dialogWasOpenRef = useRef(false);
+    const [dialog, setDialog] = useState(null); // { title, message, confirmText, cancelText, danger, resolve }
+    const cancelRef = useRef(null);
+    const lastFocusRef = useRef(null);
 
+    // ---------- הודעות קופצות ----------
     const removeToast = useCallback((id) => {
-        const timer = timersRef.current.get(id);
-        if (timer) {
-            clearTimeout(timer);
-            timersRef.current.delete(id);
-        }
-        setToasts((currentToasts) => currentToasts.filter((item) => item.id !== id));
+        setToasts((list) => list.filter((t) => t.id !== id));
     }, []);
 
     const toast = useCallback((message, type = 'success') => {
-        const id = nextToastIdRef.current++;
-        setToasts((currentToasts) => [...currentToasts, { id, message, type }]);
-        const timer = setTimeout(() => removeToast(id), 3500);
-        timersRef.current.set(id, timer);
+        const id = nextId++;
+        setToasts((list) => [...list, { id, message, type }]);
+        setTimeout(() => removeToast(id), 3500);
     }, [removeToast]);
 
-    const finishConfirm = useCallback((confirmed) => {
-        const resolve = confirmResolverRef.current;
-        confirmResolverRef.current = null;
+    // ---------- חלון אישור ----------
+    const confirm = useCallback((options = {}) => {
+        lastFocusRef.current = document.activeElement;
+        return new Promise((resolve) => {
+            setDialog({
+                title: options.title || 'אישור פעולה',
+                message: options.message || '',
+                confirmText: options.confirmText || 'אישור',
+                cancelText: options.cancelText || 'ביטול',
+                danger: Boolean(options.danger),
+                resolve,
+            });
+        });
+    }, []);
+
+    const closeDialog = (result) => {
+        if (dialog) dialog.resolve(result);
         setDialog(null);
-        if (resolve) resolve(confirmed);
-    }, []);
-
-    const confirm = useCallback(({
-        title = 'אישור',
-        message = '',
-        confirmText = 'אישור',
-        cancelText = 'ביטול',
-        danger = false
-    } = {}) => new Promise((resolve) => {
-        if (confirmResolverRef.current) {
-            confirmResolverRef.current(false);
-        } else {
-            previousFocusRef.current = document.activeElement;
-        }
-        confirmResolverRef.current = resolve;
-        setDialog({ title, message, confirmText, cancelText, danger });
-    }), []);
-
-    useEffect(() => {
-        if (dialog) {
-            dialogWasOpenRef.current = true;
-            cancelButtonRef.current?.focus();
-            return;
-        }
-
-        if (dialogWasOpenRef.current) {
-            dialogWasOpenRef.current = false;
-            const previousElement = previousFocusRef.current;
-            previousFocusRef.current = null;
-            previousElement?.focus?.();
-        }
-    }, [dialog]);
-
-    useEffect(() => () => {
-        timersRef.current.forEach((timer) => clearTimeout(timer));
-        timersRef.current.clear();
-        if (confirmResolverRef.current) {
-            confirmResolverRef.current(false);
-            confirmResolverRef.current = null;
-        }
-    }, []);
-
-    const handleDialogKeyDown = (event) => {
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            finishConfirm(false);
-        }
+        // החזרת הפוקוס לכפתור שפתח את החלון
+        if (lastFocusRef.current && lastFocusRef.current.focus) lastFocusRef.current.focus();
     };
+
+    // כשהחלון נפתח – הפוקוס עובר ל"ביטול" (הבחירה הבטוחה)
+    useEffect(() => {
+        if (dialog && cancelRef.current) cancelRef.current.focus();
+    }, [dialog]);
 
     return (
         <FeedbackContext.Provider value={{ toast, confirm }}>
             {children}
-            <div className="ui-toast-stack" role="status" aria-live="polite">
-                {toasts.map(({ id, message, type }) => (
+
+            {/* הודעות קופצות */}
+            <div className="ui-toasts" dir="rtl">
+                {toasts.map((t) => (
                     <div
-                        key={id}
-                        className={`ui-toast ui-toast--${type}`}
-                        role={type === 'error' ? 'alert' : undefined}
+                        key={t.id}
+                        className={`ui-toast ui-toast--${t.type}`}
+                        role={t.type === 'error' ? 'alert' : 'status'}
+                        aria-live={t.type === 'error' ? 'assertive' : 'polite'}
                     >
-                        <FeedbackIcon type={type} className="ui-toast__icon" />
-                        <p className="ui-toast__message">{message}</p>
-                        <button
-                            type="button"
-                            className="ui-toast__close"
-                            aria-label="סגירת הודעה"
-                            onClick={() => removeToast(id)}
-                        >
-                            ✕
+                        <span className="ui-toast__icon">{ICONS[t.type] || ICONS.info}</span>
+                        <p className="ui-toast__text">{t.message}</p>
+                        <button type="button" className="ui-toast__close" onClick={() => removeToast(t.id)} aria-label="סגירת ההודעה">
+                            {ICONS.close}
                         </button>
                     </div>
                 ))}
             </div>
 
+            {/* חלון אישור */}
             {dialog && (
-                <div
-                    className="ui-modal-overlay"
-                    onClick={(event) => {
-                        if (event.target === event.currentTarget) finishConfirm(false);
-                    }}
-                >
+                <div className="ui-overlay" onClick={() => closeDialog(false)}>
                     <div
-                        className="ui-modal"
+                        className="ui-dialog"
+                        dir="rtl"
                         role="alertdialog"
                         aria-modal="true"
-                        aria-labelledby="ui-modal-title"
-                        aria-describedby="ui-modal-message"
-                        tabIndex={-1}
-                        onKeyDown={handleDialogKeyDown}
+                        aria-labelledby="uiDialogTitle"
+                        aria-describedby="uiDialogText"
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => { if (e.key === 'Escape') closeDialog(false); }}
                     >
-                        <span className={`ui-modal__icon ${dialog.danger ? 'ui-modal__icon--danger' : ''}`}>
-                            <FeedbackIcon type={dialog.danger ? 'error' : 'info'} />
+                        <span className={`ui-dialog__icon ${dialog.danger ? 'ui-dialog__icon--danger' : ''}`}>
+                            {dialog.danger ? ICONS.danger : ICONS.question}
                         </span>
-                        <h2 className="ui-modal__title" id="ui-modal-title">{dialog.title}</h2>
-                        <p className="ui-modal__message" id="ui-modal-message">{dialog.message}</p>
-                        <div className="ui-modal__actions">
+                        <h2 id="uiDialogTitle" className="ui-dialog__title">{dialog.title}</h2>
+                        <p id="uiDialogText" className="ui-dialog__text">{dialog.message}</p>
+                        <div className="ui-dialog__actions">
                             <button
                                 type="button"
-                                className={`ui-modal__confirm ${dialog.danger ? 'ui-modal__confirm--danger' : ''}`}
-                                onClick={() => finishConfirm(true)}
+                                className={`ui-btn ${dialog.danger ? 'ui-btn--danger' : 'ui-btn--main'}`}
+                                onClick={() => closeDialog(true)}
                             >
                                 {dialog.confirmText}
                             </button>
-                            <button
-                                ref={cancelButtonRef}
-                                type="button"
-                                className="ui-modal__cancel"
-                                onClick={() => finishConfirm(false)}
-                            >
+                            <button type="button" ref={cancelRef} className="ui-btn ui-btn--ghost" onClick={() => closeDialog(false)}>
                                 {dialog.cancelText}
                             </button>
                         </div>
@@ -179,9 +128,15 @@ export const FeedbackProvider = ({ children }) => {
 };
 
 export const useFeedback = () => {
-    const feedback = useContext(FeedbackContext);
-    if (!feedback) {
-        throw new Error('useFeedback must be used within a FeedbackProvider');
+    const ctx = useContext(FeedbackContext);
+    if (!ctx) {
+        // אם שכחו לעטוף ב-FeedbackProvider – לא קורסים, חוזרים להתנהגות הרגילה של הדפדפן
+        return {
+            toast: (message) => window.alert(message),
+            confirm: async ({ message } = {}) => window.confirm(message),
+        };
     }
-    return feedback;
+    return ctx;
 };
+
+export default FeedbackProvider;
