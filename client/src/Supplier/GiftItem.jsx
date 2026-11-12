@@ -1,12 +1,30 @@
-
 import React from 'react';
+import { useFeedback } from '../common/Feedback';
+
+// ===== חדש: אייקונים =====
+const Icon = ({ children }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {children}
+  </svg>
+);
+const GiftIcon = () => <Icon><rect x="4" y="10" width="16" height="10" rx="1.5" /><path d="M3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1.5S10 7 12 7Zm0 0c1.5-3 5-3.5 5-1.5S14 7 12 7Z" /></Icon>;
+const EditIcon = () => <Icon><path d="M15 4l5 5L9 20H4v-5Z" /><path d="M13 6l5 5" /></Icon>;
+const TrashIcon = () => <Icon><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></Icon>;
 
 const GiftItem = ({ gift, onDelete,onEdit  }) => {
+  const { toast, confirm } = useFeedback();
 
   const handleDelete = async () => {
 
 
-    if (!window.confirm('האם את בטוחה שברצונך למחוק את המתנה?')) {
+    const ok = await confirm({
+      title: 'מחיקת מתנה',
+      message: 'האם את בטוחה שברצונך למחוק את המתנה?',
+      confirmText: 'מחיקה',
+      cancelText: 'ביטול',
+      danger: true
+    });
+    if (!ok) {
       return;
     }
 
@@ -30,39 +48,47 @@ const GiftItem = ({ gift, onDelete,onEdit  }) => {
       // מסירים מהתצוגה רק אחרי שהשרת אישר את המחיקה
       onDelete(gift._id);
     } catch (error) {
-      alert(error.message);
+      toast(error.message, "error");
     }
   };
   return (
-    <div className="gift-item">
-      {/* שם המתנה */}
-      <h3>{gift.name}</h3>
-
-      {/* פרטי המתנה */}
-      <p>מחיר: {gift.price} ₪</p>
-      <p>צבע: {gift.color}</p>
-      <p>תיאור: {gift.description}</p>
-      <p>קטגוריה: {gift.category?.name || 'לא צוינה קטגוריה'}</p>
-
+    <article className="pg-card gift-item">
       {/* תמונת המתנה, אם קיימת */}
-      {gift.image && (
-        <img
-          src={gift.image}
-          alt={gift.name}
-          width="150"
-        />
-      )}
+      <div className="pg-card__media">
+        {gift.image ? (
+          <img src={gift.image} alt={gift.name} className="pg-card__img" />
+        ) : (
+          <span className="pg-card__placeholder"><GiftIcon /></span>
+        )}
+        <span className="pg-card__score">{gift.category?.name || 'לא צוינה קטגוריה'}</span>
+      </div>
 
-      {/* כפתור עריכה */}
-      <button onClick={() => onEdit(gift)}>
-        עריכה
-      </button>
+      <div className="pg-card__body">
+        {/* שם המתנה */}
+        <h3 className="pg-card__title">{gift.name}</h3>
 
-      {/* כפתור מחיקה */}
-      <button onClick={handleDelete}>
-        מחיקה
-      </button>
-    </div>
+        {/* פרטי המתנה */}
+        <p className="pg-card__text">{gift.description}</p>
+        {gift.color && <span className="sgi-chip">צבע: {gift.color}</span>}
+
+        <div className="pg-card__footer">
+          <span className="pg-card__price">{gift.price} ₪</span>
+
+          <div className="sgi-actions">
+            {/* כפתור עריכה */}
+            <button type="button" className="sgi-btn" onClick={() => onEdit(gift)}>
+              <EditIcon />
+              עריכה
+            </button>
+
+            {/* כפתור מחיקה */}
+            <button type="button" className="sgi-btn sgi-btn--danger" onClick={handleDelete} aria-label={`מחיקת ${gift.name}`}>
+              <TrashIcon />
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
   );
 };
 

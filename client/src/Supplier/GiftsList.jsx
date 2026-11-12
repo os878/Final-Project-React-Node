@@ -82,58 +82,58 @@ const GiftsList = () => {
     };
 
     return (
-        <div>
-            <h2>המתנות שלי</h2>
+        <section className="sg" dir="rtl">
+            <header className="sg-head">
+                <div>
+                    <p className="pg-eyebrow">אזור הספקים</p>
+                    <h1 className="pg-title">המתנות שלי</h1>
+                    <p className="pg-sub">
+                        {gifts.length > 0 ? `${gifts.length} מוצרים באתר` : 'כאן יופיעו המוצרים שתעלו'}
+                    </p>
+                </div>
 
-            {/* כפתור מעבר לעמוד הוספת מתנה */}
-            <button onClick={() => navigate('/AddGift')}>
-                הוספת מתנה חדשה
-            </button>
+                {/* כפתור מעבר לעמוד הוספת מתנה */}
+                <button type="button" className="sg-add" onClick={() => navigate('/AddGift')}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    הוספת מתנה חדשה
+                </button>
+            </header>
 
             {/* הצגת הודעת שגיאה, אם קיימת */}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p className="pg-error" role="alert">{error}</p>}
 
             {/* מעבר על כל המתנות והצגת קומפוננטה לכל מתנה */}
-            {gifts.map((gift) => (
-                <GiftItem
-                    key={gift._id}
-                    gift={gift}
-                    onDelete={removeGift}
-                    onEdit={openEdit}
-                />
-            ))}
+            {gifts.length > 0 && (
+                <div className="sg-grid">
+                    {gifts.map((gift) => (
+                        <GiftItem
+                            key={gift._id}
+                            gift={gift}
+                            onDelete={removeGift}
+                            onEdit={openEdit}
+                        />
+                    ))}
+                </div>
+            )}
 
             {/* חלון עריכת מתנה */}
             {isEditOpen && selectedGift && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        zIndex: 1000
-                    }}
-                >
-                    <div
-                        style={{
-                            backgroundColor: 'white',
-                            padding: '20px',
-                            borderRadius: '8px',
-                            maxHeight: '90vh',
-                            overflowY: 'auto',
-                            width: '500px',
-                            maxWidth: '90%'
-                        }}
-                    >
-                        {/* כפתור לסגירת החלון */}
-                        <button onClick={closeEdit}>
-                            סגירה ✕
-                        </button>
+                <div className="gd-overlay" onClick={closeEdit}>
+                    <div className="gd-dialog" role="dialog" aria-modal="true" aria-label="עריכת מתנה" onClick={(e) => e.stopPropagation()}>
+                        <div className="gd-dialog__head">
+                            <div>
+                                <h2 className="gd-dialog__title">עריכת מתנה</h2>
+                                <p className="gd-dialog__sub">{selectedGift.name}</p>
+                            </div>
+                            {/* כפתור לסגירת החלון */}
+                            <button type="button" className="gd-dialog__close" onClick={closeEdit} aria-label="סגירה">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                                    <path d="M6 6l12 12M18 6 6 18" />
+                                </svg>
+                            </button>
+                        </div>
 
                         {/* טופס העריכה עם פרטי המתנה שנבחרה */}
                         <AddGift
@@ -146,9 +146,21 @@ const GiftsList = () => {
 
             {/* הודעה אם עדיין אין מתנות להצגה */}
             {gifts.length === 0 && !error && (
-                <p>אין עדיין מתנות להצגה</p>
+                <div className="pg-empty">
+                    <span className="pg-empty__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <rect x="4" y="10" width="16" height="10" rx="1.5" />
+                            <path d="M3 7h18v3H3zM12 7v13M12 7c-1.5-3-5-3.5-5-1.5S10 7 12 7Zm0 0c1.5-3 5-3.5 5-1.5S14 7 12 7Z" />
+                        </svg>
+                    </span>
+                    <h2>אין עדיין מתנות להצגה</h2>
+                    <p>מעלים מוצר ראשון, והוא יתחיל להופיע ללקוחות שמחפשים בדיוק אותו.</p>
+                    <button type="button" className="sg-add" onClick={() => navigate('/AddGift')}>
+                        הוספת מתנה ראשונה
+                    </button>
+                </div>
             )}
-        </div>
+        </section>
     );
 };
 

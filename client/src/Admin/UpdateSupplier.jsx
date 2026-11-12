@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
+import { useFeedback } from '../common/Feedback';
 
 export const UpdateSupplier = ({ supplier, onUpdated }) => {
+    const { toast } = useFeedback();
     const [name, setName] = useState('');
     const [companyName, setCompanyName] = useState('');
     const [email, setEmail] = useState('');
@@ -55,7 +57,7 @@ export const UpdateSupplier = ({ supplier, onUpdated }) => {
                 config
             );
 
-            alert('פרטי הספק עודכנו בהצלחה!');
+            toast('פרטי הספק עודכנו בהצלחה!', "success");
 
             if (onUpdated) {
                 onUpdated(data.supplier || data);

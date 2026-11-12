@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Axios from 'axios';
 
@@ -95,6 +94,18 @@ const SupplierDetails = () => {
                 setSupp(data.supplier);
             }
 
+            // חדש: אם השרת לא החזיר את הספק, מעדכנים לפי הערכים שנשמרו
+            // (כמו בפרטי הלקוח – אחרת "ביטול" בעריכה הבאה יחזיר ערכים ישנים)
+            else {
+                setSupp({
+                    ...supp,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    companyName: companyName
+                });
+            }
+
             // יציאה ממצב העריכה לאחר הצלחה
             setIsEditing(false);
 
@@ -105,19 +116,24 @@ const SupplierDetails = () => {
 
     // אם הפרטים עדיין נטענים, מציגים הודעה
     if (isLoading) {
-        return <p>טוען פרטי ספק...</p>;
+        return <p className="gd-state" role="status">טוען פרטי ספק…</p>;
     }
 
     // אם הטעינה הסתיימה אבל לא התקבל ספק
     if (!supp) {
-        return <p>לא ניתן לטעון את פרטי הספק.</p>;
+        return <p className="gd-state gd-state--error" role="alert">לא ניתן לטעון את פרטי הספק.</p>;
     }
 
     return (
-        <>
+        <section className="pd" dir="rtl">
             {/* כותרת וכפתורים לעריכה או לשמירה */}
             <div className="header-section">
-                <h2>פרטי ספק</h2>
+                {/* חדש: עיגול עם האות הראשונה של שם החברה */}
+                <span className="pd-avatar" aria-hidden="true">{(supp.companyName || supp.name || '?').trim().charAt(0)}</span>
+                <div className="pd-title">
+                    <h2>פרטי ספק</h2>
+                    <p>{isEditing ? 'עורכים את הפרטים. אל תשכחו לשמור.' : 'כך הלקוחות רואים את העסק שלכם'}</p>
+                </div>
 
                 {isEditing ? (
                     <div className="button-group">
@@ -149,18 +165,22 @@ const SupplierDetails = () => {
                         className="edit-btn"
                         onClick={() => setIsEditing(true)}
                     >
-                        עריכת ספק
+                        עריכת פרטים
                     </button>
                 )}
             </div>
 
+            {/* חדש: עוטף את השדות כדי לסדר אותם ברשת */}
+            <div className="pd-fields">
+
             {/* שדה שם הספק */}
             <div className="field-group">
-                <label>שם הספק:</label>
+                <label htmlFor="sdName">שם הספק:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="text"
+                            id="sdName"
                             name="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -173,11 +193,12 @@ const SupplierDetails = () => {
 
             {/* שדה שם החברה */}
             <div className="field-group">
-                <label>שם החברה:</label>
+                <label htmlFor="sdCompany">שם החברה:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="text"
+                            id="sdCompany"
                             name="companyName"
                             value={companyName}
                             onChange={(e) => setCompanyName(e.target.value)}
@@ -190,11 +211,12 @@ const SupplierDetails = () => {
 
             {/* שדה כתובת הדואר האלקטרוני */}
             <div className="field-group">
-                <label>דואר אלקטרוני:</label>
+                <label htmlFor="sdEmail">דואר אלקטרוני:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="email"
+                            id="sdEmail"
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -207,11 +229,12 @@ const SupplierDetails = () => {
 
             {/* שדה מספר הטלפון */}
             <div className="field-group">
-                <label>טלפון:</label>
+                <label htmlFor="sdPhone">טלפון:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="tel"
+                            id="sdPhone"
                             name="phone"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
@@ -221,7 +244,9 @@ const SupplierDetails = () => {
                     )}
                 </div>
             </div>
-        </>
+
+            </div>
+        </section>
     );
 };
 

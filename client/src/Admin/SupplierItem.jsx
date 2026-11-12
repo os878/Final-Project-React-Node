@@ -1,8 +1,17 @@
 import React from 'react';
+import { useFeedback } from '../common/Feedback';
 
 const SupplierItem = ({ supplier, onDelete, onEdit }) => {
+    const { toast, confirm } = useFeedback();
     const handleDelete = async () => {
-        if (!window.confirm('האם אתה בטוח שברצונך למחוק ספק זה?')) {
+        const ok = await confirm({
+            title: 'מחיקת ספק',
+            message: 'האם אתה בטוח שברצונך למחוק ספק זה?',
+            confirmText: 'מחיקה',
+            cancelText: 'ביטול',
+            danger: true
+        });
+        if (!ok) {
             return;
         }
 
@@ -24,7 +33,7 @@ const SupplierItem = ({ supplier, onDelete, onEdit }) => {
 
             onDelete(supplier._id);
         } catch (error) {
-            alert(error.message);
+            toast(error.message, "error");
         }
     };
 

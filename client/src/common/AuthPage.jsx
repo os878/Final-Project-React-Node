@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useFeedback } from './Feedback';
 
 export const AuthPage = () => {
+    const { toast } = useFeedback();
     const [searchParams] = useSearchParams();
 
     // הגעה מהחלק של הספקים בדף הנחיתה (?role=supplier) = הרשמה כספק בלבד.
@@ -121,13 +123,13 @@ export const AuthPage = () => {
                 await Axios.post("http://localhost:7002/api/auth/customer/register", {
                     name, username, password: password1, email, phone
                 });
-                alert("ההרשמה בוצעה בהצלחה! כעת ניתן להתחבר.");
+                toast("ההרשמה בוצעה בהצלחה! כעת ניתן להתחבר.", "success");
                 setIsLogin(true);
             } else {
                 const { data } = await Axios.post("http://localhost:7002/api/auth/supplier/register", {
                     name, password: password1, phone, email, companyName
                 });
-                alert("הרשמת הספק בוצעה בהצלחה!");
+                toast("הרשמת הספק בוצעה בהצלחה!", "success");
                 if (data.accessToken) {
                     localStorage.setItem("token", data.accessToken);
                     navigate("/Supplier/ProfilSupplier");

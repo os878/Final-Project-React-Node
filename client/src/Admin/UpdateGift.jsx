@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Axios from "axios"
+import { useFeedback } from '../common/Feedback'
 
 export const UpdateGift = ({ gift, onUpdated }) => {
+    const { toast } = useFeedback()
 
     // שדות בסיסיים
     const [name, setName] = useState("")
@@ -143,7 +145,7 @@ export const UpdateGift = ({ gift, onUpdated }) => {
                 config
             )
 
-            alert("המתנה עודכנה בהצלחה!")
+            toast("המתנה עודכנה בהצלחה!", "success")
 
             if (onUpdated) {
                 onUpdated(data.gift || data)

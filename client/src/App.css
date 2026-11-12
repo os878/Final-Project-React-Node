@@ -2144,12 +2144,14 @@ label {
 .pg-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  align-items: stretch;
   gap: 22px;
 }
 
 .pg-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 22px;
@@ -2166,22 +2168,30 @@ label {
 /* תמונה */
 .pg-card__media {
   position: relative;
+  width: 100%;
   aspect-ratio: 4 / 3;
+  overflow: hidden;
   background: var(--tint);
+  flex-shrink: 0;
 }
 
 .pg-card__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .pg-card__placeholder {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
   color: var(--spark);
 }
 
@@ -2193,6 +2203,7 @@ label {
 /* אחוז התאמה */
 .pg-card__score {
   position: absolute;
+  z-index: 1;
   top: 12px;
   right: 12px;
   padding: 5px 12px;
@@ -2207,6 +2218,7 @@ label {
 /* כפתור מועדפים */
 .pg-fav {
   position: absolute;
+  z-index: 1;
   top: 10px;
   left: 10px;
   display: inline-flex;
@@ -2246,6 +2258,10 @@ label {
 }
 
 .pg-card__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   color: var(--navy);
   font-size: 19px;
   font-weight: 700;
@@ -2257,6 +2273,7 @@ label {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: calc(1.6em * 3);
   color: var(--navy-soft);
   font-size: 15px;
   line-height: 1.6;
@@ -2419,6 +2436,7 @@ label {
 }
 
 .gd-media {
+  position: relative;
   overflow: hidden;
   aspect-ratio: 1;
   border-radius: 20px;
@@ -2426,9 +2444,13 @@ label {
 }
 
 .gd-media__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .gd-media__placeholder {
@@ -2808,9 +2830,6 @@ label {
     padding: 18px;
   }
 
-  .gd-media {
-    aspect-ratio: 4 / 3;
-  }
 }
 
 @media (max-width: 560px) {
@@ -3036,5 +3055,984 @@ label {
 @media (prefers-reduced-motion: reduce) {
   .pd .save-btn:hover {
     transform: none;
+  }
+}
+
+/* ========== רשימת המתנות של הספק (sg) ========== */
+.sg {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.sg-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 10px 26px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--orange);
+  color: var(--white);
+  font-family: 'Rubik', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(122, 31, 43, .22);
+  transition: background .2s, transform .2s;
+}
+
+.sg-add svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sg-add:hover {
+  background: var(--orange-dark);
+  transform: translateY(-2px);
+}
+
+.sg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  align-items: stretch;
+  gap: 22px;
+}
+
+@media (max-width: 640px) {
+  .sg-add {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-add:hover {
+    transform: none;
+  }
+}
+
+/* ========== כרטיס מתנה של ספק (sgi) ========== */
+.sgi-chip {
+  align-self: flex-start;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--tint);
+  color: var(--navy-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sgi-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sgi-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 700;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.sgi-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sgi-btn:hover {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: var(--white);
+}
+
+.sgi-btn--danger {
+  padding: 8px;
+  color: var(--orange);
+}
+
+.sgi-btn--danger:hover {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: var(--white);
+}
+
+/* ========== טופס הוספה / עריכה של מתנה (ag) ========== */
+.ag {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px clamp(20px, 4vw, 40px) 36px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--white);
+  box-shadow: 0 18px 44px rgba(42, 26, 20, .06);
+}
+
+/* בתוך חלון העריכה: בלי כרטיס כפול ובלי כותרת כפולה */
+.gd-dialog .ag {
+  max-width: none;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.gd-dialog .ag-head {
+  display: none;
+}
+
+.ag-head {
+  margin-bottom: 24px;
+}
+
+.ag-title {
+  color: var(--navy);
+  font-size: clamp(26px, 3vw, 32px);
+  font-weight: 800;
+}
+
+.ag-sub {
+  margin-top: 6px;
+  color: var(--navy-soft);
+  font-size: 16px;
+}
+
+.ag-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* כל קבוצת שאלות בתיבה משלה */
+.ag-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 20px 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--cream);
+}
+
+.ag-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px;
+  color: var(--navy);
+  font-family: 'Rubik', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ag-legend span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--spark);
+  font-size: 15px;
+}
+
+.ag-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ag-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ag-field > label,
+.ag-label {
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ag-label small {
+  margin-inline-start: 6px;
+  color: var(--navy-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ag textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.ag input:focus,
+.ag select:focus,
+.ag textarea:focus {
+  box-shadow: 0 0 0 4px rgba(122, 31, 43, .1);
+}
+
+/* בחירות בצורת "צ'יפים" (מגדר, סגנון) */
+.ag-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ag-choice {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.ag-choice input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.ag-choice:hover {
+  border-color: var(--spark);
+}
+
+.ag-choice:has(input:focus-visible) {
+  outline: 3px solid var(--spark);
+  outline-offset: 2px;
+}
+
+.ag-choice--on {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: var(--white);
+}
+
+.ag .qz-switch {
+  background: var(--white);
+}
+
+/* העלאת תמונה */
+.ag-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1.5px dashed #CDBFAE;
+  border-radius: 16px;
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+.ag-upload:hover {
+  border-color: var(--orange);
+}
+
+.ag-upload:has(input:focus-visible) {
+  outline: 3px solid var(--spark);
+  outline-offset: 2px;
+}
+
+.ag-upload input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.ag-upload__img,
+.ag-upload__icon {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+}
+
+.ag-upload__img {
+  object-fit: contain;
+  background: var(--tint);
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.ag-upload__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tint);
+  color: var(--orange);
+}
+
+.ag-upload__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.ag-upload__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ag-upload__text strong {
+  color: var(--orange);
+  font-size: 16px;
+}
+
+.ag-upload__text span {
+  overflow: hidden;
+  color: var(--navy-soft);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* מחיר עם ₪ */
+.ag-price {
+  position: relative;
+}
+
+.ag-price span {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--orange);
+  font-weight: 700;
+}
+
+.ag-price input {
+  padding-right: 36px;
+}
+
+.ag-submit {
+  min-height: 54px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--orange);
+  color: var(--white);
+  font-family: 'Rubik', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(122, 31, 43, .25);
+  transition: background .2s, transform .2s;
+}
+
+.ag-submit:hover {
+  background: var(--orange-dark);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 560px) {
+  .ag-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ag-section {
+    padding: 16px 14px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ag-submit:hover {
+    transform: none;
+  }
+}
+
+/* ========== פניות לקוחות אצל הספק (iq) ========== */
+.iq {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* סינון */
+.iq-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.iq-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 8px 6px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 700;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.iq-tab__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--tint);
+  font-size: 14px;
+}
+
+.iq-tab:hover {
+  border-color: var(--spark);
+}
+
+.iq-tab--on {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: var(--white);
+}
+
+.iq-tab--on .iq-tab__count {
+  background: rgba(217, 178, 106, .25);
+  color: var(--spark);
+}
+
+.iq-none {
+  color: var(--navy-soft);
+  text-align: center;
+}
+
+/* כרטיס פנייה */
+.iq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.iq-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 26px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--white);
+  box-shadow: 0 10px 26px rgba(42, 26, 20, .04);
+}
+
+/* פנייה חדשה בולטת יותר */
+.iq-card--New {
+  border-color: var(--spark);
+  box-shadow: 0 12px 30px rgba(217, 178, 106, .18);
+}
+
+.iq-card--Handled {
+  background: #FCFBF8;
+}
+
+.iq-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.iq-card__gift {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iq-card__gift-icon {
+  display: inline-flex;
+  flex: 0 0 46px;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--tint);
+  color: var(--orange);
+}
+
+.iq-card__gift-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.iq-card__label {
+  display: block;
+  color: var(--navy-soft);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.iq-card__title {
+  color: var(--navy);
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.iq-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.iq-card__date {
+  color: var(--navy-soft);
+  font-size: 14px;
+}
+
+/* תג סטטוס */
+.iq-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.iq-badge--New {
+  background: rgba(217, 178, 106, .3);
+  color: var(--navy);
+}
+
+.iq-badge--InProgress {
+  background: rgba(47, 111, 214, .12);
+  color: #1F4F9E;
+}
+
+.iq-badge--Handled {
+  background: rgba(46, 139, 87, .12);
+  color: #1F6B41;
+}
+
+/* הלקוח */
+.iq-person {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.iq-person__name {
+  color: var(--navy);
+  font-family: 'Rubik', sans-serif;
+  font-size: 18px;
+}
+
+.iq-person__pref {
+  color: var(--navy-soft);
+  font-size: 14px;
+}
+
+.iq-message {
+  margin: 0;
+  padding: 14px 18px;
+  border-right: 3px solid var(--spark);
+  border-radius: 12px;
+  background: var(--cream);
+  color: var(--navy);
+  font-size: 16px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+/* דרכי קשר */
+.iq-contacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.iq-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 15px;
+  font-weight: 700;
+  transition: border-color .15s, background .15s, color .15s;
+}
+
+a.iq-contact:hover {
+  border-color: var(--navy);
+  color: var(--navy);
+}
+
+.iq-contact__icon {
+  width: 18px;
+  height: 18px;
+  color: var(--orange);
+}
+
+/* הדרך שהלקוח העדיף */
+.iq-contact--pref {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: var(--white);
+}
+
+.iq-contact--pref .iq-contact__icon {
+  color: var(--white);
+}
+
+a.iq-contact--pref:hover {
+  background: var(--orange-dark);
+  border-color: var(--orange-dark);
+  color: var(--white);
+}
+
+.iq-contact--empty {
+  color: var(--navy-soft);
+  font-weight: 600;
+}
+
+/* שינוי סטטוס */
+.iq-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.iq-status__label {
+  color: var(--navy-soft);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.iq-status__options {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--tint);
+}
+
+.iq-status__btn {
+  min-height: 40px;
+  padding: 6px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--navy-soft);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background .15s, color .15s;
+}
+
+.iq-status__btn:hover {
+  color: var(--navy);
+}
+
+.iq-status__btn--on {
+  background: var(--white);
+  color: var(--navy);
+  box-shadow: 0 2px 8px rgba(42, 26, 20, .1);
+}
+
+.iq-status__btn--Handled.iq-status__btn--on {
+  color: #1F6B41;
+}
+
+.iq-status__btn--InProgress.iq-status__btn--on {
+  color: #1F4F9E;
+}
+
+@media (max-width: 640px) {
+  .iq-card {
+    padding: 20px 18px;
+  }
+
+  .iq-card__meta {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .iq-contact {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}
+
+/* ========== הודעות ואישורים (ui) ========== */
+.ui-toast-stack {
+  position: fixed;
+  z-index: 2000;
+  top: 20px;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(420px, calc(100vw - 24px));
+  transform: translateX(-50%);
+  direction: rtl;
+  pointer-events: none;
+}
+
+.ui-toast {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 14px 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-right: 4px solid var(--navy);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 12px 32px rgba(42, 26, 20, .14), 0 3px 8px rgba(42, 26, 20, .06);
+  color: var(--navy);
+  animation: ui-toast-in .24s ease-out both;
+  pointer-events: auto;
+}
+
+.ui-toast--success {
+  border-right-color: #2E8B57;
+}
+
+.ui-toast--error {
+  border-right-color: var(--orange);
+}
+
+.ui-toast--info {
+  border-right-color: var(--navy);
+}
+
+.ui-toast__icon {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  color: var(--navy);
+}
+
+.ui-toast--success .ui-toast__icon {
+  color: #2E8B57;
+}
+
+.ui-toast--error .ui-toast__icon {
+  color: var(--orange);
+}
+
+.ui-toast__message {
+  flex: 1;
+  margin: 0;
+  color: var(--navy);
+  font-family: 'Assistant', sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.ui-toast__close {
+  display: inline-flex;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--navy-soft);
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.ui-toast__close:hover {
+  background: var(--tint);
+  color: var(--navy);
+}
+
+.ui-toast__close:focus-visible,
+.ui-modal button:focus-visible {
+  outline: 3px solid var(--spark);
+  outline-offset: 2px;
+}
+
+@keyframes ui-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ui-modal-overlay {
+  position: fixed;
+  z-index: 2100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(42, 26, 20, .45);
+  backdrop-filter: blur(3px);
+}
+
+.ui-modal {
+  width: min(100%, 420px);
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--white);
+  box-shadow: 0 24px 70px rgba(42, 26, 20, .22);
+  text-align: center;
+}
+
+.ui-modal__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--navy) 9%, transparent);
+  color: var(--navy);
+}
+
+.ui-modal__icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.ui-modal__icon--danger {
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+  color: var(--orange);
+}
+
+.ui-modal__title {
+  margin: 0;
+  color: var(--navy);
+  font-family: 'Rubik', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.ui-modal__message {
+  margin: 10px 0 24px;
+  color: var(--navy-soft);
+  font-family: 'Assistant', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ui-modal__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.ui-modal__actions button {
+  flex: 1;
+  min-height: 48px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s, transform .2s;
+}
+
+.ui-modal__confirm {
+  border: 1.5px solid var(--navy);
+  background: var(--navy);
+  color: var(--white);
+}
+
+.ui-modal__confirm:hover {
+  background: var(--navy-soft);
+  border-color: var(--navy-soft);
+}
+
+.ui-modal__confirm--danger {
+  border-color: var(--orange);
+  background: var(--orange);
+}
+
+.ui-modal__confirm--danger:hover {
+  border-color: var(--orange-dark);
+  background: var(--orange-dark);
+}
+
+.ui-modal__cancel {
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  color: var(--navy);
+}
+
+.ui-modal__cancel:hover {
+  border-color: var(--navy-soft);
+  background: var(--tint);
+}
+
+@media (max-width: 559px) {
+  .ui-toast-stack {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    transform: none;
+  }
+
+  .ui-modal__actions {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-toast {
+    animation: none;
+  }
+
+  .ui-modal__actions button {
+    transition: none;
   }
 }

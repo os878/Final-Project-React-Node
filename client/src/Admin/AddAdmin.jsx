@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useFeedback } from '../common/Feedback';
 
 const AddAdmin = () => {
+    const { toast } = useFeedback();
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [password1, setPassword1] = useState("");
@@ -53,7 +55,7 @@ const AddAdmin = () => {
             );
 
             setErrorMessage("")
-            alert("הרשמת המנהל בוצעה בהצלחה! כעת ניתן להתחבר.");
+            toast("הרשמת המנהל בוצעה בהצלחה! כעת ניתן להתחבר.", "success");
             navigate("/Admin/ProfilAdmin");
 
         } catch (error) {

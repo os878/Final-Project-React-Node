@@ -21,6 +21,7 @@ import AddAdmin from './Admin/AddAdmin'
 import Giftinspirations from './Customer/Giftinspirations';
 import PresentingGifts from './Customer/PresentingGifts';
 import { GiftProvider } from './context/GiftContext'
+import { FeedbackProvider } from './common/Feedback'
 import GiftDetails from './Customer/GiftDetails'
 import SupplierInquiries from './Supplier/SupplierInquiries'
 import MaintenanceManager from './Admin/MaintenanceManager'
@@ -33,8 +34,9 @@ function App() {
   return (
     <>
       <GiftProvider>
-        <Router>
-          <Routes>
+        <FeedbackProvider>
+          <Router>
+            <Routes>
             {/* דפים שיש להם עיצוב מלא משלהם – בלי ההדר של ה-Layout */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/LandingPage" element={<LandingPage />} />
@@ -69,8 +71,9 @@ function App() {
               <Route path="/Giftinspirations" element={<Giftinspirations />} />
               <Route path="/Customer/GiftDetails/:id" element={<GiftDetails />} />
             </Route>
-          </Routes>
-        </Router>
+            </Routes>
+          </Router>
+        </FeedbackProvider>
       </GiftProvider>
     </>
   )

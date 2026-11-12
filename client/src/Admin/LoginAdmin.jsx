@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useFeedback } from '../common/Feedback';
 
 export const LoginAdmin = () => {
+    const { toast } = useFeedback();
     const [signLogin, setSignLogin] = useState(true);
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
@@ -40,7 +42,7 @@ export const LoginAdmin = () => {
             // שמירת הטוקן ב-localStorage
             localStorage.setItem("token", data.accessToken);
 
-            alert("התחברות המנהל בוצעה בהצלחה!");
+            toast("התחברות המנהל בוצעה בהצלחה!", "success");
             // ניווט לעמוד הפרופיל/פרטי המנהל
             navigate("/Admin/ProfilAdmin");
 

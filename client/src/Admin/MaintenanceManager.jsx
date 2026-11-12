@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useFeedback } from '../common/Feedback';
 
 // כתובת בסיס השרת - יש לוודא שהפורט תואם לשרת ה-Node.js שלך (לדוגמה 7002 או 5000)
 const API_BASE_URL = 'http://localhost:7002';
@@ -11,6 +12,7 @@ const MODULES = {
 };
 
 const MaintenanceManager = () => {
+    const { toast, confirm } = useFeedback();
     const [activeTab, setActiveTab] = useState(MODULES.CATEGORIES.key);
     const [items, setItems] = useState([]);
     const [newName, setNewName] = useState('');
@@ -75,7 +77,7 @@ const MaintenanceManager = () => {
             setNewName('');
             fetchItems();
         } catch (err) {
-            alert(err.response?.data?.message || 'שגיאה בהוספת פריט (נדרשת הרשאת מנהל)');
+            toast(err.response?.data?.message || 'שגיאה בהוספת פריט (נדרשת הרשאת מנהל)', "error");
         }
     };
 
@@ -89,13 +91,20 @@ const MaintenanceManager = () => {
             setEditingName('');
             fetchItems();
         } catch (err) {
-            alert(err.response?.data?.message || 'שגיאה בעדכון הפריט (נדרשת הרשאת מנהל)');
+            toast(err.response?.data?.message || 'שגיאה בעדכון הפריט (נדרשת הרשאת מנהל)', "error");
         }
     };
 
     // 4. מחיקת פריט
   const handleDelete = async (id) => {
-    if (!window.confirm('האם למחוק פריט זה?')) return;
+    const ok = await confirm({
+        title: 'מחיקת פריט',
+        message: 'האם למחוק פריט זה?',
+        confirmText: 'מחיקה',
+        cancelText: 'ביטול',
+        danger: true
+    });
+    if (!ok) return;
 
     try {
         // הוספת /delete לכל המודלים בהתאם להגדרות ה-Router בשרת
@@ -113,7 +122,7 @@ const MaintenanceManager = () => {
         fetchItems();
     } catch (err) {
         // הצגת הודעת השגיאה המדויקת שמוחזרת מהשרת (אם קיימת)
-        alert(err.response?.data?.message || 'שגיאה במחיקת הפריט');
+        toast(err.response?.data?.message || 'שגיאה במחיקת הפריט', "error");
     }
 };
 

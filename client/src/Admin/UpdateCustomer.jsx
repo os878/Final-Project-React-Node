@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
+import { useFeedback } from '../common/Feedback';
 
 export const UpdateCustomer = ({ customer, onUpdated }) => {
+    const { toast } = useFeedback();
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -55,7 +57,7 @@ export const UpdateCustomer = ({ customer, onUpdated }) => {
                 config
             );
 
-            alert('פרטי הלקוח עודכנו בהצלחה!');
+            toast('פרטי הלקוח עודכנו בהצלחה!', "success");
 
             if (onUpdated) {
                 onUpdated(data.customer || data);

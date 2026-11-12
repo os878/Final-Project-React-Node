@@ -1,37 +1,38 @@
 import { HomeHero, HomeCard } from "../common/HomeParts"
 
-// דף הבית של הלקוח – מה שהוא רואה מיד אחרי התחברות
+// דף הבית של הספק – מה שהוא רואה מיד אחרי התחברות
 
-const steps = [
-    { num: "1", title: "מספרים על מי שמקבל", text: "למי המתנה, מה הוא אוהב ומה התקציב." },
-    { num: "2", title: "מקבלים המלצות", text: "רק רעיונות שבאמת מתאימים לו." },
-    { num: "3", title: "שומרים ומעניקים", text: "מה שאהבתם נשמר במועדפים." },
+const tips = [
+    { num: "1", title: "תמונה ברורה", text: "מוצר עם תמונה טובה מושך יותר תשומת לב." },
+    { num: "2", title: "תיאור מדויק", text: "למי המוצר מתאים ולאיזה אירוע." },
+    { num: "3", title: "מענה מהיר", text: "לקוחות אוהבים תשובה מהירה לפניות." },
 ]
 
-const ProfileCustomer = () => (
+const ProfilSupplier = () => (
     <section className="home">
         <header className="home-head">
-            <p className="home-eyebrow">האזור האישי</p>
-            <h1 className="home-title">שמחים שחזרתם!</h1>
-            <p className="home-sub">למי מחפשים מתנה הפעם?</p>
+            <p className="home-eyebrow">אזור הספקים</p>
+            <h1 className="home-title">ברוכים הבאים!</h1>
+            <p className="home-sub">כל מה שצריך כדי שהמוצרים שלכם יגיעו ללקוחות הנכונים.</p>
         </header>
 
         <HomeHero
-            title="מוצאים את המתנה המושלמת"
-            text="עונים על כמה שאלות קצרות, ומקבלים רעיונות שמתאימים בדיוק למי שמקבל."
-            to="/Customer/Questionnaire"
-            button="למצוא מתנה חדשה"
+            title="יש לכם מוצר חדש?"
+            text="מעלים אותו בכמה דקות, והוא מתחיל להופיע ללקוחות שמחפשים בדיוק אותו."
+            to="/AddGift"
+            button="הוספת מוצר"
         />
 
-        <div className="home-cards">
-            <HomeCard to="/Customer/Favorites" icon="heart" title="המועדפים שלי" text="כל המתנות ששמרתם, במקום אחד." />
-            <HomeCard to="/Customer/CusromerDetails" icon="user" title="הפרטים שלי" text="עדכון שם, טלפון ואימייל." />
+        <div className="home-cards home-cards--3">
+            <HomeCard to="/Supplier/GiftsList" icon="box" title="המוצרים שלי" text="צפייה ועריכה של כל המוצרים." />
+            <HomeCard to="/Supplier/Inquiries" icon="chat" title="פניות לקוחות" text="שאלות והזמנות שהגיעו אליכם." />
+            <HomeCard to="/Supplier/SupplierDetails" icon="store" title="פרטי הספק" text="פרטי העסק ופרטי הקשר." />
         </div>
 
         <div className="home-steps">
-            <h2 className="home-steps__title">איך זה עובד?</h2>
+            <h2 className="home-steps__title">טיפים למכירה טובה יותר</h2>
             <ol className="home-steps__list">
-                {steps.map((s) => (
+                {tips.map((s) => (
                     <li key={s.num} className="home-step">
                         <span className="home-step__num">{s.num}</span>
                         <div>
@@ -45,4 +46,4 @@ const ProfileCustomer = () => (
     </section>
 )
 
-export default ProfileCustomer
+export default ProfilSupplier

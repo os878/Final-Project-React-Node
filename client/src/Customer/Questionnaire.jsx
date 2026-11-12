@@ -127,7 +127,7 @@ const STYLES = [
   { value: 'חווייתי', icon: 'ticket' },
   { value: 'אישי/מרגש', icon: 'heart' },
   { value: 'יוקרתי', icon: 'diamond' },
-  { value: 'מצחיק/מקורי', icon: 'smile' },
+  { value: 'מצחיק/מקורית', icon: 'smile' },
 ];
 const BUDGETS = [100, 200, 300, 500, 1000];
 const COLORS = [
