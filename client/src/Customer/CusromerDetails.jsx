@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Axios from 'axios';
 
@@ -114,19 +113,24 @@ const CustomerDetails = () => {
 
     // אם הפרטים עדיין נטענים, מציגים הודעה
     if (isLoading) {
-        return <p>טוען פרטי לקוח...</p>;
+        return <p className="gd-state" role="status">טוען פרטי לקוח…</p>;
     }
 
     // אם הטעינה הסתיימה אבל לא התקבל לקוח
     if (!customer) {
-        return <p>לא ניתן לטעון את פרטי הלקוח.</p>;
+        return <p className="gd-state gd-state--error" role="alert">לא ניתן לטעון את פרטי הלקוח.</p>;
     }
 
     return (
-        <>
+        <section className="pd" dir="rtl">
             {/* כותרת וכפתורים לעריכה או לשמירה */}
             <div className="header-section">
-                <h2>פרטי לקוח</h2>
+                {/* חדש: עיגול עם האות הראשונה של השם */}
+                <span className="pd-avatar" aria-hidden="true">{(customer.name || '?').trim().charAt(0)}</span>
+                <div className="pd-title">
+                    <h2>פרטי לקוח</h2>
+                    <p>{isEditing ? 'עורכים את הפרטים. אל תשכחו לשמור.' : 'הפרטים שלך באתר'}</p>
+                </div>
 
                 {isEditing ? (
                     <div className="button-group">
@@ -167,13 +171,17 @@ const CustomerDetails = () => {
                 )}
             </div>
 
+            {/* חדש: עוטף את השדות כדי לסדר אותם ברשת */}
+            <div className="pd-fields">
+
             {/* שדה שם הלקוח */}
             <div className="field-group">
-                <label>שם הלקוח:</label>
+                <label htmlFor="cdName">שם הלקוח:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="text"
+                            id="cdName"
                             name="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -186,11 +194,12 @@ const CustomerDetails = () => {
 
             {/* שדה שם המשתמש */}
             <div className="field-group">
-                <label>שם משתמש:</label>
+                <label htmlFor="cdUsername">שם משתמש:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="text"
+                            id="cdUsername"
                             name="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -203,11 +212,12 @@ const CustomerDetails = () => {
 
             {/* שדה כתובת הדואר האלקטרוני */}
             <div className="field-group">
-                <label>דואר אלקטרוני:</label>
+                <label htmlFor="cdEmail">דואר אלקטרוני:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="email"
+                            id="cdEmail"
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -220,11 +230,12 @@ const CustomerDetails = () => {
 
             {/* שדה מספר הטלפון */}
             <div className="field-group">
-                <label>טלפון:</label>
+                <label htmlFor="cdPhone">טלפון:</label>
                 <div className={`info-box ${isEditing ? 'editing' : ''}`}>
                     {isEditing ? (
                         <input
                             type="tel"
+                            id="cdPhone"
                             name="phone"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
@@ -234,7 +245,9 @@ const CustomerDetails = () => {
                     )}
                 </div>
             </div>
-        </>
+
+            </div>
+        </section>
     );
 };
 

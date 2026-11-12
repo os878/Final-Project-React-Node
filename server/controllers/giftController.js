@@ -267,6 +267,58 @@ const matchGiftsController = async (req, res) => {
 };
 
 // פונקציה חדשה ליצירת השראות מבינה מלאכותית
+// ===== להחליף את הפונקציה getAiInspirations הקיימת ב-giftController.js בכל הקוד הזה =====
+// (ה-ai שכבר מוגדר למעלה בקובץ נשאר כמו שהוא)
+
+// מודל ראשי + מודל גיבוי (שניהם מוגדרים ב-.env, ואפשר להשאיר את הגיבוי ריק)
+const AI_MODELS = [
+    process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+    process.env.GEMINI_FALLBACK_MODEL,
+].filter(Boolean);
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// זיכרון קצר: אותן תשובות בשאלון → תשובה מיידית, בלי לפנות שוב ל-Gemini
+const aiCache = new Map();
+const CACHE_MS = 30 * 60 * 1000; // 30 דקות
+const CACHE_MAX = 100;
+
+// מבנה התשובה שאנחנו מצפים לקבל – Gemini מחזיר בדיוק את זה, בלי טקסט מיותר
+const INSPIRATIONS_SCHEMA = {
+    type: 'ARRAY',
+    items: {
+        type: 'OBJECT',
+        properties: {
+            title: { type: 'STRING' },
+            description: { type: 'STRING' },
+            estimatedPrice: { type: 'STRING' },
+        },
+        required: ['title', 'description', 'estimatedPrice'],
+    },
+};
+
+// שולח ל-Gemini, ואם הוא עמוס (503/429) – מנסה שוב, ואז עובר למודל הגיבוי
+const generateWithRetry = async (request) => {
+    let lastError;
+    for (const model of AI_MODELS) {
+        for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+                return await ai.models.generateContent({ ...request, model });
+            } catch (error) {
+                lastError = error;
+                const busy = error.status === 503 || error.status === 429;
+                if (!busy) throw error;                 // שגיאה אחרת – אין טעם לנסות שוב
+                console.warn(`Gemini busy (${model}, attempt ${attempt + 1}), retrying...`);
+                await sleep(800 * 2 ** attempt);        // 0.8, 1.6, 3.2 שניות
+            }
+        }
+    }
+    const busyError = new Error('השירות עמוס כרגע, נסו שוב בעוד דקה');
+    busyError.status = 503;
+    busyError.cause = lastError;
+    throw busyError;
+};
+
 const getAiInspirations = async (req, res) => {
     try {
         const formData = req.body;
@@ -276,30 +328,47 @@ const getAiInspirations = async (req, res) => {
             return res.status(500).json({ message: 'מפתח API לא מוגדר בשרת' });
         }
 
-        const modelName = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+        // השאלון שולח גם את השמות (eventName וכו'). אם לא – משתמשים במה שיש.
+        const answers = {
+            age: formData.age || 'לא צוין',
+            gender: formData.forGender || 'לא צוין',
+            event: formData.eventName || formData.event || 'לא צוין',
+            relationship: formData.relationshipName || formData.relationship || 'לא צוין',
+            category: formData.categoryName || formData.category || 'לא צוין',
+            styles: Array.isArray(formData.styles) && formData.styles.length ? formData.styles.join(', ') : 'לא צוין',
+            price: formData.price ? `${formData.price} ש"ח` : 'לא צוין',
+            color: formData.color || 'לא צוין',
+            personal: formData.DedicationPersonalization ? 'כן' : 'לא חובה',
+        };
 
-        const prompt = `
-אתה עוזר יצירתי לבחירת מתנות.
-הלקוח מילא את השאלון הבא:
-- גיל: ${formData.age || 'לא צוין'}
-- מגדר יעד: ${formData.forGender || 'לא צוין'}
-- סוג האירוע: ${formData.event || 'לא צוין'}
-- קשר/קירבה: ${formData.relationship || 'לא צוין'}
-- קטגוריה: ${formData.category || 'לא צוין'}
-- סגנונות מבוקשים: ${Array.isArray(formData.styles) ? formData.styles.join(', ') : 'לא צוין'}
-- תקציב מקסימלי: ${formData.price ? formData.price + ' ש"ח' : 'לא צוין'}
-- צבע מועדף: ${formData.color || 'לא צוין'}
+        // תשובה מהזיכרון, אם כבר שאלו בדיוק את אותו דבר לאחרונה
+        const cacheKey = JSON.stringify(answers);
+        const cached = aiCache.get(cacheKey);
+        if (cached && Date.now() - cached.time < CACHE_MS) {
+            return res.json({ inspirations: cached.inspirations });
+        }
 
-אנא החזר 3 רעיונות מקוריים ויצירתיים להשראה למתנות מתאימות.
-החזר את התשובה בפורמט JSON בלבד, כרשימה (array) של אובייקטים המכילים לכל מתנה את השדות הבאים:
-"title" (שם המתנה), "description" (תיאור קצר והסבר למה היא מתאימה), "estimatedPrice" (הערכת מחיר בש"ח).
-`;
+        // פרומפט קצר וממוקד = תשובה מהירה יותר
+        const prompt = `אתה עוזר יצירתי לבחירת מתנות. פרטי מקבל המתנה:
+גיל: ${answers.age}
+מגדר: ${answers.gender}
+אירוע: ${answers.event}
+קשר לנותן: ${answers.relationship}
+תחום: ${answers.category}
+סגנון: ${answers.styles}
+תקציב מקסימלי: ${answers.price}
+צבע מועדף: ${answers.color}
+אפשרות הקדשה/התאמה אישית: ${answers.personal}
 
-        const response = await ai.models.generateContent({
-            model: modelName,
+החזר בדיוק 3 רעיונות מקוריים למתנה, בעברית.
+לכל רעיון: title (שם קצר), description (עד 2 משפטים: מה זה ולמה זה מתאים), estimatedPrice (מחיר משוער בש"ח, בתוך התקציב).`;
+
+        const response = await generateWithRetry({
             contents: prompt,
             config: {
                 responseMimeType: 'application/json',
+                responseSchema: INSPIRATIONS_SCHEMA,
+                temperature: 0.9,
             },
         });
 
@@ -309,9 +378,17 @@ const getAiInspirations = async (req, res) => {
         }
 
         const inspirations = JSON.parse(cleanText);
+
+        // שמירה בזיכרון (ומחיקת הישן ביותר כשמתמלא)
+        if (aiCache.size >= CACHE_MAX) aiCache.delete(aiCache.keys().next().value);
+        aiCache.set(cacheKey, { inspirations, time: Date.now() });
+
         return res.json({ inspirations });
     } catch (error) {
-        console.error("Error generating AI inspirations:", error);
+        console.error("Error generating AI inspirations:", error.cause || error);
+        if (error.status === 503) {
+            return res.status(503).json({ message: 'השירות עמוס כרגע, נסו שוב בעוד דקה' });
+        }
         return res.status(500).json({ message: 'לא ניתן ליצור הצעות השראה כרגע', error: error.message });
     }
 };
