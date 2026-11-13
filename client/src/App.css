@@ -2166,8 +2166,11 @@ label {
 /* תמונה */
 .pg-card__media {
   position: relative;
-  aspect-ratio: 4 / 3;
+  width: 100%;
+  height: 210px;
+  flex-shrink: 0;
   background: var(--tint);
+  overflow: hidden;
 }
 
 .pg-card__img {
@@ -2241,7 +2244,7 @@ label {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   padding: 18px 20px 20px;
 }
 
@@ -2250,6 +2253,12 @@ label {
   font-size: 19px;
   font-weight: 700;
   line-height: 1.3;
+  height: calc(1.3em * 2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
 }
 
 .pg-card__text {
@@ -2259,7 +2268,9 @@ label {
   overflow: hidden;
   color: var(--navy-soft);
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1.5;
+  height: calc(1.5em * 3);
+  margin: 0;
 }
 
 .pg-card__footer {
@@ -4018,6 +4029,8 @@ a.iq-contact--pref:hover {
   padding: 12px;
   border-radius: 14px;
   background: var(--cream);
+  min-height: 115px;
+  align-content: start;
 }
 
 .ad-specs dt {
@@ -4036,7 +4049,9 @@ a.iq-contact--pref:hover {
 .ad-tags {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 6px;
+  min-height: 34px;
 }
 
 /* ========== ניהול ותחזוקה (mm) ========== */
@@ -4152,6 +4167,7 @@ a.iq-contact--pref:hover {
     flex-basis: 100%;
   }
 }
+
 /* ========== הודעות ואישורים (ui) – common/Feedback.jsx ========== */
 /* הודעות קופצות */
 .ui-toasts {
