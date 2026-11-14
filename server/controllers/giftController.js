@@ -18,16 +18,26 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+const normalizeReferenceArray = (value) => {
+    const values = Array.isArray(value) ? value : [value];
+    return values.filter((item) => item !== undefined && item !== null && String(item).trim() !== '');
+};
+
+const getReferenceArray = (body, pluralName, singularName) => normalizeReferenceArray(
+    body[pluralName] !== undefined ? body[pluralName] : body[singularName]
+);
+
 const createNewGift = async (req, res) => {
     const {
         name,
         forGender,
-        category,
-        event,
-        relationship,
         color,
         description
     } = req.body;
+
+    const categories = getReferenceArray(req.body, 'categories', 'category');
+    const events = getReferenceArray(req.body, 'events', 'event');
+    const relationships = getReferenceArray(req.body, 'relationships', 'relationship');
 
     const age1 = req.body.age1 !== undefined && req.body.age1 !== '' ? Number(req.body.age1) : null;
     const age2 = req.body.age2 !== undefined && req.body.age2 !== '' ? Number(req.body.age2) : null;
@@ -51,9 +61,9 @@ const createNewGift = async (req, res) => {
         !forGender ||
         age1 === null || isNaN(age1) ||
         age2 === null || isNaN(age2) ||
-        !category ||
-        !event ||
-        !relationship ||
+        !categories.length ||
+        !events.length ||
+        !relationships.length ||
         !color ||
         price === null || isNaN(price) ||
         req.body.DedicationPersonalization === undefined
@@ -90,9 +100,9 @@ const createNewGift = async (req, res) => {
             forGender,
             age1,
             age2,
-            category: category && category.trim() !== '' ? category : null,
-            event: event && event.trim() !== '' ? event : null,
-            relationship: relationship && relationship.trim() !== '' ? relationship : null,
+            categories,
+            events,
+            relationships,
             color,
             price,
             image: imageUrl,
@@ -116,9 +126,9 @@ const createNewGift = async (req, res) => {
 const findByIdSupplier = async (req, res) => {
     try {
         const gifts = await Gift.find({ supplier: req.user._id })
-            .populate('category')
-            .populate('event')
-            .populate('relationship');
+            .populate('categories')
+            .populate('events')
+            .populate('relationships');
 
         return res.status(200).json(gifts || []);
     } catch (error) {
@@ -128,9 +138,9 @@ const findByIdSupplier = async (req, res) => {
 const getAllGifts = async (req, res) => {
     try {
         const gifts = await Gift.find()
-            .populate('category')
-            .populate('event')
-            .populate('relationship')
+            .populate('categories')
+            .populate('events')
+            .populate('relationships')
             .populate('supplier', 'companyName') // רק שם החברה – בלי טלפון, מייל או סיסמה
             .sort({ _id: -1 })                    // מהחדשה לישנה
             .exec();
@@ -184,6 +194,17 @@ const updateGift = async (req, res) => {
         }
 
         const updatedFields = { ...req.body };
+        for (const [pluralName, singularName] of [
+            ['categories', 'category'],
+            ['events', 'event'],
+            ['relationships', 'relationship']
+        ]) {
+            if (req.body[pluralName] !== undefined || req.body[singularName] !== undefined) {
+                updatedFields[pluralName] = getReferenceArray(req.body, pluralName, singularName);
+            }
+            delete updatedFields[singularName];
+        }
+
         if (age1 !== undefined) updatedFields.age1 = age1;
         if (age2 !== undefined) updatedFields.age2 = age2;
         if (price !== undefined) updatedFields.price = price;
@@ -205,9 +226,9 @@ const updateGift = async (req, res) => {
         let updatedGift = await gift.save();
 
         updatedGift = await updatedGift.populate([
-            { path: 'category' },
-            { path: 'event' },
-            { path: 'relationship' }
+            { path: 'categories' },
+            { path: 'events' },
+            { path: 'relationships' }
         ]);
 
         return res.json({
@@ -249,9 +270,9 @@ const findByIdGift = async (req, res) => {
     if (!id) return res.status(400).json({ message: 'Gift id is required' });
 
     const gift = await Gift.findById(id)
-        .populate('category')
-        .populate('event')
-        .populate('relationship')
+        .populate('categories')
+        .populate('events')
+        .populate('relationships')
         .populate('supplier', 'name companyName');
 
     if (!gift) return res.status(404).json({ message: 'The gift was not found' });

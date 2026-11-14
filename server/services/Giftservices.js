@@ -25,16 +25,21 @@ const isFilled = (value) => value !== undefined && value !== null && String(valu
 const toNumber = (value) => (isFilled(value) && Number.isFinite(Number(value)) ? Number(value) : null)
 
 // מזהה של שדה שיכול להיות id, אובייקט מאוכלס (populate), או שם
-const idOf = (field) => (field && typeof field === 'object' ? String(field._id ?? '') : String(field ?? ''))
+const idOf = (field) => String(
+    field && typeof field === 'object' ? field._id ?? field : field ?? ''
+)
 
 // האם שדה במתנה תואם לבחירה של הלקוח (לפי id או לפי שם)
-const sameOption = (giftField, answerId, answerName) => {
-    if (!giftField) return false
-    const giftId = idOf(giftField)
-    const giftName = typeof giftField === 'object' ? giftField.name : null
-    return (isFilled(answerId) && giftId === String(answerId)) ||
-           (isFilled(answerName) && giftName === answerName) ||
-           (isFilled(answerId) && giftName === answerId) // אם נשלח שם במקום id
+const sameOption = (giftFields, answerId, answerName) => {
+    const fields = Array.isArray(giftFields) ? giftFields : []
+    return fields.some((giftField) => {
+        if (!giftField) return false
+        const giftId = idOf(giftField)
+        const giftName = typeof giftField === 'object' ? giftField.name : null
+        return (isFilled(answerId) && giftId === String(answerId)) ||
+               (isFilled(answerName) && giftName === answerName) ||
+               (isFilled(answerId) && giftName === answerId) // אם נשלח שם במקום id
+    })
 }
 
 // "זהב, כחול" → ['זהב', 'כחול']
@@ -80,19 +85,19 @@ const calcScore = (gift, answers) => {
     // אירוע
     if (isFilled(answers.event) || isFilled(answers.eventName)) {
         possible += WEIGHTS.event
-        if (sameOption(gift.event, answers.event, answers.eventName)) earned += WEIGHTS.event
+        if (sameOption(gift.events, answers.event, answers.eventName)) earned += WEIGHTS.event
     }
 
     // קשר
     if (isFilled(answers.relationship) || isFilled(answers.relationshipName)) {
         possible += WEIGHTS.relationship
-        if (sameOption(gift.relationship, answers.relationship, answers.relationshipName)) earned += WEIGHTS.relationship
+        if (sameOption(gift.relationships, answers.relationship, answers.relationshipName)) earned += WEIGHTS.relationship
     }
 
     // קטגוריה
     if (isFilled(answers.category) || isFilled(answers.categoryName)) {
         possible += WEIGHTS.category
-        if (sameOption(gift.category, answers.category, answers.categoryName)) earned += WEIGHTS.category
+        if (sameOption(gift.categories, answers.category, answers.categoryName)) earned += WEIGHTS.category
     }
 
     // סגנון: לפי כמה מהסגנונות שהלקוח בחר יש במתנה
@@ -121,9 +126,9 @@ const calcScore = (gift, answers) => {
 // ---------- שלב 3: הפונקציה הראשית ----------
 const matchGifts = async (answers = {}) => {
     const gifts = await Gift.find()
-        .populate('relationship')
-        .populate('event')
-        .populate('category')
+        .populate('relationships')
+        .populate('events')
+        .populate('categories')
 
     return gifts
         .filter((gift) => passesRequirements(gift, answers))

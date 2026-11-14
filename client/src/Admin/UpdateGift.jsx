@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react'
 import Axios from "axios"
 import { useFeedback } from '../common/Feedback'
 
+const firstReferenceId = (value) => {
+    const first = Array.isArray(value) ? value[0] : value
+    return typeof first === 'object' && first !== null ? first._id || "" : first || ""
+}
+
 export const UpdateGift = ({ gift, onUpdated }) => {
     const { toast } = useFeedback()
 
@@ -61,14 +66,11 @@ export const UpdateGift = ({ gift, onUpdated }) => {
             setAge1(gift.age1 ?? "")
             setAge2(gift.age2 ?? "")
             
-            const catId = typeof gift.category === 'object' ? gift.category?._id : gift.category
-            setCategory(catId || "")
+            setCategory(firstReferenceId(gift.categories))
             
-            const eventId = typeof gift.event === 'object' ? gift.event?._id : gift.event
-            setEvent(eventId || "")
+            setEvent(firstReferenceId(gift.events))
 
-            const relId = typeof gift.relationship === 'object' ? gift.relationship?._id : gift.relationship
-            setRelationship(relId || "")
+            setRelationship(firstReferenceId(gift.relationships))
 
             setColor(gift.color || "")
             setPrice(gift.price ?? "")
@@ -115,9 +117,9 @@ export const UpdateGift = ({ gift, onUpdated }) => {
             formData.append("forGender", gender)
             formData.append("age1", Number(age1))
             formData.append("age2", Number(age2))
-            formData.append("category", category)
-            formData.append("event", event)
-            formData.append("relationship", relationship)
+            formData.append("categories", category)
+            formData.append("events", event)
+            formData.append("relationships", relationship)
             formData.append("color", color)
             formData.append("price", Number(price))
             formData.append("description", description)

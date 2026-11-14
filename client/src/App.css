@@ -4546,3 +4546,80 @@ a.iq-contact--pref:hover {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* ========== מסגרת קבועה לתמונות מתנה ========== */
+/* כרטיסי מתנה: תוצאות השאלון, כל המתנות, מועדפים, ספק ומנהל */
+.pg-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--tint);
+}
+
+.pg-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+ 
+  object-fit: cover;
+  object-position: center;
+}
+
+.pg-card__placeholder {
+  position: absolute;
+  inset: 0;
+}
+
+.pg-card__score,
+.pg-fav {
+  z-index: 1;
+}
+
+/* כל הכרטיסים באותו גובה */
+.pg-grid,
+.sg-grid {
+  align-items: stretch;
+}
+
+.pg-card {
+  height: 100%;
+}
+
+.pg-card__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pg-card__text {
+  min-height: calc(1.6em * 3);
+}
+
+/* דף פרטי המתנה */
+.gd-media {
+  position: relative;
+  aspect-ratio: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gd-media__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  padding: 16px;
+  object-fit: contain;
+}
+
+/* תצוגה מקדימה בטופס הוספת מתנה */
+.ag-upload__img {
+  object-fit: contain;
+  background: var(--tint);
+  padding: 4px;
+}

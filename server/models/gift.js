@@ -27,21 +27,21 @@ const giftSchema = new mongoose.Schema({
         type: Boolean,
         required: true
     },
-    category: {
+    categories: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
-    },
-    event: {
+    }],
+    events: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Event',
         required: true
-    },
-    relationship: {
+    }],
+    relationships: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Relationship',
         required: true
-    },
+    }],
     color: {
         type: String,
         required: true

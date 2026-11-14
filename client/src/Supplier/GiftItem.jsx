@@ -60,7 +60,7 @@ const GiftItem = ({ gift, onDelete,onEdit  }) => {
         ) : (
           <span className="pg-card__placeholder"><GiftIcon /></span>
         )}
-        <span className="pg-card__score">{gift.category?.name || 'לא צוינה קטגוריה'}</span>
+        <span className="pg-card__score">{gift.categories?.[0]?.name || 'לא צוינה קטגוריה'}</span>
       </div>
 
       <div className="pg-card__body">

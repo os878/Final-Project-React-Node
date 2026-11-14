@@ -34,6 +34,15 @@ const SORTS = [
 const nameOf = (field) => (field && typeof field === 'object' ? field.name : '');
 const idOf = (field) => (field && typeof field === 'object' ? String(field._id) : String(field || ''));
 
+// במודל של המתנה יש מערכים: categories / events / relationships.
+// הפונקציה מחזירה את כל ה-id של מתנה בשדה מסוים
+// (ותומכת גם בשדה הישן והבודד category / event, ליתר ביטחון)
+const idsOf = (gift, plural, singular) => {
+    const list = Array.isArray(gift[plural]) ? gift[plural] : (gift[singular] ? [gift[singular]] : []);
+    return list.map(idOf).filter(Boolean);
+};
+const firstOf = (gift, plural, singular) => (Array.isArray(gift[plural]) ? gift[plural][0] : gift[singular]);
+
 const GiftsCatalog = () => {
     const { toast } = useFeedback();
 
@@ -99,8 +108,8 @@ const GiftsCatalog = () => {
     };
 
     // אפשרויות הסינון: מהרשימות שבשרת, רק כאלה שיש להן לפחות מתנה אחת
-    const usedCategoryIds = useMemo(() => new Set(gifts.map((g) => idOf(g.category))), [gifts]);
-    const usedEventIds = useMemo(() => new Set(gifts.map((g) => idOf(g.event))), [gifts]);
+    const usedCategoryIds = useMemo(() => new Set(gifts.flatMap((g) => idsOf(g, 'categories', 'category'))), [gifts]);
+    const usedEventIds = useMemo(() => new Set(gifts.flatMap((g) => idsOf(g, 'events', 'event'))), [gifts]);
 
     const categories = useMemo(() => allCategories
         .map((c) => ({ id: String(c._id), name: c.name }))
@@ -111,9 +120,10 @@ const GiftsCatalog = () => {
         .filter((ev) => usedEventIds.has(ev.id)), [allEvents, usedEventIds]);
 
     // שם הקטגוריה של מתנה – גם אם השרת שלח רק id
-    const categoryName = (gift) => nameOf(gift.category)
-        || allCategories.find((c) => String(c._id) === idOf(gift.category))?.name
-        || '';
+    const categoryName = (gift) => {
+        const first = firstOf(gift, 'categories', 'category');
+        return nameOf(first) || allCategories.find((c) => String(c._id) === idOf(first))?.name || '';
+    };
 
     // המתנות שמוצגות אחרי סינון ומיון
     const shown = useMemo(() => {
@@ -122,8 +132,8 @@ const GiftsCatalog = () => {
         const list = gifts.filter((g) => {
             const price = Number(g.price) || 0;
             if (text && !`${g.name || ''} ${g.description || ''}`.toLowerCase().includes(text)) return false;
-            if (category !== 'all' && idOf(g.category) !== category) return false;
-            if (event !== 'all' && idOf(g.event) !== event) return false;
+            if (category !== 'all' && !idsOf(g, 'categories', 'category').includes(category)) return false;
+            if (event !== 'all' && !idsOf(g, 'events', 'event').includes(event)) return false;
             if (price < range.min || price > range.max) return false;
             return true;
         });
