@@ -3,11 +3,6 @@ import Axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { useFeedback } from '../common/Feedback'
 
-const firstReferenceId = (value) => {
-    const first = Array.isArray(value) ? value[0] : value
-    return typeof first === 'object' && first !== null ? first._id || "" : first || ""
-}
-
 export const AddGift = ({ gift, onUpdated }) => {
     const navigate = useNavigate()
     const { toast } = useFeedback()
@@ -88,6 +83,7 @@ export const AddGift = ({ gift, onUpdated }) => {
             setGender(gift.forGender || "לא משנה")
             setAge1(gift.age1 ?? "")
             setAge2(gift.age2 ?? "")
+            setSelectedCategories(extractIds(gift.categories || gift.category))
             setSelectedEvents(extractIds(gift.events || gift.event))
             setSelectedRelationships(extractIds(gift.relationships || gift.relationship))
             setStyles(gift.styles || [])
@@ -160,11 +156,10 @@ export const AddGift = ({ gift, onUpdated }) => {
             formData.append("forGender", gender)
             formData.append("age1", Number(age1))
             formData.append("age2", Number(age2))
-            formData.append("categories", category)
-          
             formData.append("color", color)
             formData.append("price", Number(price))
             formData.append("description", description)
+            formData.append("DedicationPersonalization", dedicationPersonalization)
 
             selectedCategories.forEach((catId) => {
                 formData.append("categories", catId)
