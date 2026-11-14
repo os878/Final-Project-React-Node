@@ -10,12 +10,12 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.get("/findByIdGift/:id", verifyJWT, giftController.findByIdGift)
-router.get("/findByIdSupplier",verifyJWT,verifyRole('Supplier'), giftController.findByIdSupplier)
-router.get("/getAllGifts",verifyJWT,verifyRole('Supplier','Admin'), giftController.getAllGifts)
-router.post("/", verifyJWT,verifyRole('Supplier'),upload.single('image'), giftController.createNewGift)
-router.put("/", verifyJWT,verifyRole('Supplier','Admin'),upload.single('image'), giftController.updateGift)
-router.delete("/delete", verifyJWT,verifyRole('Supplier','Admin'), giftController.deleteGift)
-router.post("/matchGifts",verifyJWT, verifyRole('Customer'), giftController.matchGiftsController)
-router.post("/getAiInspirations",verifyJWT, verifyRole('Customer'), giftController.getAiInspirations)
+router.get("/findByIdSupplier", verifyJWT, verifyRole('Supplier'), giftController.findByIdSupplier)
+router.get("/getAllGifts", verifyJWT, verifyRole('Supplier', 'Admin', 'Customer'), giftController.getAllGifts)
+router.post("/", verifyJWT, verifyRole('Supplier'), upload.single('image'), giftController.createNewGift)
+router.put("/", verifyJWT, verifyRole('Supplier', 'Admin'), upload.single('image'), giftController.updateGift)
+router.delete("/delete", verifyJWT, verifyRole('Supplier', 'Admin'), giftController.deleteGift)
+router.post("/matchGifts", verifyJWT, verifyRole('Customer'), giftController.matchGiftsController)
+router.post("/getAiInspirations", verifyJWT, verifyRole('Customer'), giftController.getAiInspirations)
 
 module.exports = router

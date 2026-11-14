@@ -2166,11 +2166,8 @@ label {
 /* תמונה */
 .pg-card__media {
   position: relative;
-  width: 100%;
-  height: 210px;
-  flex-shrink: 0;
+  aspect-ratio: 4 / 3;
   background: var(--tint);
-  overflow: hidden;
 }
 
 .pg-card__img {
@@ -2244,7 +2241,7 @@ label {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   padding: 18px 20px 20px;
 }
 
@@ -2253,12 +2250,6 @@ label {
   font-size: 19px;
   font-weight: 700;
   line-height: 1.3;
-  height: calc(1.3em * 2);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin: 0;
 }
 
 .pg-card__text {
@@ -2268,9 +2259,7 @@ label {
   overflow: hidden;
   color: var(--navy-soft);
   font-size: 15px;
-  line-height: 1.5;
-  height: calc(1.5em * 3);
-  margin: 0;
+  line-height: 1.6;
 }
 
 .pg-card__footer {
@@ -4029,8 +4018,6 @@ a.iq-contact--pref:hover {
   padding: 12px;
   border-radius: 14px;
   background: var(--cream);
-  min-height: 115px;
-  align-content: start;
 }
 
 .ad-specs dt {
@@ -4049,9 +4036,7 @@ a.iq-contact--pref:hover {
 .ad-tags {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
   gap: 6px;
-  min-height: 34px;
 }
 
 /* ========== ניהול ותחזוקה (mm) ========== */
@@ -4167,7 +4152,6 @@ a.iq-contact--pref:hover {
     flex-basis: 100%;
   }
 }
-
 /* ========== הודעות ואישורים (ui) – common/Feedback.jsx ========== */
 /* הודעות קופצות */
 .ui-toasts {
@@ -4396,5 +4380,169 @@ a.iq-contact--pref:hover {
   .ui-overlay,
   .ui-dialog {
     animation: none;
+  }
+}
+
+/* ========== כל המתנות – קטלוג ללקוח (cat) ========== */
+.cat-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--white);
+  box-shadow: 0 10px 26px rgba(42, 26, 20, .04);
+}
+
+.cat-bar__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px 200px;
+  gap: 12px;
+  align-items: end;
+}
+
+.cat-search {
+  position: relative;
+}
+
+.cat-search__icon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  width: 20px;
+  height: 20px;
+  color: var(--navy-soft);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.cat-search__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.cat-search input {
+  min-height: 48px;
+  padding-right: 44px;
+  background: var(--cream);
+}
+
+.cat-select {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cat-select label {
+  color: var(--navy-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cat-select select {
+  min-height: 48px;
+  background: var(--cream);
+}
+
+.cat-search input:focus,
+.cat-select select:focus {
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(122, 31, 43, .1);
+}
+
+.cat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cat-chips .qz-chip {
+  min-height: 40px;
+  padding: 6px 16px;
+  font-size: 15px;
+}
+
+/* מחירים – כפתורים קטנים יותר, בגוון זהב */
+.cat-price {
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background .15s, border-color .15s;
+}
+
+.cat-price:hover {
+  border-color: var(--spark);
+}
+
+.cat-price--on {
+  border-color: var(--spark);
+  background: rgba(217, 178, 106, .25);
+}
+
+.cat-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--navy-soft);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.cat-clear {
+  min-height: 40px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--orange);
+  font-weight: 700;
+}
+
+.cat-clear:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cat-supplier {
+  margin-top: -4px;
+  color: var(--navy-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cat-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* שם קטגוריה ארוך לא עולה על כפתור הלב */
+.pg-card__score {
+  max-width: calc(100% - 80px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .cat-bar__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cat-search {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .cat-bar__row {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

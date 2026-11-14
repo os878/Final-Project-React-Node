@@ -23,7 +23,8 @@ const ProfileCustomer = () => (
             button="למצוא מתנה חדשה"
         />
 
-        <div className="home-cards">
+        <div className="home-cards home-cards--3">
+            <HomeCard to="/Customer/Gifts" icon="box" title="כל המתנות" text="מדפדפים בכל המתנות ומחפשים השראה." />
             <HomeCard to="/Customer/Favorites" icon="heart" title="המועדפים שלי" text="כל המתנות ששמרתם, במקום אחד." />
             <HomeCard to="/Customer/CusromerDetails" icon="user" title="הפרטים שלי" text="עדכון שם, טלפון ואימייל." />
         </div>

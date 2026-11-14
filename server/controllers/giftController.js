@@ -125,13 +125,14 @@ const findByIdSupplier = async (req, res) => {
         return res.status(500).json({ message: 'שגיאה בטעינת מתנות הספק', error: error.message });
     }
 };
-
 const getAllGifts = async (req, res) => {
     try {
         const gifts = await Gift.find()
             .populate('category')
             .populate('event')
             .populate('relationship')
+            .populate('supplier', 'companyName') // רק שם החברה – בלי טלפון, מייל או סיסמה
+            .sort({ _id: -1 })                    // מהחדשה לישנה
             .exec();
 
         return res.status(200).json(gifts);

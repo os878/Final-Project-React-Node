@@ -26,7 +26,7 @@ import GiftDetails from './Customer/GiftDetails'
 import SupplierInquiries from './Supplier/SupplierInquiries'
 import MaintenanceManager from './Admin/MaintenanceManager'
 import AuthPage from './common/AuthPage';
-
+import GiftsCatalog from './Customer/GiftsCatalog';
 import LandingPage from './LandingPage'
 
 function App() {
@@ -37,40 +37,41 @@ function App() {
         <FeedbackProvider>
           <Router>
             <Routes>
-            {/* דפים שיש להם עיצוב מלא משלהם – בלי ההדר של ה-Layout */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/LandingPage" element={<LandingPage />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/admin-entry-details" element={<LoginAdmin />} />
+              {/* דפים שיש להם עיצוב מלא משלהם – בלי ההדר של ה-Layout */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/LandingPage" element={<LandingPage />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/admin-entry-details" element={<LoginAdmin />} />
 
-            {/* כל הדפים הפנימיים – עם ההדר */}
-            <Route element={<Layout />}>
-              {/* מנהל */}
-              <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
-              <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
-              <Route path="/Admin/AllGifts" element={<AllGifts />} />
-              <Route path="/Admin/AllCustomers" element={<AllCustomers />} />
-              <Route path="/Admin/AllSuppliers" element={<AllSuppliers />} />
-              <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
-              <Route path="/Admin/MaintenanceManager" element={<MaintenanceManager />} />
+              {/* כל הדפים הפנימיים – עם ההדר */}
+              <Route element={<Layout />}>
+                {/* מנהל */}
+                <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
+                <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
+                <Route path="/Admin/AllGifts" element={<AllGifts />} />
+                <Route path="/Admin/AllCustomers" element={<AllCustomers />} />
+                <Route path="/Admin/AllSuppliers" element={<AllSuppliers />} />
+                <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
+                <Route path="/Admin/MaintenanceManager" element={<MaintenanceManager />} />
 
-              {/* ספק */}
-              <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
-              <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
-              <Route path="/AddGift" element={<AddGift />} />
-              <Route path="/Supplier/GiftItem" element={<GiftItem />} />
-              <Route path="/Supplier/GiftsList" element={<GiftsList />} />
-              <Route path="/Supplier/Inquiries" element={<SupplierInquiries />} />
+                {/* ספק */}
+                <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />
+                <Route path="/Supplier/SupplierDetails" element={<SupplierDetails />} />
+                <Route path="/AddGift" element={<AddGift />} />
+                <Route path="/Supplier/GiftItem" element={<GiftItem />} />
+                <Route path="/Supplier/GiftsList" element={<GiftsList />} />
+                <Route path="/Supplier/Inquiries" element={<SupplierInquiries />} />
 
-              {/* לקוח */}
-              <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
-              <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
-              <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
-              <Route path="/PresentingGifts" element={<PresentingGifts />} />
-              <Route path="/Customer/Favorites" element={<Favorites />} />
-              <Route path="/Giftinspirations" element={<Giftinspirations />} />
-              <Route path="/Customer/GiftDetails/:id" element={<GiftDetails />} />
-            </Route>
+                {/* לקוח */}
+                <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
+                <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
+                <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
+                <Route path="/PresentingGifts" element={<PresentingGifts />} />
+                <Route path="/Customer/Favorites" element={<Favorites />} />
+                <Route path="/Giftinspirations" element={<Giftinspirations />} />
+                <Route path="/Customer/GiftDetails/:id" element={<GiftDetails />} />
+                <Route path="/Customer/Gifts" element={<GiftsCatalog />} />
+              </Route>
             </Routes>
           </Router>
         </FeedbackProvider>

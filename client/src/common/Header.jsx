@@ -6,6 +6,7 @@ const NAV_LINKS = {
     customer: [
         { to: "/Customer/ProfilCustomer", label: "האזור שלי" },
         { to: "/Customer/Questionnaire", label: "שאלון מתנות" },
+        { to: "/Customer/Gifts", label: "כל המתנות" },
         { to: "/Customer/Favorites", label: "מועדפים" },
         { to: "/Customer/CusromerDetails", label: "הפרטים שלי" },
     ],
