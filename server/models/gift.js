@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose')
 
 const giftSchema = new mongoose.Schema({
@@ -23,10 +22,11 @@ const giftSchema = new mongoose.Schema({
         type: String,
         enum: ['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית']
     }],
-    DedicationPersonalization:{
+    DedicationPersonalization: {
         type: Boolean,
         required: true
     },
+    // מתנה יכולה להתאים לכמה קטגוריות, אירועים וקשרים
     categories: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
@@ -51,16 +51,17 @@ const giftSchema = new mongoose.Schema({
         required: true
     },
     image: {
-        type: String
+        type: String,
+        trim: true // מוחק רווחים וטאבים בתחילת הקישור ובסופו
     },
     description: {
         type: String
     },
     supplier: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Supplier',
-    required: true // או false, בהתאם לרצונך אם השדה חובה
-}
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Supplier',
+        required: true
+    }
 }, {
     timestamps: true
 })

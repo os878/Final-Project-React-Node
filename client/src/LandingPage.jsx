@@ -68,19 +68,19 @@ const steps = [
   },
   {
     title: 'מקבלים המלצות מדויקות',
-    text: 'רק כמה רעיונות שבאמת מתאימים, וליד כל אחד הסבר קצר למה דווקא הוא.',
+    text: ' כמה רעיונות שבאמת מתאימים, וליד כל אחד הסבר קצר למה דווקא הוא.',
   },
   {
     title: 'בוחרים ומעניקים',
-    text: 'מזמינים מוצר מוכן מספק, או לוקחים את הרעיון ומגשימים אותו בעצמכם.',
+    text: 'מזמינים מתנה מוכנה מחנות מובחרת, או לוקחים את הרעיון ומגשימים אותו בעצמכם.',
   },
 ];
 
 const paths = [
   {
     tag: 'מוכן להזמנה',
-    title: 'מוצרים מספקים',
-    text: 'מתנות קיימות מספקים מובחרים, שמותאמות לתשובות שלכם ואפשר להזמין אותן מיד.',
+    title: 'מתנות מחנויות ומותגים',
+    text: 'מתנות קיימות מעסקים מובחרים, שמותאמות לתשובות שלכם ואפשר להזמין אותן מיד.',
     tone: 'navy',
   },
   {
@@ -127,7 +127,7 @@ const LandingPage = () => {
         <div className="gp-container gp-header__inner">
           <GifterLogo size={40} />
           <div className="gp-header__actions">
-            <a href="#suppliers" className="gp-header__link">לספקים</a>
+            <a href="#suppliers" className="gp-header__link">לבעלי עסקים</a>
             <button type="button" className="gp-btn gp-btn--small" onClick={() => start()}>
               למצוא מתנה
             </button>
@@ -148,7 +148,7 @@ const LandingPage = () => {
               </h1>
               <p className="gp-hero__lead">
                 עונים על כמה שאלות קצרות על מי שמקבל את המתנה, ומקבלים רעיונות שמתאימים בדיוק לו:
-                מוצרים מוכנים מספקים, או השראה למתנה מקורית. בלי לחפש שעות, ובלי לנחש.
+                מתנות מוכנות ממותגים וחנויות, או השראה למתנה מקורית. בלי לחפש שעות, ובלי לנחש.
               </p>
               <div className="gp-hero__actions">
                 <button type="button" className="gp-btn gp-btn--large" onClick={() => start()}>
@@ -232,11 +232,11 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* ספקים */}
+        {/* עסקים וחנויות */}
         <section id="suppliers" className="gp-section gp-suppliers" aria-labelledby="suppliers-title">
           <div className="gp-container gp-suppliers__inner">
             <div className="gp-suppliers__copy">
-              <p className="gp-eyebrow">לספקים ולבעלי עסקים</p>
+              <p className="gp-eyebrow">לבעלי עסקים, חנויות ויוצרים</p>
               <h2 id="suppliers-title" className="gp-suppliers__title">
                 הלקוחות שלכם כבר מחפשים מתנה.
                 <br />
@@ -259,7 +259,7 @@ const LandingPage = () => {
 
             <div className="gp-suppliers__bottom">
               <p className="gp-suppliers__early">
-                אנחנו בונים עכשיו את נבחרת הספקים הראשונה. מצטרפים עכשיו? אתם שם מההתחלה.
+                אנחנו בונים עכשיו את נבחרת העסקים והמותגים הראשונה. מצטרפים עכשיו? אתם שם מההתחלה.
               </p>
               <button type="button" className="gp-btn gp-btn--large gp-btn--spark" onClick={() => navigate(SUPPLIER_ROUTE)}>
                 אני רוצה להציע את המוצרים שלי

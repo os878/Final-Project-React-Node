@@ -39,15 +39,27 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
     }
   };
 
-  // פונקציית עזר מורחבת לחילוץ השם מכל מבנה אובייקט
-  const getDisplayName = (fields, fallbackText) => {
-    const names = (Array.isArray(fields) ? fields : [])
-      .map((field) => {
-        if (typeof field !== 'object' || field === null) return '';
-        return field.name || field.categoryName || field.title || field.label || '';
-      })
-      .filter(Boolean);
-    return names.length ? names.join(', ') : fallbackText;
+
+  // פונקציית עזר לחילוץ שם מפריט בודד
+  const extractSingleName = (item) => {
+    if (!item) return '';
+    if (typeof item === 'object') {
+      return item.name || item.categoryName || item.title || item.label || '';
+    }
+    return String(item);
+  };
+
+  // פונקציית עזר לחילוץ שמות ממערך או מאובייקט בודד וחיבורם בפסיק
+  const getDisplayNames = (field, fallbackText) => {
+    if (!field) return fallbackText;
+
+    if (Array.isArray(field)) {
+      const names = field.map(extractSingleName).filter(Boolean);
+      return names.length > 0 ? names.join(', ') : fallbackText;
+    }
+
+    const singleName = extractSingleName(field);
+    return singleName || fallbackText;
   };
 
   return (
@@ -58,7 +70,11 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
         ) : (
           <span className="pg-card__placeholder"><GiftIcon /></span>
         )}
-        <span className="pg-card__score">{getDisplayName(gift.categories, 'לא צוינה קטגוריה')}</span>
+
+        <span className="pg-card__score">
+          {getDisplayNames(gift.categories || gift.category, 'לא צוינה קטגוריה')}
+        </span>
+
       </div>
 
       <div className="pg-card__body">
@@ -69,8 +85,15 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
         <dl className="ad-specs">
           <div><dt>מיועד עבור</dt><dd>{gift.forGender || 'לא משנה'}</dd></div>
           <div><dt>גילאים</dt><dd>{gift.age1} עד {gift.age2}</dd></div>
-          <div><dt>אירוע</dt><dd>{getDisplayName(gift.events, 'לא צוין אירוע')}</dd></div>
-          <div><dt>למי מיועד</dt><dd>{getDisplayName(gift.relationships, 'לא צוין קשר')}</dd></div>
+
+          <div>
+            <dt>אירוע</dt>
+            <dd>{getDisplayNames(gift.events || gift.event, 'לא צוין אירוע')}</dd>
+          </div>
+          <div>
+            <dt>למי מיועד</dt>
+            <dd>{getDisplayNames(gift.relationships || gift.relationship, 'לא צוין קשר')}</dd>
+          </div>
           <div><dt>צבע</dt><dd>{gift.color}</dd></div>
           <div><dt>הקדשה אישית</dt><dd>{gift.DedicationPersonalization ? 'כן' : 'לא'}</dd></div>
         </dl>

@@ -25,21 +25,25 @@ const isFilled = (value) => value !== undefined && value !== null && String(valu
 const toNumber = (value) => (isFilled(value) && Number.isFinite(Number(value)) ? Number(value) : null)
 
 // מזהה של שדה שיכול להיות id, אובייקט מאוכלס (populate), או שם
-const idOf = (field) => String(
-    field && typeof field === 'object' ? field._id ?? field : field ?? ''
-)
+const idOf = (field) => (field && typeof field === 'object' ? String(field._id ?? '') : String(field ?? ''))
 
-// האם שדה במתנה תואם לבחירה של הלקוח (לפי id או לפי שם)
-const sameOption = (giftFields, answerId, answerName) => {
-    const fields = Array.isArray(giftFields) ? giftFields : []
-    return fields.some((giftField) => {
-        if (!giftField) return false
-        const giftId = idOf(giftField)
-        const giftName = typeof giftField === 'object' ? giftField.name : null
-        return (isFilled(answerId) && giftId === String(answerId)) ||
-               (isFilled(answerName) && giftName === answerName) ||
-               (isFilled(answerId) && giftName === answerId) // אם נשלח שם במקום id
-    })
+// בדיקת התאמה לפריט בודד (לפי id או לפי שם)
+const isSingleOptionMatch = (item, answerId, answerName) => {
+    if (!item) return false
+    const itemId = idOf(item)
+    const itemName = typeof item === 'object' ? item.name : null
+    return (isFilled(answerId) && itemId === String(answerId)) ||
+           (isFilled(answerName) && itemName === answerName) ||
+           (isFilled(answerId) && itemName === answerId) // אם נשלח שם במקום id
+}
+
+// בדיקת התאמה מול מערך במתנה (או מול שדה בודד לתאימות לאחור)
+const matchesOption = (giftFieldOrArray, answerId, answerName) => {
+    if (!giftFieldOrArray) return false
+    if (Array.isArray(giftFieldOrArray)) {
+        return giftFieldOrArray.some((item) => isSingleOptionMatch(item, answerId, answerName))
+    }
+    return isSingleOptionMatch(giftFieldOrArray, answerId, answerName)
 }
 
 // "זהב, כחול" → ['זהב', 'כחול']
@@ -82,22 +86,28 @@ const calcScore = (gift, answers) => {
     let earned = 0
     let possible = 0 // כמה נקודות אפשר היה לקבל לפי מה שהלקוח ענה
 
-    // אירוע
+    // אירוע (בודק במערך events)
     if (isFilled(answers.event) || isFilled(answers.eventName)) {
         possible += WEIGHTS.event
-        if (sameOption(gift.events, answers.event, answers.eventName)) earned += WEIGHTS.event
+        if (matchesOption(gift.events || gift.event, answers.event, answers.eventName)) {
+            earned += WEIGHTS.event
+        }
     }
 
-    // קשר
+    // קשר (בודק במערך relationships)
     if (isFilled(answers.relationship) || isFilled(answers.relationshipName)) {
         possible += WEIGHTS.relationship
-        if (sameOption(gift.relationships, answers.relationship, answers.relationshipName)) earned += WEIGHTS.relationship
+        if (matchesOption(gift.relationships || gift.relationship, answers.relationship, answers.relationshipName)) {
+            earned += WEIGHTS.relationship
+        }
     }
 
-    // קטגוריה
+    // קטגוריה (בודק במערך categories)
     if (isFilled(answers.category) || isFilled(answers.categoryName)) {
         possible += WEIGHTS.category
-        if (sameOption(gift.categories, answers.category, answers.categoryName)) earned += WEIGHTS.category
+        if (matchesOption(gift.categories || gift.category, answers.category, answers.categoryName)) {
+            earned += WEIGHTS.category
+        }
     }
 
     // סגנון: לפי כמה מהסגנונות שהלקוח בחר יש במתנה

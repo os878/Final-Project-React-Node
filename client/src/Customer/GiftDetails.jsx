@@ -156,16 +156,16 @@ const GiftDetails = () => {
                     <div className="gd-supplier">
                         <span className="gd-supplier__icon"><StoreIcon /></span>
                         <div>
-                            <span className="gd-supplier__label">פרטי הספק</span>
+                            <span className="gd-supplier__label"> פרטי העסק</span>
                             <strong className="gd-supplier__name">{gift.supplier?.companyName}</strong>
                         </div>
                     </div>
 
                     <button type="button" className="gd-cta" onClick={() => setOpenDialog(true)}>
                         <ChatIcon className="gd-cta__icon" />
-                        שליחת פנייה לספק
+                        שליחת פנייה לבעל העסק
                     </button>
-                    <p className="gd-note">הספק יחזור אליכם בדרך שתבחרו, כדי לתאם הזמנה או לענות על שאלות.</p>
+                    <p className="gd-note">בעל העסק יחזור אליכם בדרך שתבחרו, כדי לתאם הזמנה או לענות על שאלות.</p>
                 </div>
             </div>
 
@@ -200,13 +200,13 @@ const GiftDetails = () => {
                             </div>
 
                             <div className="gd-form__field">
-                                <label htmlFor="gdMessage">הודעה לספק</label>
+                                <label htmlFor="gdMessage">הודעה לבעל העסק</label>
                                 <textarea id="gdMessage" name="message" rows="4" placeholder="למשל: אשמח לדעת אם אפשר להוסיף הקדשה, ותוך כמה זמן זה מגיע"
                                     value={formData.message} onChange={handleChange} required />
                             </div>
 
                             <fieldset className="gd-contact">
-                                <legend>איך תרצו שהספק יחזור אליכם?</legend>
+                                <legend>איך תרצו שבעל העסק יחזור אליכם?</legend>
                                 <div className="gd-contact__options">
                                     {CONTACT_OPTIONS.map(({ value, label, Icon: OptionIcon }) => (
                                         <label key={value} className={`gd-contact__option ${formData.preferredContact === value ? 'gd-contact__option--on' : ''}`}>

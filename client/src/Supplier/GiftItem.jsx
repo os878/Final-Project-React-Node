@@ -11,12 +11,10 @@ const GiftIcon = () => <Icon><rect x="4" y="10" width="16" height="10" rx="1.5" 
 const EditIcon = () => <Icon><path d="M15 4l5 5L9 20H4v-5Z" /><path d="M13 6l5 5" /></Icon>;
 const TrashIcon = () => <Icon><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></Icon>;
 
-const GiftItem = ({ gift, onDelete,onEdit  }) => {
+const GiftItem = ({ gift, onDelete, onEdit }) => {
   const { toast, confirm } = useFeedback();
 
   const handleDelete = async () => {
-
-
     const ok = await confirm({
       title: 'מחיקת מתנה',
       message: 'האם את בטוחה שברצונך למחוק את המתנה?',
@@ -51,6 +49,12 @@ const GiftItem = ({ gift, onDelete,onEdit  }) => {
       toast(error.message, "error");
     }
   };
+
+  // חילוץ שמות הקטגוריות (תומך במערך categories או באובייקט category בודד)
+  const categoryLabel = Array.isArray(gift.categories) && gift.categories.length > 0
+    ? gift.categories.map((c) => c?.name).filter(Boolean).join(', ')
+    : gift.category?.name || 'לא צוינה קטגוריה';
+
   return (
     <article className="pg-card gift-item">
       {/* תמונת המתנה, אם קיימת */}
@@ -60,7 +64,7 @@ const GiftItem = ({ gift, onDelete,onEdit  }) => {
         ) : (
           <span className="pg-card__placeholder"><GiftIcon /></span>
         )}
-        <span className="pg-card__score">{gift.categories?.[0]?.name || 'לא צוינה קטגוריה'}</span>
+        <span className="pg-card__score">{categoryLabel}</span>
       </div>
 
       <div className="pg-card__body">
