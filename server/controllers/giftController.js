@@ -149,6 +149,7 @@ const getAllGifts = async (req, res) => {
             .populate('categories')
             .populate('events')
             .populate('relationships')
+            .populate('supplier')
             .exec();
 
         return res.status(200).json(gifts);
@@ -257,7 +258,11 @@ const deleteGift = async (req, res) => {
     }
 
     try {
-        const gift = await Gift.findOne({ _id: id, supplier: req.user._id }).exec();
+        const filter = req.user.role === 'Admin'
+            ? { _id: id }
+            : { _id: id, supplier: req.user._id };
+
+        const gift = await Gift.findOne(filter).exec();
 
         if (!gift) {
             return res.status(404).json({ message: 'Gift not found' });
@@ -268,7 +273,7 @@ const deleteGift = async (req, res) => {
 
         await gift.deleteOne();
 
-        return res.json(`Gift '${giftName}' ID ${giftId} deleted`);
+        return res.json({ message: `Gift '${giftName}' ID ${giftId} deleted` });
     } catch (error) {
         return res.status(500).json({ message: 'Unable to delete gift' });
     }
