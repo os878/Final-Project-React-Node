@@ -10,17 +10,18 @@ export const UpdateGift = ({ gift, onUpdated }) => {
     const [gender, setGender] = useState("לא משנה")
     const [age1, setAge1] = useState("")
     const [age2, setAge2] = useState("")
-    const [category, setCategory] = useState("")
     const [color, setColor] = useState("")
     const [price, setPrice] = useState("")
-    
+
     // state לקובץ התמונה החדש שנבחר
     const [imageFile, setImageFile] = useState(null)
     const [description, setDescription] = useState("")
 
-    // שדות נוספים מהסכמה
-    const [event, setEvent] = useState("")
-    const [relationship, setRelationship] = useState("")
+    // שדות מרובי בחירה (מערכים של מזהים)
+    const [selectedCategories, setSelectedCategories] = useState([])
+    const [selectedEvents, setSelectedEvents] = useState([])
+    const [selectedRelationships, setSelectedRelationships] = useState([])
+
     const [dedicationPersonalization, setDedicationPersonalization] = useState(false)
     const [styles, setStyles] = useState([])
 
@@ -34,20 +35,45 @@ export const UpdateGift = ({ gift, onUpdated }) => {
     // אפשרויות סגנון לפי ה-enum בשרת
     const availableStyles = ['שימושי', 'דקורטיבי', 'חווייתי', 'אישי/מרגש', 'יוקרתי', 'מצחיק/מקורית']
 
-    // טעינת הנתונים מהשרת (קטגוריות, אירועים ומערכות יחסים)
+    // פונקציית עזר לחילוץ מערך מזהים ממתנה קיימת (תומכת במערך או באובייקט/מזהה בודד)
+    const extractIds = (field) => {
+        if (!field) return []
+        if (Array.isArray(field)) {
+            return field.map(item => (typeof item === 'object' ? item?._id : item)).filter(Boolean)
+        }
+        const singleId = typeof field === 'object' ? field?._id : field
+        return singleId ? [singleId] : []
+    }
+
+    // טעינת הנתונים מהשרת (קטגוריות, אירועים וקשרים)
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const [catRes, eventRes, relRes] = await Promise.all([
-                    Axios.get("http://localhost:7002/api/category"),
-                    Axios.get("http://localhost:7002/api/event"),
-                    Axios.get("http://localhost:7002/api/relationship")
-                ])
-                setCategories(catRes.data)
-                setEvents(eventRes.data)
-                setRelationships(relRes.data)
-            } catch (error) {
-                setErrorMessage("לא ניתן לטעון את כל הנתונים הדרושים לטופס")
+            const token = localStorage.getItem("token")
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+
+            const [catRes, eventRes, relRes] = await Promise.allSettled([
+                Axios.get("http://localhost:7002/api/category", config),
+                Axios.get("http://localhost:7002/api/event", config),
+                Axios.get("http://localhost:7002/api/relationship", config)
+            ])
+
+            if (catRes.status === "fulfilled") {
+                const data = catRes.value.data
+                setCategories(Array.isArray(data) ? data : data.categories || data.data || [])
+            }
+
+            if (eventRes.status === "fulfilled") {
+                const data = eventRes.value.data
+                setEvents(Array.isArray(data) ? data : data.events || data.data || [])
+            }
+
+            if (relRes.status === "fulfilled") {
+                const data = relRes.value.data
+                setRelationships(Array.isArray(data) ? data : data.relationships || data.data || [])
+            }
+
+            if (catRes.status === "rejected" || eventRes.status === "rejected" || relRes.status === "rejected") {
+                console.error("שגיאה בטעינת חלק מהרשימות:", { catRes, eventRes, relRes })
             }
         }
         fetchData()
@@ -60,22 +86,17 @@ export const UpdateGift = ({ gift, onUpdated }) => {
             setGender(gift.forGender || "לא משנה")
             setAge1(gift.age1 ?? "")
             setAge2(gift.age2 ?? "")
-            
-            const catId = typeof gift.category === 'object' ? gift.category?._id : gift.category
-            setCategory(catId || "")
-            
-            const eventId = typeof gift.event === 'object' ? gift.event?._id : gift.event
-            setEvent(eventId || "")
 
-            const relId = typeof gift.relationship === 'object' ? gift.relationship?._id : gift.relationship
-            setRelationship(relId || "")
+            setSelectedCategories(extractIds(gift.categories || gift.category))
+            setSelectedEvents(extractIds(gift.events || gift.event))
+            setSelectedRelationships(extractIds(gift.relationships || gift.relationship))
 
             setColor(gift.color || "")
             setPrice(gift.price ?? "")
             setDescription(gift.description || "")
             setDedicationPersonalization(Boolean(gift.DedicationPersonalization))
             setStyles(gift.styles || [])
-            setImageFile(null) // איפוס הקובץ החדש בעת טעינת מתנה לעריכה
+            setImageFile(null)
         }
     }, [gift])
 
@@ -84,21 +105,22 @@ export const UpdateGift = ({ gift, onUpdated }) => {
         if (errorMessage) setErrorMessage("")
     }
 
-    // טיפול בבחירת סגנונות (מערך של תיבות סימון)
-    const handleStyleChange = (style) => {
-        if (styles.includes(style)) {
-            setStyles(styles.filter(s => s !== style))
+    // פונקציית עזר כללית להוספה/הסרה מרשימת בחירה מרובה
+    const toggleArrayItem = (currentArray, setter, item) => {
+        if (currentArray.includes(item)) {
+            setter(currentArray.filter(i => i !== item))
         } else {
-            setStyles([...styles, style])
+            setter([...currentArray, item])
         }
+        if (errorMessage) setErrorMessage("")
     }
 
     const submitForm = async (e) => {
         e.preventDefault()
         setErrorMessage("")
 
-        if (!name || !category || !event || !relationship) {
-            setErrorMessage("יש למלא שם, קטגוריה, אירוע ומערכת יחסים")
+        if (!name || selectedCategories.length === 0 || selectedEvents.length === 0 || selectedRelationships.length === 0) {
+            setErrorMessage("יש למלא שם ולבחור לפחות קטגוריה אחת, אירוע אחד וקשר אחד")
             return
         }
 
@@ -108,26 +130,33 @@ export const UpdateGift = ({ gift, onUpdated }) => {
         }
 
         try {
-            // בניה של FormData למשלוח הנתונים והקובץ
             const formData = new FormData()
             formData.append("id", gift._id)
             formData.append("name", name)
             formData.append("forGender", gender)
             formData.append("age1", Number(age1))
             formData.append("age2", Number(age2))
-            formData.append("category", category)
-            formData.append("event", event)
-            formData.append("relationship", relationship)
             formData.append("color", color)
             formData.append("price", Number(price))
             formData.append("description", description)
             formData.append("DedicationPersonalization", dedicationPersonalization)
 
+            selectedCategories.forEach((catId) => {
+                formData.append("categories", catId)
+            })
+
+            selectedEvents.forEach((eventId) => {
+                formData.append("events", eventId)
+            })
+
+            selectedRelationships.forEach((relId) => {
+                formData.append("relationships", relId)
+            })
+
             styles.forEach((style) => {
                 formData.append("styles", style)
             })
 
-            // אם נבחרה תמונה חדשה, מוסיפים אותה ל-FormData
             if (imageFile) {
                 formData.append("image", imageFile)
             }
@@ -266,19 +295,22 @@ export const UpdateGift = ({ gift, onUpdated }) => {
                     </div>
 
                     <div className="ag-field">
-                        <label htmlFor="relationship">למי מיועד</label>
-                        <select
-                            id="relationship"
-                            value={relationship}
-                            onChange={(e) => handleInputChange(setRelationship, e.target.value)}
-                        >
-                            <option value="">בחרי קשר</option>
+                        <span className="ag-label">למי מיועד <small>אפשר לבחור כמה</small></span>
+                        <div className="ag-choices">
                             {relationships.map((item) => (
-                                <option key={item._id} value={item._id}>
+                                <label
+                                    key={item._id}
+                                    className={`ag-choice ${selectedRelationships.includes(item._id) ? "ag-choice--on" : ""}`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedRelationships.includes(item._id)}
+                                        onChange={() => toggleArrayItem(selectedRelationships, setSelectedRelationships, item._id)}
+                                    />
                                     {item.name}
-                                </option>
+                                </label>
                             ))}
-                        </select>
+                        </div>
                     </div>
                 </fieldset>
 
@@ -286,36 +318,41 @@ export const UpdateGift = ({ gift, onUpdated }) => {
                 <fieldset className="ag-section">
                     <legend className="ag-legend"><span>3</span>קטגוריה, אירוע וסגנון</legend>
 
-                    <div className="ag-row">
-                        <div className="ag-field">
-                            <label htmlFor="category">קטגוריה</label>
-                            <select
-                                id="category"
-                                value={category}
-                                onChange={(e) => handleInputChange(setCategory, e.target.value)}
-                            >
-                                <option value="">בחרי קטגוריה</option>
-                                {categories.map((item) => (
-                                    <option key={item._id} value={item._id}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
+                    <div className="ag-field">
+                        <span className="ag-label">קטגוריות <small>אפשר לבחור כמה</small></span>
+                        <div className="ag-choices">
+                            {categories.map((item) => (
+                                <label
+                                    key={item._id}
+                                    className={`ag-choice ${selectedCategories.includes(item._id) ? "ag-choice--on" : ""}`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedCategories.includes(item._id)}
+                                        onChange={() => toggleArrayItem(selectedCategories, setSelectedCategories, item._id)}
+                                    />
+                                    {item.name}
+                                </label>
+                            ))}
                         </div>
-                        <div className="ag-field">
-                            <label htmlFor="event">אירוע</label>
-                            <select
-                                id="event"
-                                value={event}
-                                onChange={(e) => handleInputChange(setEvent, e.target.value)}
-                            >
-                                <option value="">בחרי אירוע</option>
-                                {events.map((item) => (
-                                    <option key={item._id} value={item._id}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
+                    </div>
+
+                    <div className="ag-field">
+                        <span className="ag-label">אירועים <small>אפשר לבחור כמה</small></span>
+                        <div className="ag-choices">
+                            {events.map((item) => (
+                                <label
+                                    key={item._id}
+                                    className={`ag-choice ${selectedEvents.includes(item._id) ? "ag-choice--on" : ""}`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedEvents.includes(item._id)}
+                                        onChange={() => toggleArrayItem(selectedEvents, setSelectedEvents, item._id)}
+                                    />
+                                    {item.name}
+                                </label>
+                            ))}
                         </div>
                     </div>
 
@@ -327,7 +364,7 @@ export const UpdateGift = ({ gift, onUpdated }) => {
                                     <input
                                         type="checkbox"
                                         checked={styles.includes(style)}
-                                        onChange={() => handleStyleChange(style)}
+                                        onChange={() => toggleArrayItem(styles, setStyles, style)}
                                     />
                                     {style}
                                 </label>

@@ -9,7 +9,6 @@ const { GoogleGenAI } = require('@google/genai');
 
 require('dotenv').config();
 
-// אתחול Google Gen AI עם ה-API Key שמוגדר בקובץ .env
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 cloudinary.config({
@@ -18,16 +17,40 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// פונקציית עזר להמרת קלט מ-FormData או JSON למערך תקין
+const parseToArray = (value) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (!trimmed) return [];
+        // תמיכה במקרה שהפרונטנד שלח JSON.stringify(array)
+        if (trimmed.startsWith('[')) {
+            try {
+                const parsed = JSON.parse(trimmed);
+                return Array.isArray(parsed) ? parsed.filter(Boolean) : [trimmed];
+            } catch {
+                return [trimmed];
+            }
+        }
+        return [trimmed];
+    }
+    return [value];
+};
+
 const createNewGift = async (req, res) => {
     const {
         name,
         forGender,
-        category,
-        event,
-        relationship,
         color,
         description
     } = req.body;
+
+    // תומך גם אם נשלחו בשם ברבים (categories) וגם אם נשלחו בשם ביחיד (category)
+    const categoriesArray = parseToArray(req.body.categories || req.body.category);
+    const eventsArray = parseToArray(req.body.events || req.body.event);
+    const relationshipsArray = parseToArray(req.body.relationships || req.body.relationship);
+    const stylesArray = parseToArray(req.body.styles);
 
     const age1 = req.body.age1 !== undefined && req.body.age1 !== '' ? Number(req.body.age1) : null;
     const age2 = req.body.age2 !== undefined && req.body.age2 !== '' ? Number(req.body.age2) : null;
@@ -37,23 +60,17 @@ const createNewGift = async (req, res) => {
         req.body.DedicationPersonalization === 'true' ||
         req.body.DedicationPersonalization === true;
 
-    let stylesArray = [];
-    if (Array.isArray(req.body.styles)) {
-        stylesArray = req.body.styles;
-    } else if (req.body.styles) {
-        stylesArray = [req.body.styles];
-    }
-
     const file = req.file;
 
+    // בדיקה שנבחרה לפחות קטגוריה, אירוע וקשר אחד
     if (
         !name ||
         !forGender ||
         age1 === null || isNaN(age1) ||
         age2 === null || isNaN(age2) ||
-        !category ||
-        !event ||
-        !relationship ||
+        categoriesArray.length === 0 ||
+        eventsArray.length === 0 ||
+        relationshipsArray.length === 0 ||
         !color ||
         price === null || isNaN(price) ||
         req.body.DedicationPersonalization === undefined
@@ -90,9 +107,9 @@ const createNewGift = async (req, res) => {
             forGender,
             age1,
             age2,
-            category: category && category.trim() !== '' ? category : null,
-            event: event && event.trim() !== '' ? event : null,
-            relationship: relationship && relationship.trim() !== '' ? relationship : null,
+            categories: categoriesArray,
+            events: eventsArray,
+            relationships: relationshipsArray,
             color,
             price,
             image: imageUrl,
@@ -116,9 +133,9 @@ const createNewGift = async (req, res) => {
 const findByIdSupplier = async (req, res) => {
     try {
         const gifts = await Gift.find({ supplier: req.user._id })
-            .populate('category')
-            .populate('event')
-            .populate('relationship');
+            .populate('categories')
+            .populate('events')
+            .populate('relationships');
 
         return res.status(200).json(gifts || []);
     } catch (error) {
@@ -129,9 +146,9 @@ const findByIdSupplier = async (req, res) => {
 const getAllGifts = async (req, res) => {
     try {
         const gifts = await Gift.find()
-            .populate('category')
-            .populate('event')
-            .populate('relationship')
+            .populate('categories')
+            .populate('events')
+            .populate('relationships')
             .exec();
 
         return res.status(200).json(gifts);
@@ -194,9 +211,23 @@ const updateGift = async (req, res) => {
         }
 
         if (req.body.styles !== undefined) {
-            updatedFields.styles = Array.isArray(req.body.styles)
-                ? req.body.styles
-                : [req.body.styles];
+            updatedFields.styles = parseToArray(req.body.styles);
+        }
+
+        // עדכון מערכי הקטגוריות, האירועים והקשרים
+        if (req.body.categories !== undefined || req.body.category !== undefined) {
+            updatedFields.categories = parseToArray(req.body.categories || req.body.category);
+            delete updatedFields.category;
+        }
+
+        if (req.body.events !== undefined || req.body.event !== undefined) {
+            updatedFields.events = parseToArray(req.body.events || req.body.event);
+            delete updatedFields.event;
+        }
+
+        if (req.body.relationships !== undefined || req.body.relationship !== undefined) {
+            updatedFields.relationships = parseToArray(req.body.relationships || req.body.relationship);
+            delete updatedFields.relationship;
         }
 
         Object.assign(gift, updatedFields);
@@ -204,9 +235,9 @@ const updateGift = async (req, res) => {
         let updatedGift = await gift.save();
 
         updatedGift = await updatedGift.populate([
-            { path: 'category' },
-            { path: 'event' },
-            { path: 'relationship' }
+            { path: 'categories' },
+            { path: 'events' },
+            { path: 'relationships' }
         ]);
 
         return res.json({
@@ -214,7 +245,7 @@ const updateGift = async (req, res) => {
             gift: updatedGift
         });
     } catch (error) {
-        return res.status(400).json({ message: 'Invalid gift data' });
+        return res.status(400).json({ message: 'Invalid gift data', error: error.message });
     }
 };
 
@@ -248,9 +279,9 @@ const findByIdGift = async (req, res) => {
     if (!id) return res.status(400).json({ message: 'Gift id is required' });
 
     const gift = await Gift.findById(id)
-        .populate('category')
-        .populate('event')
-        .populate('relationship')
+        .populate('categories')
+        .populate('events')
+        .populate('relationships')
         .populate('supplier', 'name companyName');
 
     if (!gift) return res.status(404).json({ message: 'The gift was not found' });
@@ -266,11 +297,7 @@ const matchGiftsController = async (req, res) => {
     }
 };
 
-// פונקציה חדשה ליצירת השראות מבינה מלאכותית
-// ===== להחליף את הפונקציה getAiInspirations הקיימת ב-giftController.js בכל הקוד הזה =====
-// (ה-ai שכבר מוגדר למעלה בקובץ נשאר כמו שהוא)
-
-// מודל ראשי + מודל גיבוי (שניהם מוגדרים ב-.env, ואפשר להשאיר את הגיבוי ריק)
+// --- פונקציות ה-AI נשארות ללא שינוי ---
 const AI_MODELS = [
     process.env.GEMINI_MODEL || 'gemini-3.8-flash',
     process.env.GEMINI_FALLBACK_MODEL,
@@ -278,12 +305,10 @@ const AI_MODELS = [
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// זיכרון קצר: אותן תשובות בשאלון → תשובה מיידית, בלי לפנות שוב ל-Gemini
 const aiCache = new Map();
-const CACHE_MS = 30 * 60 * 1000; // 30 דקות
+const CACHE_MS = 30 * 60 * 1000;
 const CACHE_MAX = 100;
 
-// מבנה התשובה שאנחנו מצפים לקבל – Gemini מחזיר בדיוק את זה, בלי טקסט מיותר
 const INSPIRATIONS_SCHEMA = {
     type: 'ARRAY',
     items: {
@@ -297,7 +322,6 @@ const INSPIRATIONS_SCHEMA = {
     },
 };
 
-// שולח ל-Gemini, ואם הוא עמוס (503/429) – מנסה שוב, ואז עובר למודל הגיבוי
 const generateWithRetry = async (request) => {
     let lastError;
     for (const model of AI_MODELS) {
@@ -307,9 +331,9 @@ const generateWithRetry = async (request) => {
             } catch (error) {
                 lastError = error;
                 const busy = error.status === 503 || error.status === 429;
-                if (!busy) throw error;                 // שגיאה אחרת – אין טעם לנסות שוב
+                if (!busy) throw error;
                 console.warn(`Gemini busy (${model}, attempt ${attempt + 1}), retrying...`);
-                await sleep(800 * 2 ** attempt);        // 0.8, 1.6, 3.2 שניות
+                await sleep(800 * 2 ** attempt);
             }
         }
     }
@@ -328,7 +352,6 @@ const getAiInspirations = async (req, res) => {
             return res.status(500).json({ message: 'מפתח API לא מוגדר בשרת' });
         }
 
-        // השאלון שולח גם את השמות (eventName וכו'). אם לא – משתמשים במה שיש.
         const answers = {
             age: formData.age || 'לא צוין',
             gender: formData.forGender || 'לא צוין',
@@ -341,14 +364,12 @@ const getAiInspirations = async (req, res) => {
             personal: formData.DedicationPersonalization ? 'כן' : 'לא חובה',
         };
 
-        // תשובה מהזיכרון, אם כבר שאלו בדיוק את אותו דבר לאחרונה
         const cacheKey = JSON.stringify(answers);
         const cached = aiCache.get(cacheKey);
         if (cached && Date.now() - cached.time < CACHE_MS) {
             return res.json({ inspirations: cached.inspirations });
         }
 
-        // פרומפט קצר וממוקד = תשובה מהירה יותר
         const prompt = `אתה עוזר יצירתי לבחירת מתנות. פרטי מקבל המתנה:
 גיל: ${answers.age}
 מגדר: ${answers.gender}
@@ -379,7 +400,6 @@ const getAiInspirations = async (req, res) => {
 
         const inspirations = JSON.parse(cleanText);
 
-        // שמירה בזיכרון (ומחיקת הישן ביותר כשמתמלא)
         if (aiCache.size >= CACHE_MAX) aiCache.delete(aiCache.keys().next().value);
         aiCache.set(cacheKey, { inspirations, time: Date.now() });
 
@@ -392,6 +412,7 @@ const getAiInspirations = async (req, res) => {
         return res.status(500).json({ message: 'לא ניתן ליצור הצעות השראה כרגע', error: error.message });
     }
 };
+
 module.exports = {
     createNewGift,
     getAllGifts,
