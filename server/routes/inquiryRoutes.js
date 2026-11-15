@@ -4,7 +4,11 @@ const router = express.Router();
 const {
     createInquiry,
     getSupplierInquiries,
-    updateInquiryStatus
+    updateInquiryStatus,
+    // חדש:
+    getAllInquiries,
+    getInquiryStats,
+    deleteInquiry
 } = require('../controllers/inquiryController');
 
 const { verifyJWT, verifyRole } = require('../middleware/verifyJWT');
@@ -26,4 +30,13 @@ router.patch(
     verifyRole('Supplier'),
     updateInquiryStatus
 );
+
+// ===== חדש: נתיבי מנהל. verifyRole('Admin') = רק מנהל יכול להגיע לכאן =====
+// הרגל טוב: נתיב קבוע ('/admin/stats') כותבים לפני נתיב עם פרמטר ('/admin/:id').
+// כאן זה לא היה מתנגש כי אחד GET והשני DELETE, אבל אם פעם יהיה GET '/admin/:id',
+// Express היה חושב ש-"stats" הוא id של פנייה.
+router.get('/admin', verifyJWT, verifyRole('Admin'), getAllInquiries);
+router.get('/admin/stats', verifyJWT, verifyRole('Admin'), getInquiryStats);
+router.delete('/admin/:id', verifyJWT, verifyRole('Admin'), deleteInquiry);
+
 module.exports = router;

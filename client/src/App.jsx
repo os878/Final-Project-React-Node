@@ -28,6 +28,7 @@ import MaintenanceManager from './Admin/MaintenanceManager'
 import AuthPage from './common/AuthPage';
 import GiftsCatalog from './Customer/GiftsCatalog';
 import LandingPage from './LandingPage'
+import AdminInquiries from './Admin/AdminInquiries'
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/Admin/AllSuppliers" element={<AllSuppliers />} />
                 <Route path="/Admin/AddAdmin" element={<AddAdmin />} />
                 <Route path="/Admin/MaintenanceManager" element={<MaintenanceManager />} />
+                <Route path="/Admin/Inquiries" element={<AdminInquiries />} />
 
                 {/* ספק */}
                 <Route path="/Supplier/ProfilSupplier" element={<ProfilSupplier />} />

@@ -22,6 +22,7 @@ const NAV_LINKS = {
         { to: "/Admin/AllCustomers", label: "לקוחות" },
         { to: "/Admin/AllSuppliers", label: "ספקים" },
         { to: "/Admin/AllGifts", label: "מוצרים" },
+        { to: "/Admin/Inquiries", label: "פניות" }, // חדש
         { to: "/Admin/AddAdmin", label: "הוספת מנהל" },
         { to: "/Admin/MaintenanceManager", label: "תחזוקה" },
     ],

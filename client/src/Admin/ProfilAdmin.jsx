@@ -20,7 +20,8 @@ const ProfilAdmin = () => (
         <div className="home-cards home-cards--3">
             <HomeCard to="/Admin/AllCustomers" icon="users" title="ניהול לקוחות" text="כל הלקוחות הרשומים באתר." />
             <HomeCard to="/Admin/AllSuppliers" icon="store" title="ניהול ספקים" text="אישור, עריכה והסרה של ספקים." />
-            <HomeCard to="/Admin/AllGifts" icon="box" title="ניהול מוצרים" text="כל המוצרים מכל הספקים." />
+            {/* חדש: במקום הכרטיס "ניהול מוצרים" שהיה כפול לכפתור הגדול למעלה */}
+            <HomeCard to="/Admin/Inquiries" icon="chat" title="פניות לקוחות" text="כל הפניות לספקים ומה המצב שלהן." />
             <HomeCard to="/Admin/AddAdmin" icon="shield" title="הוספת מנהל" text="מתן הרשאות ניהול למשתמש נוסף." />
             <HomeCard to="/Admin/MaintenanceManager" icon="tools" title="ניהול תחזוקה" text="הגדרות ותחזוקה של האתר." />
             <HomeCard to="/Admin/AdminDetails" icon="user" title="הפרטים שלי" text="עדכון פרטי החשבון שלכם." />
