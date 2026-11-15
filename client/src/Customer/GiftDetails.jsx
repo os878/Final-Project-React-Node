@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Axios from 'axios';
-
+import { useUser } from '../context/UserContext';
 // ===== חדש: אייקונים =====
 const Icon = ({ children, className }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -29,14 +29,17 @@ const SUCCESS_MESSAGE = 'הפנייה נשלחה בהצלחה!';
 const GiftDetails = () => {
     const { id } = useParams();
 
+    const { user } = useUser();
+
+
     const [gift, setGift] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [openDialog, setOpenDialog] = useState(false);
     const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        email: '',
+        name: user?.name || '',
+        phone: user?.phone || '',
+        email: user?.email || '',
         message: '',
         preferredContact: 'WhatsApp'
     });
@@ -49,6 +52,16 @@ const GiftDetails = () => {
             [e.target.name]: e.target.value
         });
     };
+    useEffect(() => {
+    if (user) {
+        setFormData((prev) => ({
+            ...prev,
+            name: prev.name || user.name || '',
+            phone: prev.phone || user.phone || '',
+            email: prev.email || user.email || '',
+        }));
+    }
+}, [user]);
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -76,9 +89,9 @@ const GiftDetails = () => {
 
             setSubmitMessage(SUCCESS_MESSAGE);
             setFormData({
-                name: '',
-                phone: '',
-                email: '',
+                name: user?.name || '',
+                phone: user?.phone || '',
+                email: user?.email || '',
                 message: '',
                 preferredContact: 'WhatsApp'
             });

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Outlet, Navigate, useLocation } from "react-router-dom"
 import Axios from "axios"
 import Header from "./Header"
+import { useUser } from "../context/UserContext"
 
 const API = "http://localhost:7002"
 
@@ -24,6 +25,7 @@ const AREAS = [
 
 const Layout = () => {
     const location = useLocation()
+     const { setUser } = useUser();
     // "loading" = עדיין בודקים מול השרת, null = לא מחובר
     const [role, setRole] = useState("loading")
 
@@ -32,14 +34,31 @@ const Layout = () => {
         const token = localStorage.getItem("token")
         if (!token) {
             setRole(null)
+            setUser(null); // ניקוי המשתמש מהקונטקסט
             return
         }
         Axios.get(`${API}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
-            .then(({ data }) => setRole(data.role || null))
+            .then(async({ data }) => {
+                setRole(data.role || null);
+                if (data.role === "customer") {
+                try {
+                    const customerRes = await Axios.get(
+                        'http://localhost:7002/api/customer/findByIdC',
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    );
+                    console.log("פרטי הלקוח המלאים:", customerRes.data); // <-- להוסיף את זה
+                    setUser(customerRes.data);
+                } catch (err) {
+                    console.error("שגיאה בטעינת פרטי הלקוח:", err);
+                }
+            } 
+            })
             .catch(() => {
                 localStorage.removeItem("token")
                 setRole(null)
+                setUser(null); // ניקוי המשתמש מהקונטקסט
             })
+           
     }, [])
 
     if (role === "loading") {
@@ -56,6 +75,7 @@ const Layout = () => {
         localStorage.removeItem("token")
         localStorage.removeItem("role") // ניקוי שאריות מהגרסה הקודמת
         setRole(null)
+        setUser(null); // ניקוי המשתמש מהקונטקסט
     }
 
     return (

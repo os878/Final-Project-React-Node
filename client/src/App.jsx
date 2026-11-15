@@ -27,6 +27,7 @@ import SupplierInquiries from './Supplier/SupplierInquiries'
 import MaintenanceManager from './Admin/MaintenanceManager'
 import AuthPage from './common/AuthPage';
 import GiftsCatalog from './Customer/GiftsCatalog';
+import { UserProvider } from './context/UserContext';
 import LandingPage from './LandingPage'
 import AdminInquiries from './Admin/AdminInquiries'
 
@@ -35,6 +36,7 @@ function App() {
   return (
     <>
       <GiftProvider>
+        <UserProvider>
         <FeedbackProvider>
           <Router>
             <Routes>
@@ -77,6 +79,7 @@ function App() {
             </Routes>
           </Router>
         </FeedbackProvider>
+        </UserProvider>
       </GiftProvider>
     </>
   )
