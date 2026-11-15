@@ -259,7 +259,7 @@ const Questionnaire = () => {
         aiData,
         {
           headers: { Authorization: `Bearer ${token}` },
-          timeout: 360000 // זמן קצוב של 360 שניות
+          timeout: 70000 // זמן קצוב של 70 שניות
         }
       );
 

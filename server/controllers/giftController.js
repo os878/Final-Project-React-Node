@@ -333,21 +333,57 @@ const INSPIRATIONS_SCHEMA = {
     },
 };
 
+// ===== להחליף ב-giftController.js את כל הפונקציה generateWithRetry הקיימת בקוד הזה =====
+// (AI_MODELS, sleep, aiCache, INSPIRATIONS_SCHEMA ו-getAiInspirations נשארים כמו שהם)
+
+// כמה זמן מקסימום מחכים לתשובה אחת מ-Gemini לפני שמוותרים עליה
+const AI_REQUEST_TIMEOUT_MS = 20 * 1000; // 20 שניות
+// כמה זמן מקסימום כל התהליך (כל הניסיונות ביחד), כדי שהלקוח לא יחכה דקות
+const AI_TOTAL_DEADLINE_MS = 60 * 1000;  // דקה
+// כמה ניסיונות לכל מודל לפני שעוברים למודל הגיבוי
+const AI_ATTEMPTS_PER_MODEL = 2;
+
+// מריץ promise, ואם הוא לא הסתיים תוך ms – זורק שגיאת "זמן"
+// Promise.race = מי שמסיים ראשון מנצח: התשובה של Gemini או הטיימר
+const withTimeout = (promise, ms) => {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => {
+            const error = new Error(`Gemini did not answer within ${ms}ms`);
+            error.status = 504; // 504 = Timeout
+            reject(error);
+        }, ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+};
+
+// שולח ל-Gemini. אם הוא עמוס (503/429) או לא עונה בזמן (504) – מנסה שוב,
+// ואם גם זה לא עובד – עובר למודל הגיבוי. אף פעם לא מחכה יותר מ-AI_TOTAL_DEADLINE_MS.
 const generateWithRetry = async (request) => {
+    const startedAt = Date.now();
     let lastError;
+
     for (const model of AI_MODELS) {
-        for (let attempt = 0; attempt < 3; attempt++) {
+        for (let attempt = 0; attempt < AI_ATTEMPTS_PER_MODEL; attempt++) {
+            // כמה זמן נשאר מתוך הדקה
+            const remaining = AI_TOTAL_DEADLINE_MS - (Date.now() - startedAt);
+            if (remaining < 3000) break; // נשאר פחות מ-3 שניות – אין טעם לנסות
+
             try {
-                return await ai.models.generateContent({ ...request, model });
+                return await withTimeout(
+                    ai.models.generateContent({ ...request, model }),
+                    Math.min(AI_REQUEST_TIMEOUT_MS, remaining)
+                );
             } catch (error) {
                 lastError = error;
-                const busy = error.status === 503 || error.status === 429;
-                if (!busy) throw error;
-                console.warn(`Gemini busy (${model}, attempt ${attempt + 1}), retrying...`);
-                await sleep(800 * 2 ** attempt);
+                const retryable = [503, 429, 504].includes(error.status);
+                if (!retryable) throw error; // שגיאה אחרת (מפתח, שם מודל) – אין טעם לנסות שוב
+                console.warn(`Gemini ${error.status === 504 ? 'timeout' : 'busy'} (${model}, attempt ${attempt + 1}), retrying...`);
+                await sleep(800 * 2 ** attempt); // 0.8, 1.6 שניות
             }
         }
     }
+
     const busyError = new Error('השירות עמוס כרגע, נסו שוב בעוד דקה');
     busyError.status = 503;
     busyError.cause = lastError;

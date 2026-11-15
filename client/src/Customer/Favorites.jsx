@@ -96,9 +96,10 @@ const Favorites = () => {
     if (errorMessage) {
         return <p className="gd-state gd-state--error" role="alert">{errorMessage}</p>;
     }
-
+    // רק מועדפים שהמתנה שלהם עדיין קיימת (מתנה שנמחקה לא מוצגת ולא נספרת)
+    const validFavorites = favorites.filter((favorite) => favorite.gift);
     // אם אין מתנות אהובות
-    if (favorites.length === 0) {
+    if (validFavorites.length === 0) {
         return (
             <div className="pg-empty" dir="rtl">
                 <span className="pg-empty__icon"><HeartIcon /></span>
@@ -117,12 +118,12 @@ const Favorites = () => {
                 <p className="pg-eyebrow">המועדפים שלי</p>
                 <h1 className="pg-title">המתנות האהובות שלי</h1>
                 <p className="pg-sub">
-                    {favorites.length === 1 ? 'מתנה אחת שמורה' : `${favorites.length} מתנות שמורות`}. לחיצה על הלב מסירה מהרשימה.
+                    {favorites.length === 1 ? 'מתנה אחת שמורה' : `${validFavorites.length} מתנות שמורות`}. לחיצה על הלב מסירה מהרשימה.
                 </p>
             </header>
 
             <div className="pg-grid">
-                {favorites.map(favorite => {
+                {validFavorites.map(favorite => {
 
                     const gift = favorite.gift;
 
