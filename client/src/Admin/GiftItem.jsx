@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFeedback } from '../common/Feedback';
-import { EditIcon, TrashIcon, GiftIcon } from '../common/Icons';
+import { EditIcon, TrashIcon, GiftIcon, StarIcon } from '../common/Icons';
 
 const GiftItem = ({ gift, onDelete, onEdit }) => {
   const { toast, confirm } = useFeedback();
+  // האם המתנה מוצגת בדף הנחיתה ("מתנות שאוהבים עכשיו")
+  const [featured, setFeatured] = useState(Boolean(gift.featured));
+
+  const toggleFeatured = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:7002/api/gift/featured/${gift._id}`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) {
+        throw new Error('עדכון המתנה נכשל');
+      }
+      const data = await response.json();
+      setFeatured(data.featured);
+      toast(data.featured ? 'המתנה תוצג בדף הנחיתה' : 'המתנה הוסרה מדף הנחיתה', 'success');
+    } catch (error) {
+      toast(error.message, 'error');
+    }
+  };
 
   const handleDelete = async () => {
     const ok = await confirm({
@@ -74,6 +94,18 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
         <span className="pg-card__score">
           {getDisplayNames(gift.categories || gift.category, 'לא צוינה קטגוריה')}
         </span>
+
+        {/* כוכב על התמונה: האם המתנה מוצגת בדף הנחיתה */}
+        <button
+          type="button"
+          className={`sgi-feature ${featured ? 'sgi-feature--on' : ''}`}
+          onClick={toggleFeatured}
+          aria-pressed={featured}
+          aria-label={featured ? `הסרת ${gift.name} מדף הנחיתה` : `הצגת ${gift.name} בדף הנחיתה`}
+          title={featured ? 'מוצגת בדף הנחיתה – לחיצה תסיר' : 'הצגה בדף הנחיתה'}
+        >
+          <StarIcon />
+        </button>
 
       </div>
 

@@ -1,8 +1,14 @@
 /* ==========================================================
-   Gifter – דף נחיתה
-   הצבעים, הגופנים והפריסה על כל הרוחב מגיעים מ-App.css.
+   Gifter – דף נחיתה (קידומת gp-)
+   הצבעים, הגופנים והמשתנים מגיעים מ-App.css (:root).
    כדי לשנות צבע בכל האתר, משנים אותו רק ב-App.css.
    ========================================================== */
+
+/* הדף יושב בתוך ה-Layout (עם ההדר המשותף) – אבל האזורים שלו על כל הרוחב */
+.main-content:has(> .gp) {
+  max-width: none;
+  padding: 0;
+}
 
 .gp {
   width: 100%;
@@ -11,6 +17,7 @@
 }
 
 .gp-container { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.gp-icon { width: 22px; height: 22px; flex: none; }
 
 /* ---------- לוגו ---------- */
 .gifter-logo { display: inline-flex; align-items: center; gap: 4px; }
@@ -23,148 +30,195 @@
 .gifter-slogan { font-family: 'Assistant', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.3px; color: var(--navy-soft); }
 .gifter-slogan em { font-style: normal; font-weight: 600; color: var(--orange); }
 
-/* ---------- כפתורים ---------- */
+/* ---------- כפתורים וקישורים ---------- */
 .gp-btn {
+  display: inline-flex; align-items: center; gap: 10px;
   font-family: 'Rubik', sans-serif; font-weight: 700; cursor: pointer;
-  border: none; border-radius: 999px; background: var(--orange); color: #fff;
-  min-height: 44px; transition: background .15s, transform .15s, box-shadow .15s;
+  border: none; border-radius: 999px; background: var(--orange); color: var(--white);
+  min-height: 44px; transition: background .15s, transform .15s;
 }
-.gp-btn:hover { background: var(--orange-dark); transform: translateY(-1px); }
-.gp-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
-.gp-btn--small { padding: 10px 22px; font-size: 16px; }
-.gp-btn--large { padding: 18px 40px; font-size: 21px; box-shadow: 0 10px 24px rgba(207, 52, 57, .25); }
+.gp-btn:hover { background: var(--orange-dark); color: var(--white); transform: translateY(-1px); }
+.gp-btn--large { padding: 16px 30px; font-size: 18px; }
+.gp-btn__icon { width: 20px; height: 20px; }
 
-/* ---------- כותרת עליונה ---------- */
-.gp-header {
-  position: sticky; top: 0; z-index: 10;
-  background: color-mix(in srgb, var(--cream) 92%, transparent); backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--line);
+.gp-link-btn {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px;
+  font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 18px;
+  color: var(--navy); border-bottom: 2px solid var(--navy);
 }
-.gp-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 12px; padding-bottom: 12px; }
+.gp-link-btn:hover { color: var(--orange); border-color: var(--orange); }
+
+.gp-more { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--orange); }
+.gp-more svg { width: 18px; height: 18px; }
 
 /* ---------- Hero ---------- */
-.gp-hero { padding: 72px 0 88px; }
-.gp-hero__inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
-.gp-eyebrow { font-weight: 700; color: var(--orange-dark); font-size: 17px; margin-bottom: 12px; }
-.gp-hero__title { font-size: clamp(40px, 6vw, 68px); font-weight: 800; letter-spacing: -1px; }
-.gp-hero__title span { color: var(--orange); }
-.gp-hero__lead { margin-top: 22px; font-size: 20px; color: var(--navy-soft); max-width: 34em; }
-.gp-hero__actions { margin-top: 34px; display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
-.gp-hero__note { font-size: 16px; color: var(--navy-soft); }
+.gp-hero { padding: 56px 0 72px; }
+.gp-hero__inner { display: grid; grid-template-columns: 1fr 1.15fr; gap: 56px; align-items: center; }
+.gp-eyebrow { font-weight: 700; color: var(--orange); font-size: 16px; }
+.gp-hero__title {
+  font-size: clamp(40px, 5.4vw, 64px); font-weight: 800; letter-spacing: -1.5px;
+  margin-top: 10px; color: var(--navy);
+}
+/* קו הדגשה צהוב מתחת ל"מעניקים בכיף" */
+.gp-hero__title em {
+  font-style: normal;
+  background: linear-gradient(transparent 62%, var(--yellow) 62%, var(--yellow) 90%, transparent 90%);
+}
+.gp-hero__lead { margin-top: 16px; font-size: 19px; color: var(--navy-soft); max-width: 30em; }
+.gp-hero__actions { margin-top: 28px; display: flex; align-items: center; flex-wrap: wrap; gap: 24px; }
 
-.gp-hero__visual { display: flex; justify-content: center; }
-.gp-hero__card {
-  position: relative; width: min(100%, 380px); aspect-ratio: 1;
-  border-radius: 40px; background: #fff; border: 1px solid var(--line);
-  box-shadow: 0 30px 60px rgba(31, 27, 58, .10);
-  display: flex; align-items: center; justify-content: center;
+.gp-search {
+  margin-top: 28px; display: flex; align-items: center; gap: 8px; max-width: 460px;
+  background: var(--white); border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 4px 4px 4px;
+  padding-inline-start: 16px;
 }
-.gp-chip {
-  position: absolute; padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 16px;
-  background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(31, 27, 58, .08);
-  white-space: nowrap;
+.gp-search:focus-within { border-color: var(--navy); }
+.gp-search__icon { width: 20px; height: 20px; color: var(--navy-soft); flex: none; }
+.gp-search__input { border: none; background: transparent; min-height: 40px; padding: 0 4px; }
+.gp-search__input:focus { outline: none; }
+.gp-search__btn {
+  flex: none; min-height: 40px; padding: 0 18px; border: none; border-radius: 999px;
+  background: var(--navy); color: var(--white); font-weight: 700;
 }
-.gp-chip--a { top: 12%; right: -6%; }
-.gp-chip--b { top: 34%; left: -10%; background: var(--navy); color: #fff; border-color: var(--navy); }
-.gp-chip--c { bottom: 18%; right: -8%; background: var(--spark); border-color: var(--spark); }
-.gp-chip--d { bottom: 6%; left: 8%; }
+.gp-search__btn:hover { background: #0E0B22; }
+
+.gp-trust { list-style: none; display: flex; flex-wrap: wrap; gap: 22px; margin-top: 26px; color: var(--navy-soft); font-size: 15px; }
+.gp-trust li { display: flex; align-items: center; gap: 6px; }
+.gp-trust svg { width: 18px; height: 18px; color: var(--orange); }
+
+/* פסיפס תמונות של מתנות אמיתיות */
+.gp-mosaic { display: grid; grid-template-columns: 1.2fr 1fr; grid-template-rows: 230px 190px; gap: 14px; }
+.gp-tile { position: relative; display: block; border-radius: var(--radius); overflow: hidden; background: var(--peach); }
+.gp-tile--big { grid-row: span 2; }
+.gp-tile__img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.gp-tile:hover .gp-tile__img { transform: scale(1.04); }
+.gp-tile__label {
+  position: absolute; bottom: 12px; right: 12px; left: 12px;
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  background: rgba(255, 255, 255, .95); border-radius: 14px; padding: 8px 12px;
+  font-size: 14px; color: var(--navy);
+}
+.gp-tile__label span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gp-tile__label b { color: var(--orange); white-space: nowrap; }
+.gp-mosaic--loading .gp-tile--empty { animation: gp-pulse 1.4s ease-in-out infinite; }
+@keyframes gp-pulse { 50% { opacity: .55; } }
 
 /* ---------- אזורים ---------- */
-.gp-section { padding: 80px 0; }
-.gp-section--tint { background: var(--tint); }
-.gp-section__title { font-size: clamp(30px, 4vw, 42px); font-weight: 800; text-align: center; }
-.gp-section__sub { text-align: center; margin-top: 10px; font-size: 18px; color: var(--navy-soft); }
+.gp-section { padding: 72px 0; }
+.gp-section--tight { padding: 32px 0; }
+.gp-section--tint { background: var(--peach); }
+.gp-section__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.gp-section__title { font-size: clamp(28px, 3.4vw, 38px); font-weight: 800; letter-spacing: -0.5px; color: var(--navy); }
 
-.gp-steps {
-  list-style: none; padding: 0; margin: 44px 0 0;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;
+/* למי המתנה? */
+.gp-who { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 14px; margin-top: 26px; }
+.gp-who__item {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 8px; border: 1.5px solid var(--line); border-radius: var(--radius);
+  background: var(--white); color: var(--navy); font-weight: 700; font-size: 15px;
+  transition: border-color .15s, background .15s, transform .15s;
 }
-.gp-step { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 30px 28px; }
+.gp-who__item:hover { border-color: var(--orange); background: var(--peach); transform: translateY(-2px); }
+.gp-who__icon {
+  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--peach); color: var(--orange);
+}
+.gp-who__item:hover .gp-who__icon { background: var(--white); }
+.gp-who__icon svg { width: 26px; height: 26px; }
+
+/* לאיזה אירוע? – אריחי תמונה */
+.gp-events { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 26px; }
+.gp-event { position: relative; display: block; height: 200px; border-radius: var(--radius); overflow: hidden; background: var(--peach-deep); }
+.gp-event__img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.gp-event:hover .gp-event__img { transform: scale(1.05); }
+.gp-event__name {
+  position: absolute; inset: auto 0 0 0; padding: 40px 18px 16px;
+  background: linear-gradient(transparent, rgba(31, 27, 58, .8));
+  color: var(--white); font-family: 'Rubik', sans-serif; font-weight: 800; font-size: 21px;
+}
+
+/* מתנות שאוהבים עכשיו */
+.gp-products { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-top: 26px; }
+.gp-product { display: flex; flex-direction: column; color: var(--navy); }
+.gp-product:hover { color: var(--navy); }
+.gp-product__media { position: relative; display: block; aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; background: var(--peach); }
+.gp-product__img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.gp-product:hover .gp-product__img { transform: scale(1.04); }
+.gp-product__tag {
+  position: absolute; top: 12px; right: 12px; max-width: calc(100% - 24px);
+  padding: 4px 12px; border-radius: 999px; background: rgba(255, 255, 255, .95);
+  font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.gp-product__name { margin-top: 12px; font-weight: 600; line-height: 1.35; }
+.gp-product__price { margin-top: 4px; font-family: 'Rubik', sans-serif; font-weight: 800; font-size: 17px; }
+
+/* לא בטוחים? */
+.gp-how { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.gp-steps { list-style: none; display: flex; flex-direction: column; gap: 20px; margin: 26px 0 30px; }
+.gp-step { display: flex; gap: 16px; }
 .gp-step__num {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 46px; height: 46px; border-radius: 50%; margin-bottom: 18px;
-  background: var(--navy); color: var(--spark); font-family: 'Rubik', sans-serif; font-weight: 800; font-size: 22px;
+  flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--navy); color: var(--white); font-family: 'Rubik', sans-serif; font-weight: 800;
 }
-.gp-step h3 { font-size: 22px; margin-bottom: 8px; }
-.gp-step p { color: var(--navy-soft); font-size: 17px; }
+.gp-step h3 { font-size: 19px; }
+.gp-step p { color: var(--navy-soft); margin-top: 2px; }
 
-.gp-paths { margin-top: 44px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.gp-path { border-radius: 24px; padding: 38px 34px; }
-.gp-path h3 { font-size: 28px; margin: 14px 0 10px; }
-.gp-path p { font-size: 18px; }
-.gp-path__tag { display: inline-block; padding: 4px 14px; border-radius: 999px; font-weight: 700; font-size: 15px; }
-.gp-path--navy { background: var(--navy); color: #fff; }
-.gp-path--navy p { color: #D9D5EC; }
-.gp-path--navy .gp-path__tag { background: rgba(255, 255, 255, .14); color: #fff; }
-.gp-path--spark { background: #fff; border: 2px solid var(--spark); }
-.gp-path--spark p { color: var(--navy-soft); }
-.gp-path--spark .gp-path__tag { background: var(--spark); color: var(--navy); }
-
-.gp-occasions { margin-top: 32px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-.gp-occasion {
-  font-family: 'Assistant', sans-serif; font-weight: 700; font-size: 18px; cursor: pointer;
-  min-height: 44px; padding: 10px 24px; border-radius: 999px;
-  background: #fff; color: var(--navy); border: 1.5px solid var(--line);
-  transition: border-color .15s, background .15s;
+.gp-preview { background: var(--white); border: 1px solid var(--line); border-radius: 28px; padding: 28px; }
+.gp-preview__bar { display: flex; gap: 6px; }
+.gp-preview__bar i { flex: 1; height: 6px; border-radius: 999px; background: var(--line); }
+.gp-preview__bar i.on { background: var(--orange); }
+.gp-preview__step { margin-top: 12px; font-size: 13px; color: var(--navy-soft); }
+.gp-preview__q { margin-top: 4px; font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 22px; }
+.gp-preview__opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.gp-preview__opt {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px;
+  border: 1.5px solid var(--line); border-radius: 16px; font-size: 14px; text-align: center;
 }
-.gp-occasion:hover { border-color: var(--orange); background: #FFE7E3; }
-.gp-occasion:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
-
-.gp-reasons { margin-top: 44px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.gp-reason { text-align: center; padding: 8px 12px; }
-.gp-reason h3 { font-size: 24px; color: var(--orange-dark); margin-bottom: 8px; }
-.gp-reason p { font-size: 17px; color: var(--navy-soft); }
-
-/* ---------- ספקים ---------- */
-.gp-header__actions { display: flex; align-items: center; gap: 20px; }
-.gp-header__link {
-  font-weight: 700; font-size: 16px; color: var(--navy); text-decoration: none;
-  min-height: 44px; display: inline-flex; align-items: center;
+.gp-preview__opt svg { width: 22px; height: 22px; color: var(--navy-soft); }
+.gp-preview__opt.on { border-color: var(--orange); background: var(--peach); font-weight: 700; }
+.gp-preview__opt.on svg { color: var(--orange); }
+.gp-preview__ai {
+  display: flex; align-items: center; gap: 8px; margin-top: 18px; padding: 12px 14px;
+  border-radius: 14px; background: var(--cream); font-size: 14px;
 }
-.gp-header__link:hover { color: var(--orange); }
-.gp-header__link:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+.gp-preview__ai svg { width: 18px; height: 18px; color: var(--orange); }
 
-.gp-suppliers { scroll-margin-top: 72px; }
-.gp-suppliers__inner {
-  display: flex; flex-direction: column; gap: 40px;
-  background: #fff; border: 2px solid var(--spark); border-radius: 32px;
-  padding: 52px 48px;
+/* ספקים – פס קטן ומאופק */
+.gp-suppliers {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  color: var(--navy-soft);
 }
-.gp-suppliers__title { font-size: clamp(30px, 4.4vw, 46px); font-weight: 800; }
-.gp-suppliers__title span { color: var(--orange); }
-.gp-suppliers__lead { margin-top: 18px; font-size: 20px; color: var(--navy-soft); max-width: 36em; }
-
-.gp-perks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.gp-perk { background: var(--cream); border-radius: var(--radius); padding: 28px 26px; }
-.gp-perk h3 { font-size: 22px; margin-bottom: 8px; }
-.gp-perk p { font-size: 17px; color: var(--navy-soft); }
-
-.gp-suppliers__bottom {
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
-  padding-top: 32px; border-top: 1px solid var(--line);
-}
-.gp-suppliers__early { font-size: 18px; font-weight: 600; max-width: 30em; }
-.gp-btn--spark { background: var(--navy); color: #fff; }
-.gp-btn--spark:hover { background: #0E0B22; }
-
-/* ---------- קריאה לפעולה ---------- */
-.gp-cta { background: var(--navy); color: #fff; padding: 80px 0; }
-.gp-cta__inner { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
-.gp-cta h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; }
+.gp-suppliers strong { color: var(--navy); }
+.gp-suppliers__link { font-weight: 700; color: var(--navy); border-bottom: 1.5px solid var(--navy); }
+.gp-suppliers__link:hover { color: var(--orange); border-color: var(--orange); }
 
 /* ---------- תחתית ---------- */
-.gp-footer { padding: 32px 0; border-top: 1px solid var(--line); }
+.gp-footer { padding: 32px 0 44px; }
 .gp-footer__inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; color: var(--navy-soft); }
 
+/* ---------- תנועה מופחתת ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .gp-tile__img, .gp-event__img, .gp-product__img, .gp-who__item, .gp-btn { transition: none; }
+  .gp-mosaic--loading .gp-tile--empty { animation: none; }
+}
+
 /* ---------- מובייל ---------- */
-@media (max-width: 860px) {
-  .gp-hero { padding: 48px 0 64px; }
-  .gp-hero__inner { grid-template-columns: 1fr; }
-  .gp-hero__visual { order: -1; }
-  .gp-hero__card { width: min(78%, 300px); }
-  .gp-steps, .gp-paths, .gp-reasons, .gp-perks { grid-template-columns: 1fr; }
-  .gp-header__actions { gap: 12px; }
-  .gp-suppliers__inner { padding: 32px 22px; border-radius: 24px; }
-  .gp-section { padding: 60px 0; }
-  .gp-btn--large { width: 100%; }
+@media (max-width: 900px) {
+  .gp-hero { padding: 36px 0 56px; }
+  .gp-hero__inner, .gp-how { grid-template-columns: 1fr; gap: 36px; }
+  .gp-mosaic { grid-template-rows: 170px 140px; }
+  .gp-who { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .gp-events { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gp-event { height: 150px; }
+  .gp-products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .gp-section { padding: 56px 0; }
+  .gp-section--tight { padding: 28px 0; }
+}
+
+@media (max-width: 480px) {
+  .gp-container { padding: 0 16px; }
+  .gp-who { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .gp-btn--large { width: 100%; justify-content: center; }
+  .gp-preview__opts { grid-template-columns: 1fr 1fr 1fr; }
 }

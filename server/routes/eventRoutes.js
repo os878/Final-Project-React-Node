@@ -8,6 +8,8 @@ router.get("/", eventController.getAllEvents)
 router.put("/", verifyJWT,verifyRole('Admin'), eventController.updateEvent)
 router.post("/", verifyJWT,verifyRole('Admin'), eventController.createNewEvent)
 router.delete("/delete", verifyJWT,verifyRole('Admin'), eventController.deleteEvent)
+// מנהל: תמונת האירוע בדף הנחיתה
+router.patch("/cover", verifyJWT, verifyRole('Admin'), eventController.setEventCover)
 router.get("/findByIdE", eventController.findByIdE)
 
 module.exports = router

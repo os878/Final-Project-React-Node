@@ -47,8 +47,7 @@ function App() {
           <Router>
             <Routes>
               {/* דפים שיש להם עיצוב מלא משלהם – בלי ההדר של ה-Layout */}
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/LandingPage" element={<LandingPage />} />
+              <Route path="/LandingPage" element={<Navigate to="/" replace />} />
               <Route path="/login" element={<AuthPage />} />
               <Route path="/admin-entry-details" element={<LoginAdmin />} />
 
@@ -61,6 +60,8 @@ function App() {
               {/* כל הדפים הפנימיים – עם ההדר */}
               <Route element={<Layout />}>
                 {/* פתוח לכולם, גם לאורח – ההתחברות נדרשת רק ברגע של פעולה אישית */}
+                {/* דף הנחיתה בתוך ה-Layout: אותו הדר לכולם, שמשתנה לפי מי שמחובר */}
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/gifts" element={<GiftsCatalog />} />
                 <Route path="/gift/:id" element={<GiftDetails />} />
                 <Route path="/questionnaire" element={<Questionnaire />} />

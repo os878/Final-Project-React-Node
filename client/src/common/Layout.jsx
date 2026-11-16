@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Outlet, Navigate, useLocation } from "react-router-dom"
 import Axios from "axios"
 import Header from "./Header"
@@ -61,6 +61,14 @@ const Layout = () => {
            
     }, [])
 
+    // יציאה מהחשבון: ה-role מתאפס מיד, אבל המעבר לדף הבית קורה רגע אחרי (React Router 7
+    // מריץ ניווט כ"עדכון לא דחוף"). בלי הדגל הזה, השמירה למטה הייתה רואה אורח בדף מוגן
+    // ושולחת אותו לדף ההתחברות במקום לדף הנחיתה.
+    const justLoggedOut = useRef(false)
+    useEffect(() => {
+        if (location.pathname === "/") justLoggedOut.current = false
+    }, [location.pathname])
+
     if (role === "loading") {
         return <div className="layout-loading" role="status">טוען…</div>
     }
@@ -70,12 +78,16 @@ const Layout = () => {
     if (area && role !== area.role) {
         // אורח: לדף ההתחברות, ושומרים לאן רצה להגיע – כדי להחזיר אותו לשם אחרי הכניסה
         if (!role) {
+            if (justLoggedOut.current) {
+                return <Navigate to="/" replace />
+            }
             return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
         }
         return <Navigate to={HOME_BY_ROLE[role]} replace />
     }
 
     const logout = () => {
+        justLoggedOut.current = true
         localStorage.removeItem("token")
         localStorage.removeItem("role") // ניקוי שאריות מהגרסה הקודמת
         setRole(null)

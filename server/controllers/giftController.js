@@ -158,6 +158,50 @@ const getAllGifts = async (req, res) => {
     }
 };
 
+// מתנות לדף הנחיתה – פתוח לכולם.
+// קודם המתנות שהמנהל סימן כנבחרות. אם יש פחות מ-8, משלימים מהחדשות ביותר (רק כאלה עם תמונה).
+const FEATURED_COUNT = 8;
+const getFeaturedGifts = async (req, res) => {
+    try {
+        const fields = 'name price image categories featured';
+        const featured = await Gift.find({ featured: true, image: { $nin: [null, ''] } })
+            .select(fields)
+            .populate('categories', 'name')
+            .sort({ updatedAt: -1 })
+            .limit(FEATURED_COUNT)
+            .lean();
+
+        let gifts = featured;
+        if (gifts.length < FEATURED_COUNT) {
+            const more = await Gift.find({ _id: { $nin: gifts.map((g) => g._id) }, image: { $nin: [null, ''] } })
+                .select(fields)
+                .populate('categories', 'name')
+                .sort({ _id: -1 })
+                .limit(FEATURED_COUNT - gifts.length)
+                .lean();
+            gifts = [...gifts, ...more];
+        }
+
+        return res.status(200).json(gifts);
+    } catch (error) {
+        return res.status(500).json({ message: 'שגיאה בטעינת המתנות הנבחרות' });
+    }
+};
+
+// מנהל: סימון / ביטול סימון של מתנה כנבחרת
+const toggleFeatured = async (req, res) => {
+    try {
+        const gift = await Gift.findById(req.params.id);
+        if (!gift) return res.status(404).json({ message: 'The gift was not found' });
+
+        gift.featured = !gift.featured;
+        await gift.save();
+        return res.json({ _id: gift._id, featured: gift.featured });
+    } catch (error) {
+        return res.status(400).json({ message: 'לא ניתן לעדכן את המתנה' });
+    }
+};
+
 const updateGift = async (req, res) => {
     const { id } = req.body;
     const file = req.file;
@@ -201,6 +245,8 @@ const updateGift = async (req, res) => {
         }
 
         const updatedFields = { ...req.body };
+        // "מתנה נבחרת" משתנה רק דרך נתיב המנהל (toggleFeatured), לא בעריכה רגילה של ספק
+        delete updatedFields.featured;
 
         // שדות שאסור לעדכן דרך הטופס (מזהה, בעלות על המתנה)
         delete updatedFields.id;
@@ -474,5 +520,7 @@ module.exports = {
     findByIdSupplier,
     findByIdGift,
     matchGiftsController,
-    getAiInspirations
+    getAiInspirations,
+    getFeaturedGifts,
+    toggleFeatured
 };

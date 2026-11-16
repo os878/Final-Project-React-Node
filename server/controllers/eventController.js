@@ -103,10 +103,34 @@ const deleteEvent = async (req, res) => {
     res.json(`Event '${eventName}' ID ${eventId} deleted`)
 }
 
+// מנהל: בחירת המתנה שהתמונה שלה מייצגת את האירוע בדף הנחיתה.
+// giftId ריק = חזרה לבחירה אוטומטית
+const setEventCover = async (req, res) => {
+    const { id, giftId } = req.body
+
+    if (!id) {
+        return res.status(400).json({ message: 'Event id is required' })
+    }
+
+    try {
+        const event = await Event.findById(id).exec()
+        if (!event) {
+            return res.status(404).json({ message: 'The event was not found' })
+        }
+
+        event.coverGift = giftId || null
+        await event.save()
+        return res.json({ _id: event._id, coverGift: event.coverGift })
+    } catch (error) {
+        return res.status(400).json({ message: 'לא ניתן לעדכן את תמונת האירוע' })
+    }
+}
+
 module.exports = {
     createNewEvent,
     getAllEvents,
     updateEvent,
     deleteEvent,
-    findByIdE
+    findByIdE,
+    setEventCover
 }

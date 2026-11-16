@@ -61,6 +61,11 @@ const giftSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Supplier',
         required: true
+    },
+    // מתנה נבחרת – מוצגת בדף הנחיתה ("מתנות שאוהבים עכשיו"). רק מנהל יכול לסמן
+    featured: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

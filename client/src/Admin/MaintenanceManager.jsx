@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useFeedback } from '../common/Feedback';
-import { EditIcon, TrashIcon, PlusIcon, CheckIcon, CloseIcon } from '../common/Icons';
+import { EditIcon, TrashIcon, PlusIcon, CheckIcon, CloseIcon, GiftIcon } from '../common/Icons';
 
 // כתובת בסיס השרת - יש לוודא שהפורט תואם לשרת ה-Node.js שלך (לדוגמה 7002 או 5000)
 const API_BASE_URL = 'http://localhost:7002';
@@ -21,6 +21,11 @@ const MaintenanceManager = () => {
     const [editingName, setEditingName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // אירועים: תמונה לדף הנחיתה ("לאיזה אירוע?") – המנהל בוחר מתנה מהאירוע, והתמונה שלה מוצגת
+    const [gifts, setGifts] = useState([]);
+    const [coverFor, setCoverFor] = useState(null); // id של האירוע שהבחירה שלו פתוחה
+    const isEvents = activeTab === MODULES.EVENTS.key;
 
     const currentModule = Object.values(MODULES).find(m => m.key === activeTab);
 
@@ -66,7 +71,32 @@ const MaintenanceManager = () => {
         fetchItems();
         setNewName('');
         setEditingId(null);
+        setCoverFor(null);
     }, [activeTab]);
+
+    // בלשונית האירועים – טוענים את המתנות (עם תמונה), כדי לבחור מהן תמונה לכל אירוע
+    useEffect(() => {
+        if (!isEvents || gifts.length) return;
+        axios.get(`${API_BASE_URL}/api/gift/getAllGifts`)
+            .then(({ data }) => setGifts((Array.isArray(data) ? data : []).filter((g) => g.image)))
+            .catch(() => setGifts([]));
+    }, [isEvents]);
+
+    const giftsOfEvent = (eventId) =>
+        gifts.filter((g) => (g.events || []).some((ev) => String(ev?._id || ev) === String(eventId)));
+    const imageOf = (giftId) => gifts.find((g) => String(g._id) === String(giftId))?.image;
+
+    // 5. בחירת תמונה לאירוע (giftId ריק = בחירה אוטומטית)
+    const handleSetCover = async (eventId, giftId) => {
+        try {
+            await axios.patch(`${API_BASE_URL}/api/event/cover`, { id: eventId, giftId: giftId || null }, getAuthHeaders());
+            setItems((list) => list.map((it) => ((it._id || it.id) === eventId ? { ...it, coverGift: giftId || null } : it)));
+            setCoverFor(null);
+            toast(giftId ? 'התמונה של האירוע עודכנה' : 'האירוע חזר לבחירה אוטומטית', 'success');
+        } catch (err) {
+            toast(err.response?.data?.message || 'שגיאה בעדכון תמונת האירוע', 'error');
+        }
+    };
 
     // 2. הוספת פריט חדש
     const handleCreate = async (e) => {
@@ -200,6 +230,20 @@ const MaintenanceManager = () => {
                                         <>
                                             <span className="mm-item__name">{item.name}</span>
                                             <div className="sgi-actions">
+                                                {isEvents && (
+                                                    <button
+                                                        type="button"
+                                                        className="sgi-btn mm-cover-btn"
+                                                        onClick={() => setCoverFor(coverFor === (item._id || item.id) ? null : (item._id || item.id))}
+                                                        aria-expanded={coverFor === (item._id || item.id)}
+                                                        title="התמונה של האירוע בדף הנחיתה"
+                                                    >
+                                                        {imageOf(item.coverGift)
+                                                            ? <img src={imageOf(item.coverGift)} alt="" className="mm-cover-btn__img" />
+                                                            : <GiftIcon />}
+                                                        תמונה
+                                                    </button>
+                                                )}
                                                 <button
                                                     type="button"
                                                     className="sgi-btn"
@@ -220,6 +264,38 @@ const MaintenanceManager = () => {
                                                     <TrashIcon />
                                                 </button>
                                             </div>
+
+                                            {/* בחירת תמונה לאירוע – מתוך המתנות של האירוע */}
+                                            {isEvents && coverFor === (item._id || item.id) && (
+                                                <div className="mm-cover" role="group" aria-label={`תמונה לאירוע ${item.name} בדף הנחיתה`}>
+                                                    <p className="mm-cover__hint">
+                                                        בחרו מתנה מהאירוע – התמונה שלה תוצג באריח "{item.name}" בדף הנחיתה.
+                                                    </p>
+                                                    {giftsOfEvent(item._id || item.id).length === 0 ? (
+                                                        <p className="mm-cover__hint">עוד אין לאירוע הזה מתנות עם תמונה.</p>
+                                                    ) : (
+                                                        <div className="mm-cover__grid">
+                                                            {giftsOfEvent(item._id || item.id).map((g) => (
+                                                                <button
+                                                                    key={g._id}
+                                                                    type="button"
+                                                                    className={`mm-cover__opt ${String(item.coverGift) === String(g._id) ? 'mm-cover__opt--on' : ''}`}
+                                                                    aria-pressed={String(item.coverGift) === String(g._id)}
+                                                                    onClick={() => handleSetCover(item._id || item.id, g._id)}
+                                                                >
+                                                                    <img src={g.image} alt="" />
+                                                                    <span>{g.name}</span>
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                    {item.coverGift && (
+                                                        <button type="button" className="mm-cover__auto" onClick={() => handleSetCover(item._id || item.id, null)}>
+                                                            חזרה לבחירה אוטומטית
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            )}
                                         </>
                                     )}
                                 </li>

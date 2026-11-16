@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useFeedback } from '../common/Feedback';
 import { useLoginGate } from '../common/useLoginGate';
 
@@ -56,10 +56,12 @@ const GiftsCatalog = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // סינון ומיון (רק תצוגה)
-    const [search, setSearch] = useState('');
+    // סינון ומיון (רק תצוגה).
+    // אפשר להגיע עם סינון מוכן מדף הנחיתה: /gifts?q=אגרטל או /gifts?event=<id>
+    const [searchParams] = useSearchParams();
+    const [search, setSearch] = useState(searchParams.get('q') || '');
     const [category, setCategory] = useState('all');
-    const [event, setEvent] = useState('all');
+    const [event, setEvent] = useState(searchParams.get('event') || 'all');
     const [priceRange, setPriceRange] = useState('all');
     const [sort, setSort] = useState('new');
 
