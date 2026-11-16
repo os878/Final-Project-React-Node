@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Axios from "axios"
 import { useFeedback } from '../common/Feedback'
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const firstReferenceId = (value) => {
     const first = Array.isArray(value) ? value[0] : value
@@ -57,9 +58,9 @@ export const UpdateGift = ({ gift, onUpdated }) => {
             const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
 
             const [catRes, eventRes, relRes] = await Promise.allSettled([
-                Axios.get("http://localhost:7002/api/category", config),
-                Axios.get("http://localhost:7002/api/event", config),
-                Axios.get("http://localhost:7002/api/relationship", config)
+                Axios.get(`${API_URL}/api/category`, config),
+                Axios.get(`${API_URL}/api/event`, config),
+                Axios.get(`${API_URL}/api/relationship`, config)
             ])
 
             if (catRes.status === "fulfilled") {
@@ -174,7 +175,7 @@ export const UpdateGift = ({ gift, onUpdated }) => {
             }
 
             const { data } = await Axios.put(
-                "http://localhost:7002/api/gift",
+                `${API_URL}/api/gift`,
                 formData,
                 config
             )

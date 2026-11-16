@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { safeReturnPath } from './useLoginGate';
 import { useFeedback } from './Feedback';
 import { GifterWordmark } from '../LandingPage'; // הלוגו – מוגדר במקום אחד
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 export const AuthPage = () => {
     const { toast } = useFeedback();
@@ -58,7 +59,7 @@ export const AuthPage = () => {
 
         // 1. לקוח
         try {
-            const { data } = await Axios.post("http://localhost:7002/api/auth/customer/login", {
+            const { data } = await Axios.post(`${API_URL}/api/auth/customer/login`, {
                 username,
                 password: password1
             });
@@ -69,7 +70,7 @@ export const AuthPage = () => {
 
         // 2. ספק
         try {
-            const { data } = await Axios.post("http://localhost:7002/api/auth/supplier/login", {
+            const { data } = await Axios.post(`${API_URL}/api/auth/supplier/login`, {
                 name: username,
                 password: password1
             });
@@ -82,7 +83,7 @@ export const AuthPage = () => {
 
         // 3. מנהל
         try {
-            const { data } = await Axios.post("http://localhost:7002/api/auth/admin/login", {
+            const { data } = await Axios.post(`${API_URL}/api/auth/admin/login`, {
                 username,
                 password: password1
             });
@@ -125,13 +126,13 @@ export const AuthPage = () => {
 
         try {
             if (registerRole === 'customer') {
-                await Axios.post("http://localhost:7002/api/auth/customer/register", {
+                await Axios.post(`${API_URL}/api/auth/customer/register`, {
                     name, username, password: password1, email, phone
                 });
                 toast("ההרשמה בוצעה בהצלחה! כעת ניתן להתחבר.", "success");
                 setIsLogin(true);
             } else {
-                const { data } = await Axios.post("http://localhost:7002/api/auth/supplier/register", {
+                const { data } = await Axios.post(`${API_URL}/api/auth/supplier/register`, {
                     name, password: password1, phone, email, companyName
                 });
                 toast("הרשמת הספק בוצעה בהצלחה!", "success");

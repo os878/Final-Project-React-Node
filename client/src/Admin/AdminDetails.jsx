@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Axios from 'axios';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const AdminDetails = () => {
 
@@ -29,7 +30,7 @@ const AdminDetails = () => {
 
                 // שליחת בקשת GET לשרת עם ה-token של המנהל
                 const { data } = await Axios.get(
-                    'http://localhost:7002/api/admin/findByIdA',
+                    `${API_URL}/api/admin/findByIdA`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -72,7 +73,7 @@ const AdminDetails = () => {
 
             // שליחת בקשת PUT לעדכון פרטי המנהל
             const { data } = await Axios.put(
-                'http://localhost:7002/api/admin/',
+                `${API_URL}/api/admin/`,
                 {
                     id: admin._id,
                     name: name,

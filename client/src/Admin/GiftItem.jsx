@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useFeedback } from '../common/Feedback';
 import { EditIcon, TrashIcon, GiftIcon, StarIcon } from '../common/Icons';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const GiftItem = ({ gift, onDelete, onEdit }) => {
   const { toast, confirm } = useFeedback();
@@ -10,7 +11,7 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
   const toggleFeatured = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:7002/api/gift/featured/${gift._id}`, {
+      const response = await fetch(`${API_URL}/api/gift/featured/${gift._id}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -40,7 +41,7 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
     try {
       const token = localStorage.getItem('token');
 
-      const response = await fetch('http://localhost:7002/api/gift/delete', {
+      const response = await fetch(`${API_URL}/api/gift/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

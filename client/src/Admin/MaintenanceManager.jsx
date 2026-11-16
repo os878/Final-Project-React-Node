@@ -3,9 +3,10 @@ import axios from 'axios';
 import { useFeedback } from '../common/Feedback';
 import { EditIcon, TrashIcon, PlusIcon, CheckIcon, CloseIcon, GiftIcon } from '../common/Icons';
 import { Icon as OptionIcon, ICON_CHOICES, pickIcon } from '../common/OptionIcons';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 // כתובת בסיס השרת - יש לוודא שהפורט תואם לשרת ה-Node.js שלך (לדוגמה 7002 או 5000)
-const API_BASE_URL = 'http://localhost:7002';
+const API_BASE_URL = `${API_URL}`;
 
 const MODULES = {
     CATEGORIES: { key: 'categories', label: 'קטגוריות', endpoint: `${API_BASE_URL}/api/category` },

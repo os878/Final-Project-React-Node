@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { useUser } from '../context/UserContext';
 import { useLoginGate } from '../common/useLoginGate';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 // ===== חדש: אייקונים =====
 const Icon = ({ children, className }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -84,7 +85,7 @@ const GiftDetails = () => {
 
         try {
             await Axios.post(
-                'http://localhost:7002/api/inquiry',
+                `${API_URL}/api/inquiry`,
                 {
                     giftId: id,
                     ...formData
@@ -119,7 +120,7 @@ const GiftDetails = () => {
             try {
                 // צפייה במתנה פתוחה לכולם – לא צריך token
                 const response = await Axios.get(
-                    `http://localhost:7002/api/gift/findByIdGift/${id}`
+                    `${API_URL}/api/gift/findByIdGift/${id}`
                 );
 
                 setGift(response.data);

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import GiftItem from './GiftItem';
 import UpdateGift from './UpdateGift';
 import { CloseIcon } from '../common/Icons';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const AllGifts = () => {
     const [gifts, setGifts] = useState([]);
@@ -26,7 +27,7 @@ const AllGifts = () => {
                     return;
                 }
 
-                const response = await fetch('http://localhost:7002/api/gift/getAllGifts', {
+                const response = await fetch(`${API_URL}/api/gift/getAllGifts`, {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`

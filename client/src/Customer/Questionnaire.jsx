@@ -5,6 +5,7 @@ import { GiftContext } from '../context/GiftContext';
 import { useLoginGate } from '../common/useLoginGate';
 
 import { Icon, pickIcon } from '../common/OptionIcons'; // האייקונים – משותפים גם לדף התחזוקה
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 
 /* ---------- אפשרויות קבועות ---------- */
@@ -68,9 +69,9 @@ const Questionnaire = () => {
         const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
         const [categoryRes, eventRes, relationshipRes] = await Promise.all([
-          Axios.get('http://localhost:7002/api/category', config),
-          Axios.get('http://localhost:7002/api/event', config),
-          Axios.get('http://localhost:7002/api/relationship', config)
+          Axios.get(`${API_URL}/api/category`, config),
+          Axios.get(`${API_URL}/api/event`, config),
+          Axios.get(`${API_URL}/api/relationship`, config)
         ]);
 
         setCategories(Array.isArray(categoryRes.data) ? categoryRes.data : categoryRes.data?.data || []);
@@ -95,7 +96,7 @@ const Questionnaire = () => {
     const fetchMatchingGifts = async () => {
       try {
         const response = await Axios.post(
-          'http://localhost:7002/api/gift/matchGifts',
+          `${API_URL}/api/gift/matchGifts`,
           formData
         );
         if (!Array.isArray(response.data?.gifts)) {
@@ -139,7 +140,7 @@ const Questionnaire = () => {
       };
 
       const response = await Axios.post(
-        'http://localhost:7002/api/gift/getAiInspirations',
+        `${API_URL}/api/gift/getAiInspirations`,
         aiData,
         {
           headers: { Authorization: `Bearer ${token}` },

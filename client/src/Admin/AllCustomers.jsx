@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import CustomerItem from './CustomerItem';
 import UpdateCustomer from './UpdateCustomer';
 import { CloseIcon } from '../common/Icons';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const AllCustomers = () => {
     // מערך הלקוחות שנקבל מהשרת
@@ -24,7 +25,7 @@ const AllCustomers = () => {
                     return;
                 }
 
-                const response = await fetch('http://localhost:7002/api/customer/', {
+                const response = await fetch(`${API_URL}/api/customer/`, {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`

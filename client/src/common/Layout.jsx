@@ -3,8 +3,9 @@ import { Outlet, Navigate, useLocation } from "react-router-dom"
 import Axios from "axios"
 import Header from "./Header"
 import { useUser } from "../context/UserContext"
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
-const API = "http://localhost:7002"
+const API = `${API_URL}`
 
 // דף הבית של כל סוג משתמש
 export const HOME_BY_ROLE = {
@@ -43,7 +44,7 @@ const Layout = () => {
                 if (data.role === "customer") {
                 try {
                     const customerRes = await Axios.get(
-                        'http://localhost:7002/api/customer/findByIdC',
+                        `${API_URL}/api/customer/findByIdC`,
                         { headers: { Authorization: `Bearer ${token}` } }
                     );
                     console.log("פרטי הלקוח המלאים:", customerRes.data); // <-- להוסיף את זה

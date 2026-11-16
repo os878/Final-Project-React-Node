@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFeedback } from '../common/Feedback';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 // ===== חדש: אייקונים =====
 const Icon = ({ children }) => (
@@ -30,7 +31,7 @@ const GiftItem = ({ gift, onDelete, onEdit }) => {
       const token = localStorage.getItem('token');
 
       // שולחים בקשת DELETE לשרת
-      const response = await fetch('http://localhost:7002/api/gift/delete', {
+      const response = await fetch(`${API_URL}/api/gift/delete`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

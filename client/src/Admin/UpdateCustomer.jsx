@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { useFeedback } from '../common/Feedback';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 export const UpdateCustomer = ({ customer, onUpdated }) => {
     const { toast } = useFeedback();
@@ -52,7 +53,7 @@ export const UpdateCustomer = ({ customer, onUpdated }) => {
             };
 
             const { data } = await Axios.put(
-                'http://localhost:7002/api/customer',
+                `${API_URL}/api/customer`,
                 customerData,
                 config
             );

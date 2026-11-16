@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { useFeedback } from '../common/Feedback'
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 export const AddGift = ({ gift, onUpdated }) => {
     const navigate = useNavigate()
@@ -60,9 +61,9 @@ export const AddGift = ({ gift, onUpdated }) => {
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {}
 
                 const [categoryResponse, eventResponse, relationshipResponse] = await Promise.all([
-                    Axios.get("http://localhost:7002/api/category", config),
-                    Axios.get("http://localhost:7002/api/event", config),
-                    Axios.get("http://localhost:7002/api/relationship", config)
+                    Axios.get(`${API_URL}/api/category`, config),
+                    Axios.get(`${API_URL}/api/event`, config),
+                    Axios.get(`${API_URL}/api/relationship`, config)
                 ])
 
                 setCategories(Array.isArray(categoryResponse.data) ? categoryResponse.data : categoryResponse.data.data || [])
@@ -191,7 +192,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                 formData.append("id", gift._id)
 
                 const { data } = await Axios.put(
-                    "http://localhost:7002/api/gift",
+                    `${API_URL}/api/gift`,
                     formData,
                     config
                 )
@@ -205,7 +206,7 @@ export const AddGift = ({ gift, onUpdated }) => {
                 }
             } else {
                 await Axios.post(
-                    "http://localhost:7002/api/gift",
+                    `${API_URL}/api/gift`,
                     formData,
                     config
                 )

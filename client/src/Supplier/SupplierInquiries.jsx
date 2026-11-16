@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Axios from 'axios';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 // ===== חדש: תצוגה =====
 const Icon = ({ children, className }) => (
@@ -41,7 +42,7 @@ const SupplierInquiries = () => {
 
         try {
             await Axios.patch(
-                `http://localhost:7002/api/inquiry/${inquiryId}/status`,
+                `${API_URL}/api/inquiry/${inquiryId}/status`,
                 { status: newStatus },
                 {
                     headers: {
@@ -69,7 +70,7 @@ const SupplierInquiries = () => {
 
             try {
                 const response = await Axios.get(
-                    'http://localhost:7002/api/inquiry/supplier',
+                    `${API_URL}/api/inquiry/supplier`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`

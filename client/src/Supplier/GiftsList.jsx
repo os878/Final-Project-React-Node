@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import GiftItem from './GiftItem';
 import AddGift from './AddGift';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const GiftsList = () => {
     // מערך המתנות שנקבל מהשרת
@@ -27,7 +28,7 @@ const GiftsList = () => {
             }
 
             // שליחת בקשת GET באמצעות Axios עם ה-Token ב-Header
-            const response = await Axios.get('http://localhost:7002/api/gift/findByIdSupplier', {
+            const response = await Axios.get(`${API_URL}/api/gift/findByIdSupplier`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

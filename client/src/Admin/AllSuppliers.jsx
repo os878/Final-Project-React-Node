@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import SupplierItem from './SupplierItem';
 import UpdateSupplier from './UpdateSupplier';
 import { CloseIcon } from '../common/Icons';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const AllSuppliers = () => {
     // מערך הספקים שנקבל מהשרת
@@ -24,7 +25,7 @@ const AllSuppliers = () => {
                     return;
                 }
 
-                const response = await fetch('http://localhost:7002/api/supplier/', {
+                const response = await fetch(`${API_URL}/api/supplier/`, {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`

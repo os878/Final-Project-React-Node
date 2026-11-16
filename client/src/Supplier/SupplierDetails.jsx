@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Axios from 'axios';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const SupplierDetails = () => {
 
@@ -30,7 +31,7 @@ const SupplierDetails = () => {
 
                 // שליחת בקשת GET לשרת עם ה-token בכותרת הבקשה
                 const { data } = await Axios.get(
-                    'http://localhost:7002/api/supplier/findByIdS',
+                    `${API_URL}/api/supplier/findByIdS`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -73,7 +74,7 @@ const SupplierDetails = () => {
             const token = localStorage.getItem('token');
 
             const { data } = await Axios.put(
-                'http://localhost:7002/api/supplier/',
+                `${API_URL}/api/supplier/`,
                 {
                     id: supp._id,
                     name: name,

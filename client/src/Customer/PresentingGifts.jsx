@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { GiftContext } from '../context/GiftContext';
 import { useLoginGate } from '../common/useLoginGate';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 // ===== חדש: אייקונים (במקום האימוג'י ❤️ / ♡) =====
 const HeartIcon = ({ filled }) => (
@@ -45,7 +46,7 @@ const PresentingGifts = () => {
             if (!token) return;
 
             try {
-                const response = await Axios.get('http://localhost:7002/api/favorite', {
+                const response = await Axios.get(`${API_URL}/api/favorite`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (!Array.isArray(response.data)) {
@@ -69,12 +70,12 @@ const PresentingGifts = () => {
         try {
             const isFavorite = favorites.some(favorite => favorite.gift?._id === giftId);
             if (isFavorite) {
-                await Axios.delete(`http://localhost:7002/api/favorite/${giftId}`, {
+                await Axios.delete(`${API_URL}/api/favorite/${giftId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setFavorites(prev => prev.filter(favorite => favorite.gift?._id !== giftId));
             } else {
-                const response = await Axios.post('http://localhost:7002/api/favorite', { giftId }, {
+                const response = await Axios.post(`${API_URL}/api/favorite`, { giftId }, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setFavorites(prev => [

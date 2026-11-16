@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 // ===== חדש: אייקונים =====
 const HeartIcon = () => (
@@ -38,7 +39,7 @@ const Favorites = () => {
                 const token = localStorage.getItem('token');
 
                 const response = await Axios.get(
-                    'http://localhost:7002/api/favorite',
+                    `${API_URL}/api/favorite`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -66,7 +67,7 @@ const Favorites = () => {
             const token = localStorage.getItem('token');
 
             await Axios.delete(
-                `http://localhost:7002/api/favorite/${giftId}`,
+                `${API_URL}/api/favorite/${giftId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`

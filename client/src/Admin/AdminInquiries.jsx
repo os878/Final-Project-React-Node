@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { useFeedback } from '../common/Feedback';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 // ===== דף מנהל: כל הפניות באתר ומה המצב שלהן =====
 
@@ -15,7 +16,7 @@ const statusLabel = (value) => STATUSES.find((s) => s.value === value)?.label ||
 
 const CONTACT_LABELS = { WhatsApp: 'WhatsApp', Phone: 'טלפון', Email: 'מייל' };
 
-const API = 'http://localhost:7002/api/inquiry';
+const API = `${API_URL}/api/inquiry`;
 
 // כמה ימים עברו מתאריך מסוים עד היום
 const daysSince = (date) => Math.floor((Date.now() - new Date(date).getTime()) / (24 * 60 * 60 * 1000));

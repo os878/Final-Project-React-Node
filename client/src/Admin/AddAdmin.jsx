@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useFeedback } from '../common/Feedback';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const AddAdmin = () => {
     const { toast } = useFeedback();
@@ -46,7 +47,7 @@ const AddAdmin = () => {
 
         try {
             await Axios.post(
-                "http://localhost:7002/api/auth/admin/register",
+                `${API_URL}/api/auth/admin/register`,
                 {
                     name,
                     username,

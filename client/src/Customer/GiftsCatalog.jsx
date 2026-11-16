@@ -3,8 +3,9 @@ import Axios from 'axios';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useFeedback } from '../common/Feedback';
 import { useLoginGate } from '../common/useLoginGate';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
-const API = 'http://localhost:7002';
+const API = `${API_URL}`;
 
 // ===== אייקונים =====
 const Svg = ({ children, filled }) => (

@@ -3,8 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { GiftContext } from './context/GiftContext';
 import './LandingPage.css';
+import { API_URL } from './config'; // כתובת השרת – מוגדרת במקום אחד
 
-const API = 'http://localhost:7002';
+const API = `${API_URL}`;
 
 // לאן הכפתורים מובילים
 const START_ROUTE = '/questionnaire'; // השאלון פתוח גם לאורח

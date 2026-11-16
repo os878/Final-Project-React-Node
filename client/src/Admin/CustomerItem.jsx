@@ -1,6 +1,7 @@
 import React from 'react';
 import { useFeedback } from '../common/Feedback';
 import { EditIcon, TrashIcon, MailIcon, PhoneIcon, UserIcon, StoreIcon } from '../common/Icons';
+import { API_URL } from '../config'; // כתובת השרת – מוגדרת במקום אחד
 
 const CustomerItem = ({ customer, onDelete, onEdit }) => {
     const { toast, confirm } = useFeedback();
@@ -19,7 +20,7 @@ const CustomerItem = ({ customer, onDelete, onEdit }) => {
         try {
             const token = localStorage.getItem('token');
 
-            const response = await fetch('http://localhost:7002/api/customer/delete', {
+            const response = await fetch(`${API_URL}/api/customer/delete`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
