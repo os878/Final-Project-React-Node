@@ -8,14 +8,13 @@ const {
     removeFavorite
 } = require('../controllers/favoriteController');
 
-const { verifyJWT } = require('../middleware/verifyJWT');
-// הצגת המתנות האהובות
+const { verifyJWT, verifyRole } = require('../middleware/verifyJWT');
+// הצגת המתנות האהובות (לספק/מנהל פשוט חוזרת רשימה ריקה)
 router.get('/', verifyJWT, getFavorites);
 
-// הוספת מתנה למועדפים
-router.post('/', verifyJWT, addFavorite);
+// הוספה והסרה – רק ללקוח. מועדפים הם של לקוחות, לא של ספקים או מנהלים
+router.post('/', verifyJWT, verifyRole('Customer'), addFavorite);
 
-// הסרת מתנה מהמועדפים
-router.delete('/:giftId', verifyJWT, removeFavorite);
+router.delete('/:giftId', verifyJWT, verifyRole('Customer'), removeFavorite);
 
 module.exports = router;

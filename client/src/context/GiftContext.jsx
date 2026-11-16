@@ -36,7 +36,8 @@ export function GiftProvider({ children }) {
 
     const [formData, setFormData] = useState(() => load('gifter.formData', EMPTY_FORM));
 
-    const [matchingGifts, setMatchingGifts] = useState(() => load('gifter.matchingGifts', []));
+    // null = עוד לא חיפשו (דף התוצאות מציג "עוד לא חיפשתם מתנות"), [] = חיפשו ולא נמצא כלום
+    const [matchingGifts, setMatchingGifts] = useState(() => load('gifter.matchingGifts', null));
 
     useEffect(() => save('gifter.formData', formData), [formData]);
     useEffect(() => save('gifter.matchingGifts', matchingGifts), [matchingGifts]);

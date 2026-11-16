@@ -99,7 +99,8 @@ const Layout = () => {
             <Header role={role} onLogout={logout} />
 
             <main className="main-content">
-                <Outlet />
+                {/* הדפים יכולים לדעת מי מחובר דרך useOutletContext() – למשל useLoginGate */}
+                <Outlet context={{ role }} />
             </main>
         </div>
     )
