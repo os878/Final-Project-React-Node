@@ -9,6 +9,18 @@ const app = express()
 const mongoose = require('mongoose')
 const connectDB = require("./config/dbConn")
 connectDB()
+// Render (ושירותי ענן דומים) יושב מאחורי proxy – כך req.ip הוא הכתובת האמיתית של המשתמש,
+// וזה חשוב להגבלת הניסיונות (middleware/rateLimit.js)
+app.set('trust proxy', 1)
+// לא לחשוף שהשרת בנוי ב-Express
+app.disable('x-powered-by')
+// כותרות אבטחה בסיסיות לכל תשובה
+app.use((req, res, next) => {
+    res.set('X-Content-Type-Options', 'nosniff')   // הדפדפן לא "מנחש" סוג קובץ
+    res.set('X-Frame-Options', 'DENY')             // אי אפשר להטמיע את ה-API בתוך iframe
+    res.set('Referrer-Policy', 'no-referrer')
+    next()
+})
 //middlewares
 app.use(cors(corsOptions))
 app.use(express.json({ limit: "20mb" }))

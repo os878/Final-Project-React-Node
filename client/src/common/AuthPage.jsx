@@ -66,7 +66,10 @@ export const AuthPage = () => {
             localStorage.setItem("token", data.accessToken);
             navigate(returnTo || "/Customer/ProfilCustomer");
             return;
-        } catch (err) { }
+        } catch (err) {
+            // יותר מדי ניסיונות – השרת חוסם זמנית (429). מציגים את ההודעה שלו ולא "סיסמה שגויה"
+            if (err.response?.status === 429) { setErrorMessage(err.response.data?.message || "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות."); return; }
+        }
 
         // 2. ספק
         try {
@@ -79,7 +82,9 @@ export const AuthPage = () => {
             }
             navigate("/Supplier/ProfilSupplier");
             return;
-        } catch (err) { }
+        } catch (err) {
+            if (err.response?.status === 429) { setErrorMessage(err.response.data?.message || "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות."); return; }
+        }
 
         // 3. מנהל
         try {
@@ -91,7 +96,9 @@ export const AuthPage = () => {
             navigate("/Admin/ProfilAdmin");
             return;
         } catch (err) {
-            setErrorMessage("שם משתמש או סיסמה שגויים");
+            setErrorMessage(err.response?.status === 429
+                ? (err.response.data?.message || "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.")
+                : "שם משתמש או סיסמה שגויים");
         }
     };
 

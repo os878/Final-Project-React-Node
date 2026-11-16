@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const giftController = require("../controllers/giftController")
 const { verifyJWT, verifyRole } = require("../middleware/verifyJWT")
+const { aiLimiter } = require("../middleware/rateLimit")
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -21,6 +22,6 @@ router.delete("/delete", verifyJWT, verifyRole('Supplier', 'Admin'), giftControl
 // מנהל בוחר אילו מתנות יוצגו בדף הנחיתה
 router.patch("/featured/:id", verifyJWT, verifyRole('Admin'), giftController.toggleFeatured)
 // השראות AI נשארות ללקוח מחובר בלבד – כל קריאה ל-Gemini עולה כסף
-router.post("/getAiInspirations", verifyJWT, verifyRole('Customer'), giftController.getAiInspirations)
+router.post("/getAiInspirations", verifyJWT, verifyRole('Customer'), aiLimiter, giftController.getAiInspirations) // עד 10 ביום למשתמש
 
 module.exports = router
