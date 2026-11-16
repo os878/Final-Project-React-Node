@@ -2,9 +2,6 @@ const express = require("express")
 const router = express.Router()
 const giftController = require("../controllers/giftController")
 const { verifyJWT, verifyRole } = require("../middleware/verifyJWT")
-// const multer = require('multer')
-
-// const upload = multer({ storage: multer.memoryStorage() })
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
