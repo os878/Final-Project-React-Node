@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GiftContext } from '../context/GiftContext';
 
-const QUESTIONNAIRE = '/Customer/Questionnaire';
+const QUESTIONNAIRE = '/questionnaire';
 
 const Icon = ({ children, className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

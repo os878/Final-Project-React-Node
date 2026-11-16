@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
 
 // לאן הכפתורים מובילים
-const START_ROUTE = '/login';
+const START_ROUTE = '/questionnaire'; // השאלון פתוח גם לאורח
 // הנתיב של דף הכניסה (AuthPage) כפי שמוגדר ב-App.jsx
 const AUTH_ROUTE = '/login';
 // פותח את דף הכניסה ישר על "הרשמה" עם "הרשמה כספק" מסומן

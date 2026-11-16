@@ -1,12 +1,17 @@
-import { NavLink, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate, useLocation } from "react-router-dom"
 import { GifterLogo } from "../LandingPage" // הלוגו מדף הנחיתה
 
 // הקישורים של כל סוג משתמש – מוגדרים רק כאן, במקום אחד
 const NAV_LINKS = {
+    // אורח (לא מחובר) – רואה את המתנות ואת השאלון, בלי שום דרישה להירשם
+    guest: [
+        { to: "/gifts", label: "כל המתנות" },
+        { to: "/questionnaire", label: "מצאו לי מתנה" },
+    ],
     customer: [
         { to: "/Customer/ProfilCustomer", label: "האזור שלי" },
-        { to: "/Customer/Questionnaire", label: "שאלון מתנות" },
-        { to: "/Customer/Gifts", label: "כל המתנות" },
+        { to: "/questionnaire", label: "שאלון מתנות" },
+        { to: "/gifts", label: "כל המתנות" },
         { to: "/Customer/Favorites", label: "מועדפים" },
         { to: "/Customer/CusromerDetails", label: "הפרטים שלי" },
     ],
@@ -33,7 +38,8 @@ const ROLE_NAMES = { customer: "לקוח", supplier: "ספק", admin: "מנהל"
 // role מגיע מה-Layout, אחרי שהשרת אישר אותו
 const Header = ({ role, onLogout }) => {
     const navigate = useNavigate()
-    const links = NAV_LINKS[role] || []
+    const location = useLocation()
+    const links = NAV_LINKS[role || "guest"] || []
 
     const logout = () => {
         onLogout()
@@ -66,7 +72,8 @@ const Header = ({ role, onLogout }) => {
                             </button>
                         </>
                     ) : (
-                        <NavLink to="/login" className="site-header__login">
+                        // אחרי ההתחברות – חוזרים לדף שממנו לחצו
+                        <NavLink to="/login" state={{ from: location.pathname + location.search }} className="site-header__login">
                             התחברות
                         </NavLink>
                     )}

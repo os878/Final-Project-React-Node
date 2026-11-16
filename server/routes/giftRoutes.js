@@ -6,13 +6,18 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.get("/findByIdGift/:id", verifyJWT, giftController.findByIdGift)
+// ===== פתוח לכולם (גם לאורח): צפייה במתנות וחישוב התאמה =====
+// הנתונים כאן לא רגישים: מהספק נשלח רק שם החברה (ראו giftController).
+router.get("/findByIdGift/:id", giftController.findByIdGift)
+router.get("/getAllGifts", giftController.getAllGifts)
+router.post("/matchGifts", giftController.matchGiftsController)
+
+// ===== דורש התחברות =====
 router.get("/findByIdSupplier", verifyJWT, verifyRole('Supplier'), giftController.findByIdSupplier)
-router.get("/getAllGifts", verifyJWT, verifyRole('Supplier', 'Admin', 'Customer'), giftController.getAllGifts)
 router.post("/", verifyJWT, verifyRole('Supplier'), upload.single('image'), giftController.createNewGift)
 router.put("/", verifyJWT, verifyRole('Supplier', 'Admin'), upload.single('image'), giftController.updateGift)
 router.delete("/delete", verifyJWT, verifyRole('Supplier', 'Admin'), giftController.deleteGift)
-router.post("/matchGifts", verifyJWT, verifyRole('Customer'), giftController.matchGiftsController)
+// השראות AI נשארות ללקוח מחובר בלבד – כל קריאה ל-Gemini עולה כסף
 router.post("/getAiInspirations", verifyJWT, verifyRole('Customer'), giftController.getAiInspirations)
 
 module.exports = router

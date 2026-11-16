@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import Axios from 'axios';
 import { useUser } from '../context/UserContext';
+import { useLoginGate } from '../common/useLoginGate';
 // ===== חדש: אייקונים =====
 const Icon = ({ children, className }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -30,6 +31,14 @@ const GiftDetails = () => {
     const { id } = useParams();
 
     const { user } = useUser();
+    const navigate = useNavigate();
+    const { requireLogin } = useLoginGate();
+
+    // שליחת פנייה לספק – רק למחוברים. אורח מקבל חלון קצר עם הצעה להתחבר
+    const openInquiry = async () => {
+        if (!(await requireLogin('כדי לשלוח פנייה לבעל העסק, התחברו או הירשמו.'))) return;
+        setOpenDialog(true);
+    };
 
 
     const [gift, setGift] = useState(null);
@@ -107,16 +116,10 @@ const GiftDetails = () => {
     };
     useEffect(() => {
         const fetchGift = async () => {
-            const token = localStorage.getItem('token');
-
             try {
+                // צפייה במתנה פתוחה לכולם – לא צריך token
                 const response = await Axios.get(
-                    `http://localhost:7002/api/gift/findByIdGift/${id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                    `http://localhost:7002/api/gift/findByIdGift/${id}`
                 );
 
                 setGift(response.data);
@@ -147,9 +150,19 @@ const GiftDetails = () => {
 
     return (
         <section className="gd" dir="rtl">
-            <Link to="/PresentingGifts" className="gd-back">
+            {/* חזרה לדף הקודם (קטלוג או תוצאות). אם נכנסו ישר מקישור – לכל המתנות */}
+            <Link
+                to="/gifts"
+                className="gd-back"
+                onClick={(e) => {
+                    if (window.history.length > 1) {
+                        e.preventDefault();
+                        navigate(-1);
+                    }
+                }}
+            >
                 <BackIcon className="gd-back__icon" />
-                חזרה לתוצאות
+                חזרה
             </Link>
 
             <div className="gd-main">
@@ -174,7 +187,7 @@ const GiftDetails = () => {
                         </div>
                     </div>
 
-                    <button type="button" className="gd-cta" onClick={() => setOpenDialog(true)}>
+                    <button type="button" className="gd-cta" onClick={openInquiry}>
                         <ChatIcon className="gd-cta__icon" />
                         שליחת פנייה לבעל העסק
                     </button>

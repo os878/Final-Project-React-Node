@@ -53,7 +53,9 @@ const AddAdmin = () => {
                     password: password1,
                     email,
                     phone
-                }
+                },
+                // השרת מאפשר להוסיף מנהל רק למנהל מחובר
+                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
 
             setErrorMessage("")

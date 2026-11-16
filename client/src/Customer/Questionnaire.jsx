@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { GiftContext } from '../context/GiftContext';
+import { useLoginGate } from '../common/useLoginGate';
 
 /* ---------- אייקונים (קו פשוט, בסגנון האתר) ---------- */
 const ICONS = {
@@ -166,6 +167,7 @@ const Questionnaire = () => {
   const [relationships, setRelationships] = useState([]);
 
   const { formData, setFormData, setMatchingGifts, setAiInspirations } = useContext(GiftContext);
+  const { isLoggedIn, requireLogin } = useLoginGate();
 
   // טעינת אפשרויות (קטגוריות, אירועים, קשרים) מהשרת בעת עשיית Render ראשוני
   useEffect(() => {
@@ -192,16 +194,10 @@ const Questionnaire = () => {
     fetchOptions();
   }, []);
 
-  // פונקציה 1: חיפוש מתנות מספקים
+  // פונקציה 1: חיפוש מתנות מספקים – פתוח לכולם, גם לאורח
   const handleSubmit = (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
     setErrorMessage('');
-
-    if (!token) {
-      setErrorMessage('יש להתחבר למערכת כדי לחפש מתנות');
-      return;
-    }
 
     setIsLoading(true);
     setLoadingType('gifts');
@@ -209,17 +205,14 @@ const Questionnaire = () => {
       try {
         const response = await Axios.post(
           'http://localhost:7002/api/gift/matchGifts',
-          formData,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+          formData
         );
         if (!Array.isArray(response.data?.gifts)) {
           throw new Error('השרת החזיר תשובה לא תקינה');
         }
 
         setMatchingGifts(response.data.gifts);
-        navigate('/PresentingGifts');
+        navigate('/results');
       } catch (error) {
         console.error('Error fetching matching gifts:', error);
         setErrorMessage(error.response?.data?.message || error.message || 'לא הצלחנו למצוא מתנות מתאימות');
@@ -233,13 +226,13 @@ const Questionnaire = () => {
 
   // פונקציה 2: קבלת השראות מבינה מלאכותית
   const handleAiInspirations = async () => {
-    const token = localStorage.getItem('token');
     setErrorMessage('');
 
-    if (!token) {
-      setErrorMessage('יש להתחבר למערכת כדי לקבל השראות');
+    // השראות AI – רק למחוברים (כל קריאה ל-Gemini עולה כסף). התשובות בשאלון נשמרות בינתיים.
+    if (!(await requireLogin('התחברו וקבלו 3 רעיונות מקוריים מה-AI. התשובות שלכם בשאלון יחכו לכם כאן.'))) {
       return;
     }
+    const token = localStorage.getItem('token');
 
     setIsLoading(true);
     setLoadingType('ai');
@@ -482,7 +475,11 @@ const Questionnaire = () => {
                   <span className="qz-action__icon"><Icon name="bulb" /></span>
                   <span className="qz-action__text">
                     <strong>{loadingType === 'ai' ? 'מייצרים השראות…' : 'השראה מבינה מלאכותית'}</strong>
-                    <span>רעיונות מקוריים, בנויים במיוחד בשבילו</span>
+                    <span>
+                      {isLoggedIn()
+                        ? 'רעיונות מקוריים, בנויים במיוחד בשבילו'
+                        : 'התחברו וקבלו 3 רעיונות מקוריים מה-AI'}
+                    </span>
                   </span>
                 </button>
               </div>

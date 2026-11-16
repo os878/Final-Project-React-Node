@@ -3,6 +3,7 @@ import Axios from 'axios';
 import { Link, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { GiftContext } from '../context/GiftContext';
+import { useLoginGate } from '../common/useLoginGate';
 
 // ===== חדש: אייקונים (במקום האימוג'י ❤️ / ♡) =====
 const HeartIcon = ({ filled }) => (
@@ -27,15 +28,14 @@ const PresentingGifts = () => {
     const [favorites, setFavorites] = useState([]);
     const { matchingGifts } = useContext(GiftContext);
     const [favoritesError, setFavoritesError] = useState('');
+    const { requireLogin } = useLoginGate();
 
 
     useEffect(() => {
         const fetchFavorites = async () => {
             const token = localStorage.getItem('token');
-            if (!token) {
-                setFavoritesError('יש להתחבר למערכת כדי לטעון מועדפים');
-                return;
-            }
+            // אורח – אין מועדפים לטעון, וזה בסדר (לא מציגים שגיאה)
+            if (!token) return;
 
             try {
                 const response = await Axios.get('http://localhost:7002/api/favorite', {
@@ -55,11 +55,9 @@ const PresentingGifts = () => {
     }, []);
 
     const handleToggleFavorite = async (giftId) => {
+        // אורח – חלון קצר עם הצעה להתחבר, ואחרי הכניסה חוזרים לכאן (התוצאות שמורות)
+        if (!(await requireLogin('כדי לשמור את המתנה, התחברו או הירשמו.'))) return;
         const token = localStorage.getItem('token');
-        if (!token) {
-            setFavoritesError('יש להתחבר למערכת כדי לשמור מתנות במועדפים');
-            return;
-        }
 
         try {
             const isFavorite = favorites.some(favorite => favorite.gift?._id === giftId);
@@ -90,7 +88,7 @@ const PresentingGifts = () => {
                 <span className="pg-empty__icon"><GiftIcon /></span>
                 <h2>עוד לא חיפשתם מתנות</h2>
                 <p>לא ניתן להציג את המתנות. יש לחפש מתנות דרך השאלון.</p>
-                <Link to="/Customer/Questionnaire" className="pg-btn">חזרה לשאלון</Link>
+                <Link to="/questionnaire" className="pg-btn">חזרה לשאלון</Link>
             </div>
         );
     }
@@ -101,7 +99,7 @@ const PresentingGifts = () => {
                 <span className="pg-empty__icon"><GiftIcon /></span>
                 <h2>לא נמצאו מתנות מתאימות</h2>
                 <p>אפשר לנסות לשנות חלק מהתשובות, למשל להגדיל את התקציב או לבחור תחום אחר.</p>
-                <Link to="/Customer/Questionnaire" className="pg-btn">לשנות תשובות בשאלון</Link>
+                <Link to="/questionnaire" className="pg-btn">לשנות תשובות בשאלון</Link>
             </div>
         );
     }
@@ -149,7 +147,7 @@ const PresentingGifts = () => {
 
                                 <div className="pg-card__footer">
                                     <span className="pg-card__price">{gift.price} ₪</span>
-                                    <Link to={`/Customer/GiftDetails/${gift._id}`} className="pg-card__link">
+                                    <Link to={`/gift/${gift._id}`} className="pg-card__link">
                                         לפרטים נוספים
                                         <ArrowIcon />
                                     </Link>

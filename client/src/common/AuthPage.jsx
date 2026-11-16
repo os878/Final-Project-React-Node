@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from "axios";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { safeReturnPath } from './useLoginGate';
 import { useFeedback } from './Feedback';
 import { GifterWordmark } from '../LandingPage'; // הלוגו – מוגדר במקום אחד
 
@@ -25,6 +26,9 @@ export const AuthPage = () => {
     const [errorMessage, setErrorMessage] = useState("");
 
     const navigate = useNavigate();
+    const location = useLocation();
+    // הדף שממנו האורח הגיע (למשל לחץ על "שמירה למועדפים") – לקוח יחזור אליו אחרי הכניסה
+    const returnTo = safeReturnPath(location.state?.from);
 
     useEffect(() => {
         if (searchParams.get('mode') === 'register') {
@@ -59,7 +63,7 @@ export const AuthPage = () => {
                 password: password1
             });
             localStorage.setItem("token", data.accessToken);
-            navigate("/Customer/ProfilCustomer");
+            navigate(returnTo || "/Customer/ProfilCustomer");
             return;
         } catch (err) { }
 

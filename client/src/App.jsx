@@ -1,5 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom"
 import Layout from "./common/Layout"
+
+// כתובת ישנה של דף מתנה (/Customer/GiftDetails/:id) – מעבירה לכתובת החדשה
+const OldGiftDetailsRedirect = () => {
+  const { id } = useParams()
+  return <Navigate to={`/gift/${id}`} replace />
+}
 
 import './App.css'
 import LoginAdmin from './Admin/LoginAdmin'
@@ -46,8 +52,20 @@ function App() {
               <Route path="/login" element={<AuthPage />} />
               <Route path="/admin-entry-details" element={<LoginAdmin />} />
 
+              {/* כתובות ישנות – מעבירות לכתובות הציבוריות החדשות (כדי שקישורים ישנים ימשיכו לעבוד) */}
+              <Route path="/Customer/Gifts" element={<Navigate to="/gifts" replace />} />
+              <Route path="/Customer/Questionnaire" element={<Navigate to="/questionnaire" replace />} />
+              <Route path="/Customer/GiftDetails/:id" element={<OldGiftDetailsRedirect />} />
+              <Route path="/PresentingGifts" element={<Navigate to="/results" replace />} />
+
               {/* כל הדפים הפנימיים – עם ההדר */}
               <Route element={<Layout />}>
+                {/* פתוח לכולם, גם לאורח – ההתחברות נדרשת רק ברגע של פעולה אישית */}
+                <Route path="/gifts" element={<GiftsCatalog />} />
+                <Route path="/gift/:id" element={<GiftDetails />} />
+                <Route path="/questionnaire" element={<Questionnaire />} />
+                <Route path="/results" element={<PresentingGifts />} />
+
                 {/* מנהל */}
                 <Route path="/Admin/ProfilAdmin" element={<ProfilAdmin />} />
                 <Route path="/Admin/AdminDetails" element={<AdminDetails />} />
@@ -69,12 +87,8 @@ function App() {
                 {/* לקוח */}
                 <Route path="/Customer/ProfilCustomer" element={<ProfileCustomer />} />
                 <Route path="/Customer/CusromerDetails" element={<CusromerDetails />} />
-                <Route path="/Customer/Questionnaire" element={<Questionnaire />} />
-                <Route path="/PresentingGifts" element={<PresentingGifts />} />
                 <Route path="/Customer/Favorites" element={<Favorites />} />
                 <Route path="/Giftinspirations" element={<Giftinspirations />} />
-                <Route path="/Customer/GiftDetails/:id" element={<GiftDetails />} />
-                <Route path="/Customer/Gifts" element={<GiftsCatalog />} />
               </Route>
             </Routes>
           </Router>

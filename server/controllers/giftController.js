@@ -289,14 +289,20 @@ const findByIdGift = async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: 'Gift id is required' });
 
-    const gift = await Gift.findById(id)
-        .populate('categories')
-        .populate('events')
-        .populate('relationships')
-        .populate('supplier', 'name companyName');
+    try {
+        const gift = await Gift.findById(id)
+            .populate('categories')
+            .populate('events')
+            .populate('relationships')
+            // הנתיב פתוח לכולם – רק שם החברה. בלי name (שם המשתמש של הספק), טלפון, מייל או סיסמה
+            .populate('supplier', 'companyName');
 
-    if (!gift) return res.status(404).json({ message: 'The gift was not found' });
-    res.json(gift);
+        if (!gift) return res.status(404).json({ message: 'The gift was not found' });
+        return res.json(gift);
+    } catch (error) {
+        // למשל id בפורמט לא תקין
+        return res.status(404).json({ message: 'The gift was not found' });
+    }
 };
 
 const matchGiftsController = async (req, res) => {

@@ -105,7 +105,7 @@ const Favorites = () => {
                 <span className="pg-empty__icon"><HeartIcon /></span>
                 <h2>עדיין לא שמרת מתנות במועדפים</h2>
                 <p>כשמוצאים מתנה שאוהבים, לוחצים על הלב והיא נשמרת כאן.</p>
-                <Link to="/Customer/Questionnaire" className="pg-btn">למצוא מתנה</Link>
+                <Link to="/questionnaire" className="pg-btn">למצוא מתנה</Link>
             </div>
         );
     }
@@ -160,7 +160,7 @@ const Favorites = () => {
 
                                 <div className="pg-card__footer">
                                     <span className="pg-card__price">{gift.price} ₪</span>
-                                    <Link to={`/Customer/GiftDetails/${gift._id}`} className="pg-card__link">
+                                    <Link to={`/gift/${gift._id}`} className="pg-card__link">
                                         לפרטים נוספים
                                         <ArrowIcon />
                                     </Link>

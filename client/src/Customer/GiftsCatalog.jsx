@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useFeedback } from '../common/Feedback';
+import { useLoginGate } from '../common/useLoginGate';
 
 const API = 'http://localhost:7002';
 
@@ -45,6 +46,7 @@ const firstOf = (gift, plural, singular) => (Array.isArray(gift[plural]) ? gift[
 
 const GiftsCatalog = () => {
     const { toast } = useFeedback();
+    const { requireLogin } = useLoginGate();
 
     const [gifts, setGifts] = useState([]);
     // רשימות הקטגוריות והאירועים – נטענות מהשרת (כמו בשאלון)
@@ -68,11 +70,12 @@ const GiftsCatalog = () => {
             const config = { headers: { Authorization: `Bearer ${token}` } };
             try {
                 const asList = (res) => (Array.isArray(res.data) ? res.data : res.data?.data || []);
+                // המתנות, הקטגוריות והאירועים פתוחים לכולם. מועדפים – רק למי שמחובר
                 const [giftsRes, favRes, catRes, eventRes] = await Promise.all([
-                    Axios.get(`${API}/api/gift/getAllGifts`, config),
-                    Axios.get(`${API}/api/favorite`, config).catch(() => ({ data: [] })),
-                    Axios.get(`${API}/api/category`, config).catch(() => ({ data: [] })),
-                    Axios.get(`${API}/api/event`, config).catch(() => ({ data: [] })),
+                    Axios.get(`${API}/api/gift/getAllGifts`),
+                    token ? Axios.get(`${API}/api/favorite`, config).catch(() => ({ data: [] })) : { data: [] },
+                    Axios.get(`${API}/api/category`).catch(() => ({ data: [] })),
+                    Axios.get(`${API}/api/event`).catch(() => ({ data: [] })),
                 ]);
                 setGifts(asList(giftsRes));
                 setFavorites(asList(favRes));
@@ -89,6 +92,8 @@ const GiftsCatalog = () => {
 
     // הוספה / הסרה מהמועדפים (כמו בדף תוצאות השאלון)
     const toggleFavorite = async (giftId) => {
+        // אורח – חלון קצר עם הצעה להתחבר, ואחרי הכניסה חוזרים לקטלוג
+        if (!(await requireLogin('כדי לשמור את המתנה, התחברו או הירשמו.'))) return;
         const token = localStorage.getItem('token');
         const config = { headers: { Authorization: `Bearer ${token}` } };
         const isFavorite = favorites.some((f) => f.gift?._id === giftId);
@@ -228,7 +233,7 @@ const GiftsCatalog = () => {
                     <p>אפשר לנקות את הסינון, או לתת לשאלון למצוא בשבילכם.</p>
                     <div className="cat-empty__actions">
                         {hasFilters && <button type="button" className="ins-btn ins-btn--ghost" onClick={clearFilters}>ניקוי הסינון</button>}
-                        <Link to="/Customer/Questionnaire" className="pg-btn">לשאלון</Link>
+                        <Link to="/questionnaire" className="pg-btn">לשאלון</Link>
                     </div>
                 </div>
             ) : (
@@ -262,7 +267,7 @@ const GiftsCatalog = () => {
 
                                     <div className="pg-card__footer">
                                         <span className="pg-card__price">{gift.price} ₪</span>
-                                        <Link to={`/Customer/GiftDetails/${gift._id}`} className="pg-card__link">
+                                        <Link to={`/gift/${gift._id}`} className="pg-card__link">
                                             לפרטים נוספים
                                             <ArrowIcon />
                                         </Link>

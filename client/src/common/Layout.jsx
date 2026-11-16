@@ -13,13 +13,13 @@ export const HOME_BY_ROLE = {
     admin: "/Admin/ProfilAdmin",
 }
 
-// איזה סוג משתמש מורשה לראות כל אזור באתר
+// איזה סוג משתמש מורשה לראות כל אזור באתר.
+// דפים שלא מופיעים כאן פתוחים לכולם, גם לאורח: /gifts, /gift/:id, /questionnaire, /results
 const AREAS = [
     { prefix: "/Admin", role: "admin" },
     { prefix: "/Supplier", role: "supplier" },
     { prefix: "/AddGift", role: "supplier" },
     { prefix: "/Customer", role: "customer" },
-    { prefix: "/PresentingGifts", role: "customer" },
     { prefix: "/Giftinspirations", role: "customer" },
 ]
 
@@ -68,7 +68,11 @@ const Layout = () => {
     // שמירה על הדפים: מי שלא מורשה לאזור מועבר החוצה
     const area = AREAS.find((a) => location.pathname.startsWith(a.prefix))
     if (area && role !== area.role) {
-        return <Navigate to={role ? HOME_BY_ROLE[role] : "/login"} replace />
+        // אורח: לדף ההתחברות, ושומרים לאן רצה להגיע – כדי להחזיר אותו לשם אחרי הכניסה
+        if (!role) {
+            return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
+        }
+        return <Navigate to={HOME_BY_ROLE[role]} replace />
     }
 
     const logout = () => {
