@@ -6,6 +6,11 @@ const relationshipSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true
+    },
+    // שם האייקון שמוצג בשאלון (נבחר מגלריה בדף התחזוקה). ריק = לפי השם / שלוש נקודות
+    icon: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true

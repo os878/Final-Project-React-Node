@@ -1230,9 +1230,9 @@ label {
 }
 
 .qz-bar {
-  height: 6px;
+  height: 10px;
   border-radius: 999px;
-  background: var(--tint);
+  background: var(--peach);
   overflow: hidden;
 }
 
@@ -1240,21 +1240,35 @@ label {
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--spark), var(--orange));
-  transition: width .35s ease;
+  background: linear-gradient(90deg, var(--yellow), var(--coral), var(--orange));
+  transition: width .45s cubic-bezier(.2, .8, .2, 1);
 }
 
 /* ---------- כרטיס השאלה ---------- */
+/* לכל שלב גוון רקע חם משלו (--qz-tint), כדי שהמעבר בין השאלות ירגיש חי */
 .qz-card {
+  --qz-tint: var(--white);
   display: flex;
   flex-direction: column;
   gap: 24px;
   padding: 36px clamp(22px, 5vw, 44px);
   border: 1px solid var(--line);
   border-radius: 28px;
-  background: var(--white);
+  background: var(--qz-tint);
   box-shadow: 0 18px 44px rgba(31, 27, 58, .06);
   animation: qz-in .3s ease;
+  transition: background .3s;
+}
+
+.qz-card--who { --qz-tint: #FFF1EA; }
+.qz-card--event { --qz-tint: #FFF6DC; }
+.qz-card--relation { --qz-tint: #FFEDEE; }
+.qz-card--style { --qz-tint: #FFF0E3; }
+.qz-card--budget { --qz-tint: #FDF3E7; }
+
+/* על רקע צבעוני – כרטיסי הבחירה לבנים, כדי שיבלטו */
+.qz-card .qz-option {
+  background: var(--white);
 }
 
 @keyframes qz-in {
@@ -1388,6 +1402,41 @@ label {
 
 .qz-option--on .qz-option__check {
   display: inline-flex;
+  animation: qz-pop .25s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+/* לחיצה על כרטיס בחירה – "קפיצה" קטנה */
+.qz-option:active {
+  transform: scale(.97);
+}
+
+.qz-option--on .qz-option__icon {
+  animation: qz-pop .3s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+@keyframes qz-pop {
+  from {
+    transform: scale(.6);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qz-card,
+  .qz-option--on .qz-option__check,
+  .qz-option--on .qz-option__icon {
+    animation: none;
+  }
+
+  .qz-option,
+  .qz-option:active,
+  .qz-bar__fill {
+    transition: none;
+    transform: none;
+  }
 }
 
 /* ---------- שדות ---------- */
@@ -2246,6 +2295,46 @@ label {
   font-size: 14px;
   font-weight: 700;
   box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+}
+
+/* תוצאות השאלון: צבע תגית ההתאמה לפי האחוז */
+.pg-score--high {
+  background: var(--orange);
+  color: var(--white);
+}
+
+.pg-score--mid {
+  background: var(--yellow);
+  color: var(--navy);
+}
+
+.pg-score--low {
+  background: var(--white);
+  color: var(--navy);
+  box-shadow: inset 0 0 0 1.5px var(--peach-deep), 0 4px 10px rgba(0, 0, 0, .1);
+}
+
+/* תוצאות השאלון: הכרטיסים מופיעים בזה אחר זה */
+.pg-card--reveal {
+  animation: pg-reveal .45s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes pg-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-card--reveal {
+    animation: none;
+  }
 }
 
 /* כפתור מועדפים */
@@ -4215,6 +4304,64 @@ a.iq-contact--pref:hover {
   color: var(--navy);
   font-size: 17px;
   font-weight: 600;
+}
+
+/* האייקון ליד כל פריט (כמו בשאלון) */
+.mm-item__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mm-item__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--peach);
+  color: var(--orange);
+  flex: none;
+}
+
+.mm-item__svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* גלריית האייקונים */
+.mm-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mm-icons__opt {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-height: 44px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--navy);
+  transition: border-color .15s, background .15s;
+}
+
+.mm-icons__opt:hover {
+  border-color: var(--navy);
+}
+
+.mm-icons__opt--on {
+  border-color: var(--orange);
+  background: var(--peach);
+  color: var(--orange);
+}
+
+.mm-icons__svg {
+  width: 24px;
+  height: 24px;
 }
 
 /* אירועים: בחירת תמונה לדף הנחיתה */

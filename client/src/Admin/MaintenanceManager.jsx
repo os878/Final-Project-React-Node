@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useFeedback } from '../common/Feedback';
 import { EditIcon, TrashIcon, PlusIcon, CheckIcon, CloseIcon, GiftIcon } from '../common/Icons';
+import { Icon as OptionIcon, ICON_CHOICES, pickIcon } from '../common/OptionIcons';
 
 // כתובת בסיס השרת - יש לוודא שהפורט תואם לשרת ה-Node.js שלך (לדוגמה 7002 או 5000)
 const API_BASE_URL = 'http://localhost:7002';
@@ -25,6 +26,8 @@ const MaintenanceManager = () => {
     // אירועים: תמונה לדף הנחיתה ("לאיזה אירוע?") – המנהל בוחר מתנה מהאירוע, והתמונה שלה מוצגת
     const [gifts, setGifts] = useState([]);
     const [coverFor, setCoverFor] = useState(null); // id של האירוע שהבחירה שלו פתוחה
+    // גלריית אייקונים: id של הפריט שהגלריה שלו פתוחה (קטגוריה / אירוע / קשר)
+    const [iconFor, setIconFor] = useState(null);
     const isEvents = activeTab === MODULES.EVENTS.key;
 
     const currentModule = Object.values(MODULES).find(m => m.key === activeTab);
@@ -72,7 +75,20 @@ const MaintenanceManager = () => {
         setNewName('');
         setEditingId(null);
         setCoverFor(null);
+        setIconFor(null);
     }, [activeTab]);
+
+    // 6. בחירת אייקון מהגלריה (icon ריק = אוטומטי, לפי השם)
+    const handleSetIcon = async (id, icon) => {
+        try {
+            await axios.patch(`${currentModule.endpoint}/icon`, { id, icon: icon || null }, getAuthHeaders());
+            setItems((list) => list.map((it) => ((it._id || it.id) === id ? { ...it, icon: icon || null } : it)));
+            setIconFor(null);
+            toast('האייקון עודכן – כך הוא יופיע בשאלון', 'success');
+        } catch (err) {
+            toast(err.response?.data?.message || 'שגיאה בעדכון האייקון', 'error');
+        }
+    };
 
     // בלשונית האירועים – טוענים את המתנות (עם תמונה), כדי לבחור מהן תמונה לכל אירוע
     useEffect(() => {
@@ -228,13 +244,26 @@ const MaintenanceManager = () => {
                                         </div>
                                     ) : (
                                         <>
-                                            <span className="mm-item__name">{item.name}</span>
+                                            <span className="mm-item__name">
+                                                {/* האייקון כפי שהוא מופיע בשאלון */}
+                                                <span className="mm-item__icon"><OptionIcon name={pickIcon(item)} className="mm-item__svg" /></span>
+                                                {item.name}
+                                            </span>
                                             <div className="sgi-actions">
+                                                <button
+                                                    type="button"
+                                                    className="sgi-btn"
+                                                    onClick={() => { setIconFor(iconFor === (item._id || item.id) ? null : (item._id || item.id)); setCoverFor(null); }}
+                                                    aria-expanded={iconFor === (item._id || item.id)}
+                                                    title="האייקון שמופיע בשאלון"
+                                                >
+                                                    אייקון
+                                                </button>
                                                 {isEvents && (
                                                     <button
                                                         type="button"
                                                         className="sgi-btn mm-cover-btn"
-                                                        onClick={() => setCoverFor(coverFor === (item._id || item.id) ? null : (item._id || item.id))}
+                                                        onClick={() => { setCoverFor(coverFor === (item._id || item.id) ? null : (item._id || item.id)); setIconFor(null); }}
                                                         aria-expanded={coverFor === (item._id || item.id)}
                                                         title="התמונה של האירוע בדף הנחיתה"
                                                     >
@@ -264,6 +293,33 @@ const MaintenanceManager = () => {
                                                     <TrashIcon />
                                                 </button>
                                             </div>
+
+                                            {/* גלריית אייקונים – האייקון שיופיע ליד האפשרות בשאלון */}
+                                            {iconFor === (item._id || item.id) && (
+                                                <div className="mm-cover" role="group" aria-label={`אייקון ל${item.name}`}>
+                                                    <p className="mm-cover__hint">בחרו אייקון ל"{item.name}" – כך הוא יופיע בשאלון.</p>
+                                                    <div className="mm-icons">
+                                                        {ICON_CHOICES.map((c) => (
+                                                            <button
+                                                                key={c.name}
+                                                                type="button"
+                                                                className={`mm-icons__opt ${pickIcon(item) === c.name ? 'mm-icons__opt--on' : ''}`}
+                                                                aria-pressed={pickIcon(item) === c.name}
+                                                                aria-label={c.label}
+                                                                title={c.label}
+                                                                onClick={() => handleSetIcon(item._id || item.id, c.name)}
+                                                            >
+                                                                <OptionIcon name={c.name} className="mm-icons__svg" />
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                    {item.icon && (
+                                                        <button type="button" className="mm-cover__auto" onClick={() => handleSetIcon(item._id || item.id, null)}>
+                                                            חזרה לאייקון האוטומטי
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            )}
 
                                             {/* בחירת תמונה לאירוע – מתוך המתנות של האירוע */}
                                             {isEvents && coverFor === (item._id || item.id) && (

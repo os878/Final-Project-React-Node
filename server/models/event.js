@@ -12,6 +12,11 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Gift',
         default: null
+    },
+    // שם האייקון שמוצג בשאלון (נבחר מגלריה בדף התחזוקה). ריק = לפי השם / שלוש נקודות
+    icon: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true

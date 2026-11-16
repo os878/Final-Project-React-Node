@@ -23,6 +23,13 @@ const ArrowIcon = () => (
     </svg>
 );
 
+// צבע התגית לפי אחוז ההתאמה (האלגוריתם עצמו לא השתנה – רק התצוגה)
+const scoreClass = (score) => {
+    if (score >= 80) return 'pg-score--high';
+    if (score >= 60) return 'pg-score--mid';
+    return 'pg-score--low';
+};
+
 const PresentingGifts = () => {
     const location = useLocation();
     const [favorites, setFavorites] = useState([]);
@@ -115,12 +122,13 @@ const PresentingGifts = () => {
             {favoritesError && <p className="pg-error" role="alert">{favoritesError}</p>}
 
             <div className="pg-grid">
-                {matchingGifts.map(result => {
+                {matchingGifts.map((result, index) => {
                     const gift = result.gift;
                     const isFavorite = favorites.some(favorite => favorite.gift?._id === gift._id);
 
                     return (
-                        <article key={gift._id} className="pg-card">
+                        // הכרטיסים מופיעים בזה אחר זה (השהיה קטנה לכל כרטיס, עד גבול)
+                        <article key={gift._id} className="pg-card pg-card--reveal" style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}>
                             <div className="pg-card__media">
                                 {gift.image ? (
                                     <img src={gift.image} alt={gift.name} className="pg-card__img" />
@@ -128,7 +136,7 @@ const PresentingGifts = () => {
                                     <span className="pg-card__placeholder"><GiftIcon /></span>
                                 )}
 
-                                <span className="pg-card__score">התאמה <bdi>{result.score}%</bdi></span>
+                                <span className={`pg-card__score ${scoreClass(result.score)}`}>התאמה <bdi>{result.score}%</bdi></span>
 
                                 <button
                                     type="button"
