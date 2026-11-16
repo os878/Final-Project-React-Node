@@ -11,45 +11,33 @@ const SUPPLIER_ROUTE = `/login?mode=register&role=supplier`;
 
 /* ---------- לוגו ---------- */
 
-const BulbIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 40 46" aria-hidden="true">
-    <circle cx="20" cy="17" r="13" fill="#D9B26A" />
-    <rect x="14" y="33" width="12" height="4" rx="2" fill="#2A1A14" />
-    <rect x="16" y="39" width="8" height="4" rx="2" fill="#2A1A14" />
+// סמל: קופסת מתנה עם ניצוץ של רעיון (צבעי המותג קבועים, לא תלויים במשתנים)
+export const GifterMark = ({ size = 48, className }) => (
+  <svg className={className} width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+    <path d="M47 3l2.6 7.4L57 13l-7.4 2.6L47 23l-2.6-7.4L37 13l7.4-2.6Z" fill="#FFC93C" />
+    <path d="M32 26c-3-6-11-8-11-3.5S28 26 32 26Zm0 0c3-6 11-8 11-3.5S36 26 32 26Z" fill="none" stroke="#CF3439" strokeWidth="3" strokeLinejoin="round" />
+    <rect x="8" y="26" width="48" height="10" rx="3" fill="#CF3439" />
+    <rect x="12" y="35" width="40" height="23" rx="3.5" fill="#CF3439" />
+    <rect x="12" y="35" width="40" height="2.5" fill="#B42A30" />
+    <rect x="29.5" y="26" width="5" height="32" fill="#FFC93C" />
   </svg>
 );
 
-export const GifterMark = ({ size = 48 }) => (
-  <svg width={size} height={size} viewBox="0 0 120 120" aria-hidden="true">
-    <g stroke="#D9B26A" strokeWidth="2" strokeLinecap="round">
-      <line x1="60" y1="6" x2="60" y2="10" />
-      <line x1="44" y1="13" x2="46.5" y2="16" />
-      <line x1="76" y1="13" x2="73.5" y2="16" />
-    </g>
-    <circle cx="60" cy="29" r="11" fill="none" stroke="#D9B26A" strokeWidth="2.5" />
-    <path d="M55.5 31 Q60 23 64.5 31" fill="none" stroke="#D9B26A" strokeWidth="1.8" strokeLinecap="round" />
-    <line x1="55" y1="42" x2="65" y2="42" stroke="#2A1A14" strokeWidth="2.5" strokeLinecap="round" />
-    <line x1="56.5" y1="45.5" x2="63.5" y2="45.5" stroke="#2A1A14" strokeWidth="2.5" strokeLinecap="round" />
-    <rect x="24" y="62" width="72" height="48" rx="3" fill="#7A1F2B" />
-    <rect x="18" y="50" width="84" height="14" rx="2.5" fill="#7A1F2B" />
-    <rect x="18" y="62" width="84" height="2" fill="#2A1A14" opacity="0.35" />
-    <rect x="57.5" y="50" width="5" height="60" fill="#D9B26A" />
-  </svg>
+// השם עם e אדומה – משותף לכל מקום שבו מופיע הלוגו
+export const GifterWordmark = ({ className = 'gifter-wordmark' }) => (
+  <>
+    <span className="sr-only">Gifter</span>
+    <span className={className} dir="ltr" aria-hidden="true">
+      Gift<span className="gifter-wordmark__e">e</span>r
+    </span>
+  </>
 );
 
 export const GifterLogo = ({ size = 48, showSlogan = false }) => (
   <div className="gifter-logo">
     <GifterMark size={size} />
     <div className="gifter-logo__text">
-      <span className="sr-only">Gifter</span>
-      <span className="gifter-wordmark" dir="ltr" aria-hidden="true">
-        G
-        <span className="gifter-wordmark__i">
-          ı
-          <BulbIcon className="gifter-wordmark__bulb" />
-        </span>
-        fter
-      </span>
+      <GifterWordmark />
       {showSlogan && (
         <span className="gifter-slogan">
           מוצאים בקלות, <em>מעניקים בכיף.</em>

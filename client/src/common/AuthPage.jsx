@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useFeedback } from './Feedback';
+import { GifterWordmark } from '../LandingPage'; // הלוגו – מוגדר במקום אחד
 
 export const AuthPage = () => {
     const { toast } = useFeedback();
@@ -382,19 +383,8 @@ export const AuthPage = () => {
                 <aside className="auth-content-panel">
                     <div className="auth-brand">
                         <span className="auth-wordmark">
-                            <span className="sr-only">Gifter</span>
-                            <span dir="ltr" aria-hidden="true">
-                                G
-                                <span className="auth-wordmark__i">
-                                    ı
-                                    <svg className="auth-wordmark__bulb" viewBox="0 0 40 46" aria-hidden="true">
-                                        <circle cx="20" cy="17" r="13" fill="#D9B26A" />
-                                        <rect x="14" y="33" width="12" height="4" rx="2" fill="#F3ECE0" />
-                                        <rect x="16" y="39" width="8" height="4" rx="2" fill="#F3ECE0" />
-                                    </svg>
-                                </span>
-                                fter
-                            </span>
+                            {/* הסמל עצמו מוצג דרך ‎.auth-brand::before ב-App.css */}
+                            <GifterWordmark className="auth-wordmark__text" />
                         </span>
                         <p className="auth-slogan">
                             מוצאים בקלות, <span>מעניקים בכיף.</span>

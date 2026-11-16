@@ -1,24 +1,9 @@
 import { Link } from "react-router-dom"
+import { GifterMark } from "../LandingPage" // סמל הלוגו – מוגדר במקום אחד
 
 // חלקים משותפים לדפי הבית של לקוח, ספק ומנהל
 
-export const GiftMark = () => (
-    <svg className="home-hero__mark" viewBox="0 0 120 120" aria-hidden="true">
-        <g stroke="#D9B26A" strokeWidth="2" strokeLinecap="round">
-            <line x1="60" y1="6" x2="60" y2="10" />
-            <line x1="44" y1="13" x2="46.5" y2="16" />
-            <line x1="76" y1="13" x2="73.5" y2="16" />
-        </g>
-        <circle cx="60" cy="29" r="11" fill="none" stroke="#D9B26A" strokeWidth="2.5" />
-        <path d="M55.5 31 Q60 23 64.5 31" fill="none" stroke="#D9B26A" strokeWidth="1.8" strokeLinecap="round" />
-        <line x1="55" y1="42" x2="65" y2="42" stroke="#F3ECE0" strokeWidth="2.5" strokeLinecap="round" />
-        <line x1="56.5" y1="45.5" x2="63.5" y2="45.5" stroke="#F3ECE0" strokeWidth="2.5" strokeLinecap="round" />
-        <rect x="24" y="62" width="72" height="48" rx="3" fill="#7A1F2B" />
-        <rect x="18" y="50" width="84" height="14" rx="2.5" fill="#7A1F2B" />
-        <rect x="18" y="62" width="84" height="2" fill="#000" opacity="0.35" />
-        <rect x="57.5" y="50" width="5" height="60" fill="#D9B26A" />
-    </svg>
-)
+export const GiftMark = () => <GifterMark className="home-hero__mark" size={120} />
 
 export const Arrow = () => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

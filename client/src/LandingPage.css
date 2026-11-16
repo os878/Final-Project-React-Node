@@ -13,17 +13,13 @@
 .gp-container { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
 /* ---------- לוגו ---------- */
-.gifter-logo { display: inline-flex; align-items: center; gap: 12px; }
+.gifter-logo { display: inline-flex; align-items: center; gap: 4px; }
 .gifter-logo__text { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .gifter-wordmark {
   font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 32px;
-  line-height: 1; letter-spacing: 0; color: var(--navy); white-space: nowrap;
+  line-height: 1; letter-spacing: -0.5px; color: var(--navy); white-space: nowrap;
 }
-.gifter-wordmark__i { position: relative; display: inline-block; }
-.gifter-wordmark__bulb {
-  position: absolute; left: 50%; top: -0.1em; width: 0.3em; height: 0.36em;
-  transform: translateX(-50%);
-}
+.gifter-wordmark__e { color: var(--orange); }
 .gifter-slogan { font-family: 'Assistant', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.3px; color: var(--navy-soft); }
 .gifter-slogan em { font-style: normal; font-weight: 600; color: var(--orange); }
 
@@ -34,9 +30,9 @@
   min-height: 44px; transition: background .15s, transform .15s, box-shadow .15s;
 }
 .gp-btn:hover { background: var(--orange-dark); transform: translateY(-1px); }
-.gp-btn:focus-visible { outline: 3px solid var(--spark); outline-offset: 3px; }
+.gp-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 .gp-btn--small { padding: 10px 22px; font-size: 16px; }
-.gp-btn--large { padding: 18px 40px; font-size: 21px; box-shadow: 0 10px 24px rgba(122, 31, 43, .25); }
+.gp-btn--large { padding: 18px 40px; font-size: 21px; box-shadow: 0 10px 24px rgba(207, 52, 57, .25); }
 
 /* ---------- כותרת עליונה ---------- */
 .gp-header {
@@ -60,12 +56,12 @@
 .gp-hero__card {
   position: relative; width: min(100%, 380px); aspect-ratio: 1;
   border-radius: 40px; background: #fff; border: 1px solid var(--line);
-  box-shadow: 0 30px 60px rgba(42, 26, 20, .10);
+  box-shadow: 0 30px 60px rgba(31, 27, 58, .10);
   display: flex; align-items: center; justify-content: center;
 }
 .gp-chip {
   position: absolute; padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 16px;
-  background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(42, 26, 20, .08);
+  background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 18px rgba(31, 27, 58, .08);
   white-space: nowrap;
 }
 .gp-chip--a { top: 12%; right: -6%; }
@@ -98,7 +94,7 @@
 .gp-path p { font-size: 18px; }
 .gp-path__tag { display: inline-block; padding: 4px 14px; border-radius: 999px; font-weight: 700; font-size: 15px; }
 .gp-path--navy { background: var(--navy); color: #fff; }
-.gp-path--navy p { color: #E3D6CC; }
+.gp-path--navy p { color: #D9D5EC; }
 .gp-path--navy .gp-path__tag { background: rgba(255, 255, 255, .14); color: #fff; }
 .gp-path--spark { background: #fff; border: 2px solid var(--spark); }
 .gp-path--spark p { color: var(--navy-soft); }
@@ -111,7 +107,7 @@
   background: #fff; color: var(--navy); border: 1.5px solid var(--line);
   transition: border-color .15s, background .15s;
 }
-.gp-occasion:hover { border-color: var(--orange); background: #F5E6E2; }
+.gp-occasion:hover { border-color: var(--orange); background: #FFE7E3; }
 .gp-occasion:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 
 .gp-reasons { margin-top: 44px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
@@ -126,7 +122,7 @@
   min-height: 44px; display: inline-flex; align-items: center;
 }
 .gp-header__link:hover { color: var(--orange); }
-.gp-header__link:focus-visible { outline: 3px solid var(--spark); outline-offset: 3px; border-radius: 6px; }
+.gp-header__link:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
 
 .gp-suppliers { scroll-margin-top: 72px; }
 .gp-suppliers__inner {
@@ -149,7 +145,7 @@
 }
 .gp-suppliers__early { font-size: 18px; font-weight: 600; max-width: 30em; }
 .gp-btn--spark { background: var(--navy); color: #fff; }
-.gp-btn--spark:hover { background: #140C09; }
+.gp-btn--spark:hover { background: #0E0B22; }
 
 /* ---------- קריאה לפעולה ---------- */
 .gp-cta { background: var(--navy); color: #fff; padding: 80px 0; }
